@@ -1,53 +1,34 @@
-#pragma once
+#pragma onece
 #include "functions.hpp"
 #include "output.hpp"
 
 
 void trajectory(Variables *vars){
+	int itime=0;
+    int loop=0;
+    int Floop=timestep/Observe;
 	for (auto &a:vars->particles) updateDisp(vars, a);
-	const int particleSize=vars->particles.size();
-	int trapParticle=0;
-//	# pragma omp parallel for
-	for (int pid=0; pid<particleSize; pid++){
-		particle &a=vars->particles[pid];
-		int itime=0;
-		int loop=0;
-		int Floop=timestep/Observe;
-		int breakFlag=0;
-		int penetrationFlag=0;
-		while(loop<Floop){
-			for(int i=0; i<3; i++) a.v.x[i]+=0.5*dt*a.F.x[i];
-			for(int i=0; i<3; i++) a.x.x[i]+=dt*a.v.x[i];
-		    if(vars->particles[pid].x.x[plane2D]<Axis && dimensionFlag>0) {
-		        a.x.x[plane2D]=2*Axis-a.x.x[plane2D];
-		        a.v.x[plane2D]*=-1.0;
-		        a.F.x[plane2D]*=-1.0;
-		        a.reflect*=-1;
-			}
-			breakFlag=checkCell(vars,pid);
-			double FD=computeFD(vars, a);
-			for(int i=0; i<3; i++) a.F.x[i]=FD*(vars->U[a.cell].x[i]+a.Urand.x[i]-a.v.x[i])-vars->dp[a.cell].x[i]/rho_p;
+	while(loop<Floop){
+		velocityUpdate(vars);
+		positionUpdate(vars);
+        if(dimensionFlag>0) symmetricModification(vars);
+		checkCell(vars);
+		if(vars->particles.size()==0) break;
+		forceUpdate(vars);
+		velocityUpdate(vars);
 
-			for(int i=0; i<3; i++) a.v.x[i]+=0.5*dt*a.F.x[i];
-
-			if(dispFlag==1){
+		if(dispFlag==1){
+			for (auto &a:vars->particles) {
 				a.randLoop++;
 				if(a.randLoop==a.randUpdate) updateDisp(vars, a);
 			}
-			if(a.x.x[0]>0.173&&penetrationFlag==0){
-				outParticle op;
-				op.pid=a.id;
-				op.r=a.x;
-				op.v=a.v;
-				op.bid=0;
-				outputPenetration(op);
-				penetrationFlag=1;
-			}
-			if(itime%Observe==0){
-				vars->time=dt*loop*Observe;
-		        loop++;
-		        itime=0;
-				output(a, vars->time);
+		}
+		if(itime%Observe==0){
+			vars->time=dt*loop*Observe;
+            loop++;
+            itime=0;
+			output(vars);
+			for(auto &a: vars->particles){
 				f=fopen("out.dat", "a");
 				fprintf(f,"%f\t%f\t%f\t%d\n", a.x.x[0], a.x.x[1], a.x.x[2], loop);
 				fclose(f);
@@ -55,92 +36,118 @@ void trajectory(Variables *vars){
 				int faceSize=cells[icell].iface.size();
 				for (int i=0; i<faceSize; i++){
 					int b=cells[icell].iface[i];
-					int c0=faces[b].iface[0];
-					double x0=points[c0].x[0];
-					double y0=points[c0].x[1];
-					double z0=points[c0].x[2];
-					double x=a.x.x[0]-x0;
-					double y=a.x.x[1]-y0;
-					double z=a.x.x[2]-z0;
-					point c=cells[icell].norm[i];
-					double inProduct=c.x[0]*x+c.x[1]*y+c.x[2]*z;
-					f=fopen("inpro.dat", "a");
-					fprintf(f,"%f\t%f\t%f\t%e\n", c.x[0], c.x[1], c.x[2], inProduct);
-					fclose(f);
-					f=fopen("cell.dat", "a");
 					for (auto &c0:faces[b].iface){
-						fprintf(f,"%f\t%f\t%f\t%d\n", points[c0].x[0], points[c0].x[1], points[c0].x[2], b);
+						f=fopen("cell.dat", "a");
+						fprintf(f,"%f\t%f\t%f\t%d\n", points[c0].x[0], points[c0].x[1], points[c0].x[2], itime);
+						fclose(f);
 					}
-					fprintf(f,"\n");
-					fclose(f);
 				}*/
 			}
-			if(breakFlag==-1) break;
-			itime++;
 		}
-		if(breakFlag==0){
-			outParticle op;
-			op.pid=a.id;
-			op.r=a.x;
-			op.v=a.v;
-			op.bid=-1;
-			outParticles.push_back(op);
-			trapParticle++;
-			cout<<op.pid<<" might be trapped circulation"<<endl;    
-		}
-		outputFinalPosition(outParticles[pid]);
+		itime++;
 	}
-    cout<<trapParticle<<" might be trapped circulation"<<endl;    
+    cout<<"Final time: "<<dt*itime<<" s"<<endl;
+    cout<<vars->particles.size()<<" might be trapped circulation"<<endl;
+    for(auto &a: vars->particles){
+		outParticle op;
+		op.pid=a.id;
+		op.r=a.x;
+		op.bid=-1;
+		outParticles.push_back(op);
+    }
+    
 }
 
 
-int checkCell(Variables *vars, int pid){
-	int escapeFlag=0;
-	int loopFlag;
-	while(escapeFlag<100){
-		loopFlag=0;	//0:continue, -1:out from bound, 1:move to next cell
-		int icell=vars->particles[pid].cell;
-		int faceSize=cells[icell].iface.size();
-		for (int i=0; i<faceSize; i++){
-			int b=cells[icell].iface[i];
-			int c0=faces[b].iface[0];
-			double x0=points[c0].x[0];
-			double y0=points[c0].x[1];
-			double z0=points[c0].x[2];
-			double x=vars->particles[pid].x.x[0]-x0;
-			double y=vars->particles[pid].x.x[1]-y0;
-			double z=vars->particles[pid].x.x[2]-z0;
-			point c=cells[icell].norm[i];
-			double inProduct=c.x[0]*x+c.x[1]*y+c.x[2]*z;
-		    if(b>boundaryStartID-1)	{
-				if(inProduct<vars->particles[pid].dp*0.5){
-			        loopFlag=boundAction(vars,b,pid,c);
-				    if(loopFlag<0) break;
-                }
-		    }
-			else{
-				if(inProduct<0){
-					loopFlag=1;
-					escapeFlag++;
-					if(owners[b]==vars->particles[pid].cell) vars->particles[pid].cell=neighbors[b];
-					else vars->particles[pid].cell=owners[b];
-					int newID=vars->particles[pid].cell;
-					double Kn=vars->ramda[newID]/vars->particles[pid].dp;
-					double Cc=1+Kn*(A1+A2*exp(-A3/Kn));
-					vars->particles[pid].Kn=Kn;
-					vars->particles[pid].Cc=Cc;
-					vars->particles[pid].Zp=Cc*1.6e-19/(3*M_PI*vars->myu[newID]*vars->particles[pid].dp);
-					vars->particles[pid].beta=3.0*M_PI*vars->myu[newID]*vars->particles[pid].dp/Cc/vars->particles[pid].m;
-					vars->particles[pid].le=pow(vars->k[newID],0.5)/vars->omega[newID]/pow(0.09,0.25);
-					
-					break;
+void velocityUpdate(Variables *vars){
+	for (auto &a: vars->particles){
+		for(int i=0; i<3; i++){
+			a.v.x[i]+=0.5*dt*a.F.x[i];
+		}
+	}
+}
+
+void positionUpdate(Variables *vars){
+	for (auto &a: vars->particles){
+		for(int i=0; i<3; i++){
+			a.x.x[i]+=dt*a.v.x[i];
+		}
+	}
+}
+
+
+void forceUpdate(Variables *vars){
+	for (auto &a: vars->particles){
+		double FD=computeFD(vars, a);
+		int icell=a.cell;
+		for(int i=0; i<3; i++){
+			a.F.x[i]=FD*(vars->U[icell].x[i]+a.Urand.x[i]-a.v.x[i])-vars->dp[icell].x[i]/rho_p;
+		}
+	}
+}
+
+
+void symmetricModification(Variables *vars){
+	int particleSize=vars->particles.size();
+	for(int pid=0; pid<particleSize; pid++){
+		if(vars->particles[pid].x.x[plane2D]<Axis){
+            vars->particles[pid].x.x[plane2D]=2*Axis-vars->particles[pid].x.x[plane2D];
+            vars->particles[pid].v.x[plane2D]*=-1.0;
+            vars->particles[pid].F.x[plane2D]*=-1.0;
+            vars->particles[pid].reflect*=-1;
+        }
+    }
+}
+
+void checkCell(Variables *vars){
+	int particleSize=vars->particles.size();
+	for(int pid=0; pid<particleSize; pid++){
+		int escapeFlag=0;
+		while(escapeFlag<100){
+			int loopFlag=0;
+			
+			int icell=vars->particles[pid].cell;
+			int faceSize=cells[icell].iface.size();
+			for (int i=0; i<faceSize; i++){
+				int b=cells[icell].iface[i];
+				int c0=faces[b].iface[0];
+				double x0=points[c0].x[0];
+				double y0=points[c0].x[1];
+				double z0=points[c0].x[2];
+				double x=vars->particles[pid].x.x[0]-x0;
+				double y=vars->particles[pid].x.x[1]-y0;
+				double z=vars->particles[pid].x.x[2]-z0;
+				point c=cells[icell].norm[i];
+				double inProduct=c.x[0]*x+c.x[1]*y+c.x[2]*z;
+			    if(b>boundaryStartID-1)	{
+					if(inProduct<vars->particles[pid].dp*0.5){
+				        loopFlag=boundAction(vars,b,pid,c);
+    				    break;
+                    }
+			    }
+				else{
+					if(inProduct<0){
+						loopFlag=1;
+						escapeFlag++;
+						if(owners[b]==vars->particles[pid].cell) vars->particles[pid].cell=neighbors[b];
+						else vars->particles[pid].cell=owners[b];
+						int newID=vars->particles[pid].cell;
+						double Kn=vars->ramda[newID]/vars->particles[pid].dp;
+						double Cc=1+Kn*(A1+A2*exp(-A3/Kn));
+						vars->particles[pid].Kn=Kn;
+						vars->particles[pid].Cc=Cc;
+						vars->particles[pid].Zp=Cc*1.6e-19/(3*M_PI*vars->myu[newID]*vars->particles[pid].dp);
+						vars->particles[pid].beta=3.0*M_PI*vars->myu[newID]*vars->particles[pid].dp/Cc/vars->particles[pid].m;
+						vars->particles[pid].le=pow(vars->k[newID],0.5)/vars->omega[newID]/pow(0.09,0.25);
+						
+						break;
+					}
 				}
 			}
+			if(loopFlag<1) {pid+=loopFlag; particleSize+=loopFlag; break;}
 		}
-		if(loopFlag<1) break;
 	}
-	if(loopFlag==1) loopFlag=0;
-	return loopFlag;
+
 }
 
 
@@ -153,10 +160,10 @@ int boundAction(Variables *vars, int faceID, int particleID, point norm){
 				outParticle op;
 				op.pid=vars->particles[particleID].id;
 				op.r=vars->particles[particleID].x;
-				op.v=vars->particles[particleID].v;
 				op.bid=i;
 				outParticles.push_back(op);
-				//cout<<"out from "<<boundaries[i].name<<" "<<faceID<<endl;
+				vars->particles.erase(vars->particles.begin()+particleID);
+				cout<<"out from "<<boundaries[i].name<<" "<<faceID<<endl;
 				returnInt=-1;
 			}
 			if(boundaries[i].type=="symmetryPlane"){
@@ -200,10 +207,10 @@ int boundAction(Variables *vars, int faceID, int particleID, point norm){
 				outParticle op;
 				op.pid=vars->particles[particleID].id;
 				op.r=vars->particles[particleID].x;
-				op.v=vars->particles[particleID].v;
 				op.bid=i;
 				outParticles.push_back(op);
-				//cout<<"hit to "<<boundaries[i].name<<endl;
+				vars->particles.erase(vars->particles.begin()+particleID);
+				cout<<"hit to "<<boundaries[i].name<<endl;
 				returnInt=-1;
 			}
 		}

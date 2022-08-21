@@ -1,5 +1,4 @@
 #pragma once
-
 #include "functions.hpp"
 
 
@@ -21,15 +20,30 @@ void output(particle a, double time){
 
 }
 
+void outputTrajectory(particle a){
+	sprintf(filepath, "result/trajectory.%d", int(a.id)); 
+	f=fopen(filepath, "a");
+	fprintf(f,"%e\t%e\t%e\n", a.x.x[0], a.x.x[1], a.x.x[2]);
+	fclose(f);
+
+}
+
 
 void outputInitial(Variables *vars){
 	for (auto &a:vars->particles){
 		sprintf(filepath, "result/position.%d", int(a.id)); 
 		f=fopen(filepath, "w");
+		fprintf(f,"%e\t%e\t%e\t%d\n", a.x.x[0], a.x.x[1], a.x.x[2], a.cell);
 		fclose(f);
 
 		sprintf(filepath, "result/U.%d", int(a.id)); 
 		f=fopen(filepath, "w");
+		fprintf(f,"%e\t%e\t%e\n", a.v.x[0], a.v.x[1], a.v.x[2]);
+		fclose(f);
+
+		sprintf(filepath, "result/trajectory.%d", int(a.id)); 
+		f=fopen(filepath, "w");
+		fprintf(f,"%e\t%e\t%e\n", a.x.x[0], a.x.x[1], a.x.x[2]);
 		fclose(f);
 	}
 	sprintf(filepath, "result/Time"); 
@@ -54,35 +68,39 @@ void outputInitial(Variables *vars){
 	sprintf(filepath, "penetrateVelocity.dat"); 
 	f=fopen(filepath, "w");
 	fclose(f);
+	sprintf(filepath, "initialVelocity.dat"); 
+	f=fopen(filepath, "w");
+	fclose(f);
 }
 
 void outputFinalPosition(outParticle a){
 	sprintf(filepath, "finalPosition.dat"); 
 	f=fopen(filepath, "a");
-   	fprintf(f,"%f\t%f\t%f\t%d\t%d\n", a.r.x[0], a.r.x[1], a.r.x[2], a.pid, a.bid);
+   	fprintf(f,"%e\t%e\t%e\t%d\t%d\n", a.r.x[0], a.r.x[1], a.r.x[2], a.pid, a.bid);
 	fclose(f);
 	sprintf(filepath, "finalVelocity.dat"); 
 	f=fopen(filepath, "a");
-   	fprintf(f,"%f\t%f\t%f\t%d\t%d\n", a.v.x[0], a.v.x[1], a.v.x[2], a.pid, a.bid);
+   	fprintf(f,"%e\t%e\t%e\t%d\t%d\n", a.v.x[0], a.v.x[1], a.v.x[2], a.pid, a.bid);
 	fclose(f);
 }
 
-void outputFinalPositionInitial(){
-
+void outputInitial(particle p){
+	sprintf(filepath, "initialVelocity.dat"); 
+	f=fopen(filepath, "a");
+   	fprintf(f,"%e\t%e\t%e\t%d\n", p.v.x[0], p.v.x[1], p.v.x[2], p.id);
+	fclose(f);
 }
 
-void outputPenetration(outParticle a){
+void outputPenetration(particle p){
 	sprintf(filepath, "penetratePosition.dat"); 
 	f=fopen(filepath, "a");
-   	fprintf(f,"%f\t%f\t%f\t%d\t%d\n", a.r.x[0], a.r.x[1], a.r.x[2], a.pid, a.bid);
+   	fprintf(f,"%e\t%e\t%e\t%d\n", p.x.x[0], p.x.x[1], p.x.x[2], p.id);
 	fclose(f);
 	sprintf(filepath, "penetrateVelocity.dat"); 
 	f=fopen(filepath, "a");
-   	fprintf(f,"%f\t%f\t%f\t%d\t%d\n", a.v.x[0], a.v.x[1], a.v.x[2], a.pid, a.bid);
+   	fprintf(f,"%e\t%e\t%e\t%d\n", p.v.x[0], p.v.x[1], p.v.x[2], p.id);
 	fclose(f);
 }
 
-void outputPenetrationInitial(){
 
-}
 

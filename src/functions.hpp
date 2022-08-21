@@ -11,168 +11,98 @@
 
 using namespace std;
 
-//	Constant
-const double myu0=1.81e-5;
-const double ST0=288.15;
-const double SC0=110.4;
-const double rho_p=1000;
-const double e=1.6e-19;
-const double ramda0=67.0e-9;
-const double mgas=(28*0.8+32*0.2)*0.001/6.02e23;
-const double kb=1.38e-23;
+#include "structure.hpp"
+#include "constants.hpp"
 
-/*const double myu0=3.93267e-5;
-const double ST0=809;
-const double SC0=147.2;
-const double rho_p=1000;
-const double e=1.6e-19;
-const double ramda0=285.0e-9;
-const double mgas=(4.0)*0.001/6.02e23;
-const double kb=1.38e-23;*/
 
 // Calculation conditions (flag, file path, etc...)
 double dt=1e-7;
-double timestep=1e8;
-int Observe=10000;
-int dispFlag=0;
-int dragFlag=1;
-int KFFlag=0;
-int compressFlag=0;
-int dimensionFlag=0;
-int initialBreakFlag=0;
+double rho_p=1000;
+double observeTime=1e-5;
+double totalTime=1;
+int Observe=10000;	// output time steps
+double delta_r2_trajectory=1e-4*1e-4;	// output migration distance for the trajectory
 int plane2D=-1;
 string startDir="20000";
 double Axis=0;
-int symmerticFlag=1;
 double flag=1;
 char filepath[100];
 int boundaryStartID;
-int outputLoop=0;
 double constTemp=300;
 double constRho=1.2;
+double timer;
 FILE*f;
 FILE*file;
 
-
-
-// Parameters for slip correction
-const double A1=2.514;
-const double A2=0.8;
-const double A3=0.55;
-
-//	Parameters for drag force
-const double delta0=9.4; // or 9.06?
-const double alpha0=0.356;
-const double ita=1.8;
-const double alpha_hoc=1.27;
-const double C0=24/delta0/delta0; // C0*delta0*delta0=24
-const double CdMach=0.9;
-/*const double Cp=5.1926;
-const double Cv=3.1156;*/
-const double Cp=1.00;
-const double Cv=0.718;
-const double gam=Cp/Cv;
-const double omega=0.74;
-const double gam_m=gam-1;
-const double gam_mSQ=gam_m*gam_m;
-const double gam_p=gam+1;
-const double gam_pSQ=gam_p*gam_p;
-const double gamkb_m=gam*kb/mgas;
-
-//  For high speed calculation...
-const double ramda_coeff=sqrt(M_PI*mgas*0.5/kb);
-const double C1C1=CdMach-C0*pow(1+gam_m*gam_m*0.25/gam,gam/gam_m);
-const double C1C2=gam_m/alpha0/gam_p;
-const double Re_C=gam_p*0.5/gam-gam_m/gam*omega;
-
-
-
-
-struct face {
-	std::vector<int> iface;
-};
-
-struct point {
-	double x[3];
-};
-struct boundary {
-	string name;
-	string type;
-	int nFaces;
-	int startFace;
-};
-
-struct cell {
-	std::vector<int> iface;
-	std::vector<point> norm;
-	point r;
-};
-
-
-struct outParticle {
-	int pid;
-    int bid;
-	point r;
-	point v;
-};
-
-
-struct particle {
-	point x;
-	point v;
-	point F;
-	int cell;
-	int id;
-	double Re;
-	double Mach;
-	double Kn;
-	double dp;
-	double m;
-	double Cc;
-	double Zp;
-	double beta;
-	double le;
-	int randUpdate;
-	point Urand;
-	int randLoop;
-    int reflect;
-};
-
 class Variables {
 	private:
-
-
     public:
 		std::vector<double> p;
 		std::vector<point> U;
 		std::vector<double> T;
 		std::vector<double> rho;
-		std::vector<double> k;
-		std::vector<double> omega;
 		std::vector<double> myu;
 		std::vector<double> ramda;
 		std::vector<point> dp;
 		std::vector<particle> particles;
+		double delta_r2;
 		double time;
-		Variables(void){time=0;};
+		double preOutTime;
+		double analyticalStep;
+
+		Variables(void){time=0;preOutTime=0;};
 		~Variables(void){};
+};
+
+
+class Flags {
+	private:
+    public:
+		int dragFlag;
+		int KFFlag;
+		int compressFlag;
+		int dimensionFlag;
+		int initialBreakFlag;
+		int autoStep;
+		int breakFlag;
+		int analytical;
+
+		Flags(void){
+			int dragFlag=1;
+			int autoStep=0;
+			int KFFlag=0;
+			int compressFlag=0;
+			int dimensionFlag=0;
+			int initialBreakFlag=0;
+			int analytical=0;
+		};
+		~Flags(void){};
 
 };
 
 
-void trajectory(Variables *vars);
+//Stokes-Millikan
+class dragForceSM{
+	public:
+		void computeFD(Variables *vars, Flags *flags, particle &par);
+		virtual double computeCd(double Re, double Mach, double Cc);
+	private:
+};
+std::vector<dragForceSM*> forces;
+
+
+
+
+void trajectory(Variables *vars,  Flags *flags);
 int checkCell(Variables *vars, int pid);
 int boundAction(Variables *vars, int faceID, int particleID, point norm);
-void updateDisp(Variables *vars, particle &par);
-double get_vTD(double dispEnergy);
-double get_tini(Variables *vars, particle par);
+void updateDisp(Variables *vars, Flags *flags, particle &par);
+void initialize(Variables *vars, Flags *flags){
+	vars->time=0;
+	vars->preOutTime=0;
+	flags->breakFlag=0;
+}
 
-double computeFD(Variables *vars, particle &par);
-double computeCd_AIAA(double Re, double Mach, double Cc);
-double computeCd_Stokes(double Re, double Cc);
-double computeCd_Loth(double Re, double Mach, double Cc);
-double computeCd_Re(double Re, double Cc);
-double computeCd(Variables *vars, particle &par);
 
 std::vector<face> faces;
 std::vector<point> points;
@@ -182,7 +112,6 @@ std::vector<int> neighbors;
 std::vector<int> owners;
 std::vector<outParticle> outParticles;
 std::vector<int> erasePID;
-
 
 void calculateMyu(Variables *vars){
 	string str;
@@ -206,9 +135,20 @@ void calculateRamda(Variables *vars){
 	}
 }
 
+void  computeReMach(Variables *vars, particle &par){
+	double dUx=vars->U[par.cell].x[0]-par.v.x[0];
+	double dUy=vars->U[par.cell].x[1]-par.v.x[1];
+	double dUz=vars->U[par.cell].x[2]-par.v.x[2];
+	double U2=dUx*dUx+dUy*dUy+dUz*dUz;
+	double Umag=sqrt(U2);
+	double cg=sqrt(gamkb_m*vars->T[par.cell]);
 
+	par.Re=vars->rho[par.cell]*Umag*par.dp/vars->myu[par.cell]+1e-20;
+	par.Mach=Umag/cg;
+}
 
 void makeCells(){
+	timer=clock();
 	int maxOwner=0;
 	for (auto &a:owners) {if(a>maxOwner) maxOwner=a;}
 	cell c;
@@ -296,10 +236,12 @@ void makeCells(){
 		}
 
 	}
+	cout<<"Making cell time: "<<(clock()-timer)*1e-6<<" sec"<<endl;
 }
 
 
 void findParticle(Variables *vars){
+	timer=clock();
 	int ps=vars->particles.size();
 	for(int i=0; i<ps; i++){
 		int foundCells=0;
@@ -312,6 +254,10 @@ void findParticle(Variables *vars){
 			cell a=cells[j];
 			int faceSize=a.iface.size();
 			int flag=0;
+			/*int btest=a.iface[0];
+			int c0test=faces[btest].iface[0];
+			double y0test=points[c0test].x[1];
+			if(y0test<0.05) continue;*/
 			for (int k=0; k<faceSize; k++){
 				int b=a.iface[k];
 				int c0=faces[b].iface[0];
@@ -343,13 +289,47 @@ void findParticle(Variables *vars){
 			}
 		}
 //		if (foundCells>0){cout<<"I found "<<foundCells<<" initial cell(s) for pid "<<i<<endl;}
-		if (foundCells==0){cout<<"**Error: I could not find an initial cell for pid "<<i<<endl;initialBreakFlag=1;}
+		if (foundCells==0){
+			cout<<"**Error: I could not find an initial cell for pid "<<i<<endl;
+			for(int j=0; j<cellSize; j++) {
+				cell a=cells[j];
+				int faceSize=a.iface.size();
+				int flag=0;
+				for (int k=0; k<faceSize; k++){
+					int b=a.iface[k];
+					int c0=faces[b].iface[0];
+					double x0=points[c0].x[0];
+					double y0=points[c0].x[1];
+					double z0=points[c0].x[2];
+					point c=a.norm[k];
+					double naiseki=c.x[0]*(x-x0)+c.x[1]*(y-y0)+c.x[2]*(z-z0);
+					if(naiseki<0) {flag=1;break;}
+
+				}
+				double Dist=0;
+				for (int k=0; k<faceSize; k++){
+					int b=a.iface[k];
+					int c0=faces[b].iface[0];
+					double x0=points[c0].x[0];
+					double y0=points[c0].x[1];
+					double z0=points[c0].x[2];
+					point c=a.norm[k];
+					double naiseki=c.x[0]*(x-x0)+c.x[1]*(y-y0)+c.x[2]*(z-z0);
+	                Dist+=naiseki;
+				}			
+				if (Dist<minDist){
+					minDist=Dist;
+					vars->particles[i].cell=j;		
+				}
+			}	
+		}
 	}
+	cout<<"Find particle time: "<<(clock()-timer)*1e-6<<" sec"<<endl;
 }
 
 
 
-void initialParticle(Variables *vars){
+void initialParticle(Variables *vars, Flags *flags){
 	int ps=vars->particles.size();
 	findParticle(vars);
 	for(auto &a:vars->particles){
@@ -358,15 +338,15 @@ void initialParticle(Variables *vars){
 		double Cc=1+Kn*(A1+A2*exp(-A3/Kn));
 		a.Kn=Kn;
 		a.Cc=Cc;
-		a.Zp=Cc*1.6e-19/(3*M_PI*vars->myu[icell]*a.dp);
-		a.beta=3.0*M_PI*vars->myu[icell]*a.dp/Cc/a.m;
-		a.le=pow(vars->k[icell],0.5)/vars->omega[icell]/pow(0.09,0.25);
+		double threePiMuDp_Cc=3*M_PI*vars->myu[icell]*a.dp/Cc;
+		a.Zp=1.6e-19/threePiMuDp_Cc;
+		a.beta=threePiMuDp_Cc/a.m;
+		a.dt=1/(40*a.beta);
 		for(int i=0; i<3; i++) {
 			a.v.x[i]=vars->U[icell].x[i]*0.99;
-			a.F.x[i]=computeFD(vars, a)*(vars->U[icell].x[i]-a.v.x[i]);
 		}
+		for(auto &force : forces) force->computeFD(vars,flags,a);
 	}
-
 }
 
 

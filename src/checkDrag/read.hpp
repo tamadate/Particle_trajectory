@@ -245,15 +245,13 @@ void readCondition(Variables *vars){
 				if(tmp=="compressible") {readFlag=9; continue;}
 				if(tmp=="constTemp") {readFlag=10; continue;}
 				if(tmp=="constRho") {readFlag=11; continue;}
-				if(tmp=="startDir") {readFlag=12; continue;}
 			}
 			if (readFlag==1) dt=stod(tmp);
 			if (readFlag==2) timestep=stod(tmp);
 			if (readFlag==3) {
 				if(tmp=="Singh") dragFlag=1;
-				if(tmp=="Stokes") dragFlag=0;
-				if(tmp=="Morsi") dragFlag=2;
-				if(tmp=="Loth") dragFlag=3;
+				if(tmp=="Stokes-Millikan") dragFlag=0;
+				if(tmp=="Morse") dragFlag=2;
 			}
 			if (readFlag==4) {
 				if(tmp=="Yes") dispFlag=1;
@@ -287,9 +285,6 @@ void readCondition(Variables *vars){
 			}
 			if (readFlag==11) {
 				constRho=stod(tmp);
-			}
-			if (readFlag==12) {
-				startDir=tmp;
 			}
 		}
 	}

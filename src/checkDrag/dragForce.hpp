@@ -1,4 +1,4 @@
-#pragma once
+#pragma onece
 #include "functions.hpp"
 
 // Morsi & Alexander (1972)
@@ -73,7 +73,7 @@ double computeCd(Variables *vars, particle &par) {
 	return Cd;
 }
 
-// Singh et al. (2022)
+// Singh et al. (2021)
 double computeCd_AIAA(double Re, double Mach, double Cc){
 	double Ts_T, Us_U, Ms, alpha, C1, Br, fKnWr;
 	double Cdfm=0;
@@ -83,8 +83,6 @@ double computeCd_AIAA(double Re, double Mach, double Cc){
 		Ms=Mach;
 		alpha=1;
 		C1=1;
-		Br=0;
-		fKnWr=1/Cc;
 	}
 	else{
 		double MachSQ=Mach*Mach;
@@ -122,6 +120,7 @@ double computeCd_AIAA(double Re, double Mach, double Cc){
 	return (Cdc*fKnWr+Cdfm*Brita)/(1+Brita);
 }
 
+
 // Loth model
 double computeCd_Loth(double Re, double Mach, double Cc){
 	double M4=Mach*Mach*Mach*Mach;
@@ -150,8 +149,6 @@ double computeCd_Loth(double Re, double Mach, double Cc){
 	return Cd;
 }
 
-
-	
 
 	
 
