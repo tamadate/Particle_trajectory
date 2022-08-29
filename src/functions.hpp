@@ -42,7 +42,7 @@ class Variables {
 		std::vector<double> T;
 		std::vector<double> rho;
 		std::vector<double> myu;
-		std::vector<double> ramda;
+		std::vector<double> lamda;
 		std::vector<point> dp;
 		std::vector<particle> particles;
 		double delta_r2;
@@ -124,14 +124,14 @@ void calculateMyu(Variables *vars){
 	}
 }
 
-void calculateRamda(Variables *vars){
+void calculatelamda(Variables *vars){
 	string str;
 	int iflag=0;
 
 	int fieldSize=vars->T.size();
 	for(int i=0; i<fieldSize; i++){
-		double ramda=ramda_coeff*vars->myu[i]/vars->rho[i]/sqrt(vars->T[i]);
-		vars->ramda.push_back(ramda);
+		double lamda=lamda_coeff*vars->myu[i]/vars->rho[i]/sqrt(vars->T[i]);
+		vars->lamda.push_back(lamda);
 	}
 }
 
@@ -334,7 +334,7 @@ void initialParticle(Variables *vars, Flags *flags){
 	findParticle(vars);
 	for(auto &a:vars->particles){
 		int icell=a.cell;
-		double Kn=vars->ramda[icell]/a.dp;
+		double Kn=vars->lamda[icell]/a.dp;
 		double Cc=1+Kn*(A1+A2*exp(-A3/Kn));
 		a.Kn=Kn;
 		a.Cc=Cc;

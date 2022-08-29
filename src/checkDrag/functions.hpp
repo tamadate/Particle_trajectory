@@ -15,7 +15,7 @@ using namespace std;
 const double myu0=1.81e-5;
 const double rho_p=1000;
 const double e=1.6e-19;
-const double ramda0=67.0e-9;
+const double lamda0=67.0e-9;
 const double mgas=(28*0.8+32*0.2)*0.001/6.02e23;
 const double kb=1.38e-23;
 
@@ -66,7 +66,7 @@ const double gam_pSQ=gam_p*gam_p;
 const double gamkb_m=gam*kb/mgas;
 
 //  For high speed calculation...
-const double ramda_coeff=sqrt(M_PI*mgas*0.5/kb);
+const double lamda_coeff=sqrt(M_PI*mgas*0.5/kb);
 const double C1C1=CdMach-C0*pow(1+gam_m*gam_m*0.25/gam,gam/gam_m);
 const double C1C2=gam_m/alpha0/gam_p;
 const double Re_C=gam_p*0.5/gam-gam_m/gam*omega;
@@ -133,7 +133,7 @@ class Variables {
 		std::vector<double> k;
 		std::vector<double> omega;
 		std::vector<double> myu;
-		std::vector<double> ramda;
+		std::vector<double> lamda;
 		std::vector<point> dp;
 		std::vector<particle> particles;
 		double time;
@@ -182,14 +182,14 @@ void calculateMyu(Variables *vars){
 	}
 }
 
-void calculateRamda(Variables *vars){
+void calculatelamda(Variables *vars){
 	string str;
 	int iflag=0;
 
 	int fieldSize=vars->T.size();
 	for(int i=0; i<fieldSize; i++){
-		double ramda=ramda_coeff*vars->myu[i]/vars->rho[i]/sqrt(vars->T[i]);
-		vars->ramda.push_back(ramda);
+		double lamda=lamda_coeff*vars->myu[i]/vars->rho[i]/sqrt(vars->T[i]);
+		vars->lamda.push_back(lamda);
 	}
 }
 
@@ -341,7 +341,7 @@ void initialParticle(Variables *vars){
 	findParticle(vars);
 	for(auto &a:vars->particles){
 		int icell=a.cell;
-		double Kn=vars->ramda[icell]/a.dp;
+		double Kn=vars->lamda[icell]/a.dp;
 		double Cc=1+Kn*(A1+A2*exp(-A3/Kn));
 		a.Kn=Kn;
 		a.Cc=Cc;

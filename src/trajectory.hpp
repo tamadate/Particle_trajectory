@@ -91,11 +91,11 @@ void trajectory(Variables *vars, Flags *flags){
 			op.v=a.v;
 			op.bid=-1;
 			outParticles.push_back(op);
-			trapParticle++;  
+			trapParticle++;
 		}
 		outputFinalPosition(outParticles[pid]);
 	}
-    cout<<trapParticle<<" might be trapped circulation"<<endl;    
+    cout<<trapParticle<<" might be trapped circulation"<<endl;
 	cout<<"Trajectory calculation time: "<<(clock()-timer)*1e-6<<" sec"<<endl;
 }
 
@@ -131,7 +131,7 @@ int checkCell(Variables *vars, int pid){
 					if(owners[b]==vars->particles[pid].cell) vars->particles[pid].cell=neighbors[b];
 					else vars->particles[pid].cell=owners[b];
 					int newID=vars->particles[pid].cell;
-					double Kn=vars->ramda[newID]/vars->particles[pid].dp;
+					double Kn=vars->lamda[newID]/vars->particles[pid].dp;
 					vars->particles[pid].Kn=Kn;
 					vars->particles[pid].Cc=1+Kn*(A1+A2*exp(-A3/Kn));
 					double threePiMuDp_Cc=3*M_PI*vars->myu[icell]*vars->particles[pid].dp/vars->particles[pid].Cc;
@@ -140,7 +140,7 @@ int checkCell(Variables *vars, int pid){
 					double tau100=1/(100*vars->particles[pid].beta);
 
 					vars->particles[pid].dt=1/(100*vars->particles[pid].beta);
-					
+
 					break;
 				}
 			}
@@ -209,7 +209,5 @@ int boundAction(Variables *vars, int faceID, int particleID, point norm){
 		}
 	}
 	return returnInt;
-	
+
 }
-
-

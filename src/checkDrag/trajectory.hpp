@@ -132,7 +132,7 @@ void checkCell(Variables *vars){
 						if(owners[b]==vars->particles[pid].cell) vars->particles[pid].cell=neighbors[b];
 						else vars->particles[pid].cell=owners[b];
 						int newID=vars->particles[pid].cell;
-						double Kn=vars->ramda[newID]/vars->particles[pid].dp;
+						double Kn=vars->lamda[newID]/vars->particles[pid].dp;
 						double Cc=1+Kn*(A1+A2*exp(-A3/Kn));
 						vars->particles[pid].Kn=Kn;
 						vars->particles[pid].Cc=Cc;

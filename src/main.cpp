@@ -14,7 +14,7 @@ int main(int argc,char *argv[]){
 
 
 	calculateMyu(vars);
-	calculateRamda(vars);
+	calculatelamda(vars);
 
 	reader->readParticles(vars);
 	makeCells();
