@@ -8,6 +8,7 @@
 #include <sstream>
 #include <random>
 #include <stdlib.h>
+#include <time.h>
 
 using namespace std;
 
@@ -39,7 +40,7 @@ struct point {
 
 struct particle {
 	point x;	//position
-	point v;	//velocity 
+	point v;	//velocity
 	point F;	//force
 	int id;	//particle id
 	int cell;	//cell number
@@ -92,8 +93,3 @@ void initialParticle(Variables *vars){
 	}
 
 }
-
-
-
-	
-
