@@ -1,80 +1,49 @@
-#pragma onece
-#include "functions.hpp"
+#include "dragForce.hpp"
 
-// Morsi & Alexander (1972)
-double computeCd_Re(double Re, double Cc){
-	double CdRE;
-
-	if (Re < 0.1)
-	{
-		CdRE = 24.0 * Re_inv;
-	}
-	else if (Re < 1.0)
-	{
-		CdRE = 22.73 * Re_inv + 0.0903 * Re_inv2 + 3.69;
-	}
-	else if (Re < 10.0)
-	{
-		CdRE = 29.1667 * Re_inv - 3.8889 * Re_inv2 + 1.222;
-	}
-	else if (Re < 100.0)
-	{
-		CdRE = 46.5 * Re_inv - 116.67 * Re_inv2 + 0.6167;
-	}
-	else if (Re < 1000.0)
-	{
-		CdRE = 98.33 * Re_inv - 2778.0 * Re_inv2 + 0.3644;
-	}
-	else if (Re < 5000.0)
-	{
-		CdRE = 148.62 * Re_inv - 47500.0 * Re_inv2 + 0.357;
-	}
-	else if (Re < 10000.0)
-	{
-		CdRE = -490.546 * Re_inv + 578700.0 * Re_inv2 + 0.46;
-	}
-	else if (Re < 50000.0)
-	{
-		CdRE = -1662.5 * Re_inv - 5416700.0 * Re_inv2 + 0.5191;
-	}
-	else
-	{
-		CdRE = 0.4;
-	}
-
-	return CdRE / Cc;
-}
-
-double computeCd_Stokes(double Re, double Cc){
-	return 24/Re/Cc;
-}
-
-double computeFD(Variables *vars, particle &par) {
-	double Cd=computeCd(vars,par);
-	return M_PI*0.125*vars->myu[par.cell]*par.dp*par.Re*Cd/par.m;
-}
-
-double computeCd(Variables *vars, particle &par) {
-	double dUx=(vars->U[par.cell].x[0]+par.Urand.x[0])-par.v.x[0];
-	double dUy=(vars->U[par.cell].x[1]+par.Urand.x[1])-par.v.x[1];
-	double dUz=(vars->U[par.cell].x[2]+par.Urand.x[2])-par.v.x[2];
+void
+dragForceSM::computeFD(Variables *vars, Flags *flags, particle &par){
+	double dUx=vars->U[par.cell].x[0]+par.Urand.x[0]-par.v.x[0];
+	double dUy=vars->U[par.cell].x[1]+par.Urand.x[1]-par.v.x[1];
+	double dUz=vars->U[par.cell].x[2]+par.Urand.x[2]-par.v.x[2];
 	double U2=dUx*dUx+dUy*dUy+dUz*dUz;
 	double Umag=sqrt(U2);
 	double cg=sqrt(gamkb_m*vars->T[par.cell]);
 
-	par.Re=vars->rho[par.cell]*Umag*par.dp/vars->myu[par.cell]+1e-10;
+	par.Re=vars->rho[par.cell]*Umag*par.dp/vars->myu[par.cell]+1e-20;
 	par.Mach=Umag/cg;
+	double Cd=computeCd(par.Re, par.Mach, par.Cc);
 
-	double Cd;
-	if(dragFlag==2)	Cd=computeCd_Re(par.Re, par.Cc);
-	if(dragFlag==0)	Cd=computeCd_Stokes(par.Re, par.Cc);
-	if(dragFlag==1)	Cd=computeCd_AIAA(par.Re, par.Mach, par.Cc);
-	if(dragFlag==3)	Cd=computeCd_Loth(par.Re, par.Mach, par.Cc);
-	return Cd;
+	double FD=M_PI*0.125*vars->myu[par.cell]*par.dp*par.Re*Cd/par.m;
+
+	par.F.x[0]=FD*dUx;
+	par.F.x[1]=FD*dUy;
+	par.F.x[2]=FD*dUz;
 }
 
-// Singh et al. (2021)
-double computeCd_AIAA(double Re, double Mach, double Cc){
+double
+dragForceSM::computeCd(double Re, double Mach, double Cc){
+	return 24/Re/Cc;
+}
+
+double
+dragForceMA::computeCd(double Re, double Mach, double Cc){
+	double CdRE;
+	double Re_inv=1/Re;
+	double Re_inv2=Re_inv*Re_inv;
+	if (Re < 0.1){CdRE = 24.0 * Re_inv;}
+	else if (Re < 1.0){	CdRE = 22.73 * Re_inv + 0.0903 * Re_inv2 + 3.69;}
+	else if (Re < 10.0){CdRE = 29.1667 * Re_inv - 3.8889 * Re_inv2 + 1.222;}
+	else if (Re < 100.0){CdRE = 46.5 * Re_inv - 116.67 * Re_inv2 + 0.6167;}
+	else if (Re < 1000.0){CdRE = 98.33 * Re_inv - 2778.0 * Re_inv2 + 0.3644;}
+	else if (Re < 5000.0){CdRE = 148.62 * Re_inv - 47500.0 * Re_inv2 + 0.357;}
+	else if (Re < 10000.0){CdRE = -490.546 * Re_inv + 578700.0 * Re_inv2 + 0.46;}
+	else if (Re < 50000.0){CdRE = -1662.5 * Re_inv - 5416700.0 * Re_inv2 + 0.5191;}
+	else{CdRE = 0.4;}
+	return CdRE / Cc;
+}
+
+double
+dragForceSingh::computeCd(double Re, double Mach, double Cc){
 	double Ts_T, Us_U, Ms, alpha, C1, Br, fKnWr;
 	double Cdfm=0;
     if(Mach<1){
@@ -83,6 +52,8 @@ double computeCd_AIAA(double Re, double Mach, double Cc){
 		Ms=Mach;
 		alpha=1;
 		C1=1;
+		Br=0;
+		fKnWr=1/Cc;
 	}
 	else{
 		double MachSQ=Mach*Mach;
@@ -120,9 +91,8 @@ double computeCd_AIAA(double Re, double Mach, double Cc){
 	return (Cdc*fKnWr+Cdfm*Brita)/(1+Brita);
 }
 
-
-// Loth model
-double computeCd_Loth(double Re, double Mach, double Cc){
+double
+dragForceLoth::computeCd(double Re, double Mach, double Cc){
 	double M4=Mach*Mach*Mach*Mach;
 	double Cd;
 	if(Re<=45){
@@ -148,9 +118,3 @@ double computeCd_Loth(double Re, double Mach, double Cc){
 	}
 	return Cd;
 }
-
-
-	
-
-	
-

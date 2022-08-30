@@ -44,5 +44,10 @@ struct particle {
 	double Zp;
 	double beta;
 	double dt;
-    int reflect;
+
+	point Urand;
+	double tini;
+	int update;
+
+  int reflect;
 };
