@@ -28,15 +28,16 @@ dragForceSM::computeCd(double Re, double Mach, double Cc){
 double
 dragForceMA::computeCd(double Re, double Mach, double Cc){
 	double CdRE;
-
-	if (Re < 0.1){CdRE = 24.0 / Re;}
-	else if (Re < 1.0){	CdRE = 22.73 / Re + 0.0903 / Re / Re + 3.69;}
-	else if (Re < 10.0){CdRE = 29.1667 / Re - 3.8889 / Re / Re + 1.222;}
-	else if (Re < 100.0){CdRE = 46.5 / Re - 116.67 / Re / Re + 0.6167;}
-	else if (Re < 1000.0){CdRE = 98.33 / Re - 2778.0 / Re / Re + 0.3644;}
-	else if (Re < 5000.0){CdRE = 148.62 / Re - 47500.0 / Re / Re + 0.357;}
-	else if (Re < 10000.0){CdRE = -490.546 / Re + 578700.0 / Re / Re + 0.46;}
-	else if (Re < 50000.0){CdRE = -1662.5 / Re - 5416700.0 / Re / Re + 0.5191;}
+	double Re_inv=1/Re;
+	double Re_inv2=Re_inv*Re_inv;
+	if (Re < 0.1){CdRE = 24.0 * Re_inv;}
+	else if (Re < 1.0){	CdRE = 22.73 * Re_inv + 0.0903 * Re_inv2 + 3.69;}
+	else if (Re < 10.0){CdRE = 29.1667 * Re_inv - 3.8889 * Re_inv2 + 1.222;}
+	else if (Re < 100.0){CdRE = 46.5 * Re_inv - 116.67 * Re_inv2 + 0.6167;}
+	else if (Re < 1000.0){CdRE = 98.33 * Re_inv - 2778.0 * Re_inv2 + 0.3644;}
+	else if (Re < 5000.0){CdRE = 148.62 * Re_inv - 47500.0 * Re_inv2 + 0.357;}
+	else if (Re < 10000.0){CdRE = -490.546 * Re_inv + 578700.0 * Re_inv2 + 0.46;}
+	else if (Re < 50000.0){CdRE = -1662.5 * Re_inv - 5416700.0 * Re_inv2 + 0.5191;}
 	else{CdRE = 0.4;}
 	return CdRE / Cc;
 }

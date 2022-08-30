@@ -85,8 +85,6 @@ trajectory::makeCells(void){
 			norm.x[2]/=r;
 
 			a.norm.push_back(norm);
-
-
 		}
 
 	}
