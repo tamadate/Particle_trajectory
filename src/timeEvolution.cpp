@@ -1,16 +1,18 @@
 #include "trajectory.hpp"
 
 
-void
+double
 trajectory::timeEvolution(particle &a){
-	
-	computeReMach(a);
 
-	if(a.Re<0.01 && a.Mach<0.1 && flags->analytical==1) analytical(a);
-	else euler(a);
+	computeReMach(a);
+	double timeStep;
+	if(a.Re<0.01 && a.Mach<0.1 && flags->analytical==1) timeStep=analytical(a);
+	else timeStep=euler(a);
+
+	return timeStep;
 }
 
-void
+double
 trajectory::euler(particle &a){
 	if(flags->autoStep) {
 		double v2=a.v.x[0]*a.v.x[0]+a.v.x[1]*a.v.x[1]+a.v.x[2]*a.v.x[2];
@@ -32,12 +34,12 @@ trajectory::euler(particle &a){
         a.F.x[plane2D]*=-1.0;
         a.reflect*=-1;
 	}
-	vars->time+=dt;
 	a.tini-=dt;
+	return dt;
 }
 
 
-void
+double
 trajectory::analytical(particle &a){
 	if(flags->autoStep) dt=a.dt;
 	double Ux=vars->U[a.cell].x[0]+a.Urand.x[0];
@@ -75,7 +77,7 @@ trajectory::analytical(particle &a){
         a.F.x[plane2D]*=-1.0;
         a.reflect*=-1;
 	}
-	vars->time+=dt_anal;
 	a.tini-=dt_anal;
 
+	return dt_anal;
 }

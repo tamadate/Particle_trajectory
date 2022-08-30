@@ -3,7 +3,8 @@
 
 class Variables {
 	private:
-    public:
+		int Nth;
+  public:
 		std::vector<double> p;
 		std::vector<point> U;
 		std::vector<double> T;
@@ -15,10 +16,17 @@ class Variables {
 		std::vector<double> epsilon;
 		std::vector<particle> particles;
 		double delta_r2;
-		double time;
-		double preOutTime;
+		std::vector<double> time;
 		double analyticalStep;
 
-		Variables(void){time=0;preOutTime=0;};
+		Variables(void){
+			#pragma omp parallel
+			{
+				#pragma omp single
+				{
+					Nth=omp_get_num_threads();
+				}
+			}
+		};
 		~Variables(void){};
 };

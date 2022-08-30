@@ -32,9 +32,9 @@ class trajectory{
 		void updateDisp(particle &par);
 
 		void run(void);
-		void timeEvolution(particle &a);
-		void euler(particle &a);
-		void analytical(particle &a);
+		double timeEvolution(particle &a);
+		double euler(particle &a);
+		double analytical(particle &a);
 
 		int checkCell(int pid);
 		int boundAction(int faceID, int pid, point norm);
@@ -75,10 +75,7 @@ class trajectory{
 		void outputInitialPosition(particle p);
 		void outputPenetration(particle p);
 
-		void initialize(particle &par){
-			vars->time=0;
-			vars->preOutTime=0;
-			flags->breakFlag=0;
+		void initialize(particle &par, int nth){
 			if(flags->dispersionFlag) par.update=1;
 			else par.tini=1e10;
 			outputInitialPosition(par);

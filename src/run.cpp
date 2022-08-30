@@ -6,27 +6,31 @@ trajectory::run(void){
 	const int particleSize=vars->particles.size();
 	int trapParticle=0;	// Number of cases when the calculaiton is not finished in required time steps
 
-	//# pragma omp parallel for 
+	# pragma omp parallel for
 	for (int pid=0; pid<particleSize; pid++){
+		int nth=omp_get_thread_num();
 		particle &a=vars->particles[pid];
-		initialize(a);
+		initialize(a,nth);
 
-		while(vars->time<totalTime){
-			if(vars->time - vars->preOutTime > observeTime) {
-				output(a, vars->time);
-				vars->preOutTime=vars->time;
+		int breakFlag=0;
+		double preOutTime=0;
+		double time=0;
+		while(time<totalTime){
+			if(time - preOutTime > observeTime) {
+				output(a, time);
+				preOutTime=time;
 			}
 
-			timeEvolution(a);
+			time+=timeEvolution(a);
 
-			flags->breakFlag=checkCell(pid);
-			if(flags->breakFlag==-1) break;
+			breakFlag=checkCell(pid);
+			if(breakFlag==-1) break;
 
 			if(a.update==1) updateDisp(a);	// Update dispersion?
 		}
 
 		// if particle did not hit on any "bounday" during wall time
-		if(flags->breakFlag==0){
+		if(breakFlag==0){
 			outParticles[pid].pid=a.id;
 			outParticles[pid].r=a.x;
 			outParticles[pid].v=a.v;

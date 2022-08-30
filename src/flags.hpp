@@ -3,7 +3,9 @@
 
 class Flags {
 	private:
-    public:
+
+  public:
+		int Nth;
 		int dragFlag;
 		int KFFlag;
 		int compressFlag;
@@ -11,9 +13,9 @@ class Flags {
 		int dimensionFlag;
 		int initialBreakFlag;
 		int autoStep;
-		int breakFlag;
 		int analytical;
 		int inletFace;
+
 
 		Flags(void){
 			int dragFlag=1;
