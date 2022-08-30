@@ -2,12 +2,25 @@
 
 
 void
+trajectory::timeEvolution(particle &a){
+	
+	computeReMach(a);
+
+	if(a.Re<0.01 && a.Mach<0.1 && flags->analytical==1) analytical(a);
+	else euler(a);
+}
+
+void
 trajectory::euler(particle &a){
 	if(flags->autoStep) {
 		double v2=a.v.x[0]*a.v.x[0]+a.v.x[1]*a.v.x[1]+a.v.x[2]*a.v.x[2];
 		double vmag=sqrt(v2);
 		dt=1e-6/vmag;
 		//dt=a.dt;
+	}
+	if(a.tini<dt){
+		dt=a.tini;
+		a.update=1;
 	}
 	for(auto &force : forces) force->computeFD(vars,flags,a);
 	for(int i=0; i<3; i++) a.v.x[i]+=dt*a.F.x[i];
@@ -20,16 +33,16 @@ trajectory::euler(particle &a){
         a.reflect*=-1;
 	}
 	vars->time+=dt;
-
+	a.tini-=dt;
 }
 
 
 void
 trajectory::analytical(particle &a){
 	if(flags->autoStep) dt=a.dt;
-	double Ux=vars->U[a.cell].x[0];
-	double Uy=vars->U[a.cell].x[1];
-	double Uz=vars->U[a.cell].x[2];
+	double Ux=vars->U[a.cell].x[0]+a.Urand.x[0];
+	double Uy=vars->U[a.cell].x[1]+a.Urand.x[1];
+	double Uz=vars->U[a.cell].x[2]+a.Urand.x[2];
 	double dvx=a.v.x[0]-Ux;
 	double dvy=a.v.x[1]-Uy;
 	double dvz=a.v.x[2]-Uz;
@@ -37,6 +50,10 @@ trajectory::analytical(particle &a){
 	double vmag=sqrt(v2);
 
 	double dt_anal=1e-6/vmag;
+	if(a.tini<dt_anal){
+		dt_anal=a.tini;
+		a.update=1;
+	}
 
 
 	double EXP=exp(-dt_anal*a.beta);
@@ -59,5 +76,6 @@ trajectory::analytical(particle &a){
         a.reflect*=-1;
 	}
 	vars->time+=dt_anal;
+	a.tini-=dt_anal;
 
 }

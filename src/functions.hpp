@@ -8,6 +8,7 @@
 #include <sstream>
 #include <random>
 #include <stdlib.h>
+#include <omp.h>
 
 using namespace std;
 

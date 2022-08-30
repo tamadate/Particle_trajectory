@@ -2,9 +2,9 @@
 
 void
 dragForceSM::computeFD(Variables *vars, Flags *flags, particle &par){
-	double dUx=vars->U[par.cell].x[0]-par.v.x[0];
-	double dUy=vars->U[par.cell].x[1]-par.v.x[1];
-	double dUz=vars->U[par.cell].x[2]-par.v.x[2];
+	double dUx=vars->U[par.cell].x[0]+par.Urand.x[0]-par.v.x[0];
+	double dUy=vars->U[par.cell].x[1]+par.Urand.x[1]-par.v.x[1];
+	double dUz=vars->U[par.cell].x[2]+par.Urand.x[2]-par.v.x[2];
 	double U2=dUx*dUx+dUy*dUy+dUz*dUz;
 	double Umag=sqrt(U2);
 	double cg=sqrt(gamkb_m*vars->T[par.cell]);

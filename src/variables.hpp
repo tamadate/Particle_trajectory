@@ -11,6 +11,8 @@ class Variables {
 		std::vector<double> myu;
 		std::vector<double> lamda;
 		std::vector<point> dp;
+		std::vector<double> k;
+		std::vector<double> epsilon;
 		std::vector<particle> particles;
 		double delta_r2;
 		double time;

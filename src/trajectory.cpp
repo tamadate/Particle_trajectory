@@ -50,5 +50,8 @@ trajectory::initialParticle(void){
 			a.v.x[i]=vars->U[icell].x[i]*0.99;
 		}
 		for(auto &force : forces) force->computeFD(vars,flags,a);
+    outParticle op;
+    op.pid=a.id;
+    outParticles.push_back(op);
 	}
 }

@@ -28,12 +28,16 @@ class trajectory{
 		FILE*f;
 		FILE*file;
 
+		double get_tini(particle &par);
+		void updateDisp(particle &par);
+
 		void run(void);
+		void timeEvolution(particle &a);
 		void euler(particle &a);
 		void analytical(particle &a);
 
 		int checkCell(int pid);
-		int boundAction(int faceID, int particleID, point norm);
+		int boundAction(int faceID, int pid, point norm);
 		void calculateMyu(void);
 		void calculatelamda(void);
 		void computeReMach(particle &par);
@@ -62,18 +66,22 @@ class trajectory{
 		void readCFDresults(void);
 		void initialParticle(void);
 		void findParticle(void);
+		void findParticleFace(std::vector<cell> cells);
 
 		void output(particle a, double time);
 		void outputTrajectory(particle a);
 		void outputInitial(void);
 		void outputFinalPosition(outParticle a);
-		void outputInitial(particle p);
+		void outputInitialPosition(particle p);
 		void outputPenetration(particle p);
 
-		void initialize(void){
+		void initialize(particle &par){
 			vars->time=0;
 			vars->preOutTime=0;
 			flags->breakFlag=0;
+			if(flags->dispersionFlag) par.update=1;
+			else par.tini=1e10;
+			outputInitialPosition(par);
 		}
 
 		trajectory(void);

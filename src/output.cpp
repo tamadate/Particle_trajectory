@@ -4,17 +4,12 @@ void
 trajectory::output(particle a, double time){
 	sprintf(filepath, "result/position.%d", int(a.id));
 	f=fopen(filepath, "a");
-	fprintf(f,"%e\t%e\t%e\t%d\n", a.x.x[0], a.x.x[1], a.x.x[2], a.cell);
+	fprintf(f,"%e\t%e\t%e\t%d\t%e\n", a.x.x[0], a.x.x[1], a.x.x[2], a.cell, time);
 	fclose(f);
 
 	sprintf(filepath, "result/U.%d", int(a.id));
 	f=fopen(filepath, "a");
-	fprintf(f,"%e\t%e\t%e\n", a.v.x[0], a.v.x[1], a.v.x[2]);
-	fclose(f);
-
-	sprintf(filepath, "result/Time");
-	f=fopen(filepath, "a");
-	fprintf(f,"%e\n", time);
+	fprintf(f,"%e\t%e\t%e\t%e\n", a.v.x[0], a.v.x[1], a.v.x[2], time);
 	fclose(f);
 
 }
@@ -25,7 +20,6 @@ trajectory::outputTrajectory(particle a){
 	f=fopen(filepath, "a");
 	fprintf(f,"%e\t%e\t%e\n", a.x.x[0], a.x.x[1], a.x.x[2]);
 	fclose(f);
-
 }
 
 
@@ -47,12 +41,6 @@ trajectory::outputInitial(void){
 		fprintf(f,"%e\t%e\t%e\n", a.x.x[0], a.x.x[1], a.x.x[2]);
 		fclose(f);
 	}
-	sprintf(filepath, "result/Time");
-	f=fopen(filepath, "w");
-	fclose(f);
-	sprintf(filepath, "out.dat");
-	f=fopen(filepath, "w");
-	fclose(f);
 	sprintf(filepath, "result/nparticle");
 	f=fopen(filepath, "w");
 	fprintf(f,"%d\n", int(vars->particles.size()));
@@ -87,7 +75,7 @@ trajectory::outputFinalPosition(outParticle a){
 }
 
 void
-trajectory::outputInitial(particle p){
+trajectory::outputInitialPosition(particle p){
 	sprintf(filepath, "initialVelocity.dat");
 	f=fopen(filepath, "a");
    	fprintf(f,"%e\t%e\t%e\t%d\n", p.v.x[0], p.v.x[1], p.v.x[2], p.id);

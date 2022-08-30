@@ -2,7 +2,7 @@
 
 void
 trajectory::makeCells(void){
-	timer=clock();
+	timer=omp_get_wtime();
 	int maxOwner=0;
 	for (auto &a:owners) {if(a>maxOwner) maxOwner=a;}
 	cell c;
@@ -88,5 +88,5 @@ trajectory::makeCells(void){
 		}
 
 	}
-	cout<<"Making cell time: "<<(clock()-timer)*1e-6<<" sec"<<endl;
+	cout<<"Making cell time: "<<omp_get_wtime()-timer<<" sec"<<endl;
 }
