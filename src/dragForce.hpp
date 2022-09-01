@@ -20,7 +20,7 @@ class dragForceMA : public dragForceSM{
 	private:
 };
 
-// Singh et al. (2022)
+// Singh et al. (2021)
 class dragForceSingh : public dragForceSM{
 	public:
 		double computeCd(double Re, double Mach, double Cc);

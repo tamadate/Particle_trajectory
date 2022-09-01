@@ -17,22 +17,22 @@ const double kb=1.38e-23;
 const double e=1.6e-19;
 
 //	Constant (Air)
-const double myu0_Air=1.81e-5;
-const double ST0_Air=288.15;
-const double SC0_Air=110.4;
-const double lamda0_Air=67.0e-9;
-const double mgas_Air=(28*0.8+32*0.2)*0.001/6.02e23;
-const double Cp_Air=1.00;
-const double Cv_Air=0.718;
+const double myu0_Air=1.81e-5;  // Sutherland's equation parameter
+const double ST0_Air=288.15;    // Sutherland's equation parameter
+const double SC0_Air=110.4;     // Sutherland's equation parameter
+const double lamda0_Air=67.0e-9;// Mean free path at normal condition
+const double mgas_Air=(28*0.8+32*0.2)*0.001/6.02e23;  // Mass of a molecule
+const double Cp_Air=1.00;       // Specific heat at constant pressure
+const double Cv_Air=0.718;      // Specific heat at constant volume
 
 //	Constant (He)
-const double myu0_He=3.93267e-5;
-const double ST0_He=809;
-const double SC0_He=147.2;
-const double lamda0_He=285.0e-9;
-const double mgas_He=(4.0)*0.001/6.02e23;
-const double Cp_He=5.1926;
-const double Cv_He=3.1156;
+const double myu0_He=3.93267e-5;  // Sutherland's equation parameter
+const double ST0_He=809;          // Sutherland's equation parameter
+const double SC0_He=147.2;        // Sutherland's equation parameter
+const double lamda0_He=285.0e-9;  // Sutherland's equation parameter
+const double mgas_He=(4.0)*0.001/6.02e23;  // Mass of a molecule
+const double Cp_He=5.1926;       // Specific heat at constant pressure
+const double Cv_He=3.1156;       // Specific heat at constant volume
 
 const double myu0=myu0_Air;
 const double ST0=ST0_Air;
@@ -50,4 +50,3 @@ const double gamkb_m=gam*kb/mgas;
 const double A1=2.514;
 const double A2=0.8;
 const double A3=0.55;
-

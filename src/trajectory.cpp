@@ -2,7 +2,7 @@
 
 
 trajectory::trajectory(void){
-
+// Get number of thread for OpenMP
   #pragma omp parallel
   {
     #pragma omp single
@@ -11,40 +11,44 @@ trajectory::trajectory(void){
     }
   }
 
-
-  rho_p=1000;
-  observeTime=1e-5;
-  totalTime=1;
+// set default values
+  rho_p=1000; // particle density
+  observeTime=1e-5; // output time interval
+  totalTime=1;    // total calculation time
   Observe=10000;	// output time steps
   delta_r2_trajectory=1e-4*1e-4;	// output migration distance for the trajectory
-  plane2D=-1;
-  startDir="20000";
-  Axis=0;
+  plane2D=-1; //
+  startDir="20000"; // CFD simulation directory
+  Axis=0; // 0 for 3D simulaiton
   flag=1;
-  filepath[100];
-  constTemp=300;
-  constRho=1.2;
+  constTemp=300;  // constant temperature for the incompressible flow
+  constRho=1.2;   // constant density for the incompressible flow
+  for(int i=0;i<Nth;i++) trapParticle.push_back(0);
 
-  vars = new Variables();
-  flags = new Flags();
+// generate class
+  vars = new Variables(); // generate variables class
+  flags = new Flags();    // initialize flags (see flags.hpp)
 
-  readCondition();
-  readGeometry();
-  readCFDresults();
+// initialization
+  readCondition();  // read condition file ./particle/condition
+  readGeometry();   // read geometry ./constant/polyMesh/
+  readCFDresults(); // CFD result ./${startDir}/
 
-  calculateMyu();
-  calculatelamda();
+  calculateMyu();   // viscosity calculation from field data
+  calculatelamda(); // mean free path calculation form field data
 
-  readParticles();
-  makeCells();
-  initialParticle();
-  outputInitial();
+  readParticles();  // read particle file ./particle/particleSet
+  makeCells();      // make cells data from geometry file
+  initialParticle();// initialize particle (see below)
+  outputInitial();  // initialization of output files
 }
 
 void
 trajectory::initialParticle(void){
-	int ps=vars->particles.size();
-	findParticle();
+
+	findParticle();  // find initial location of particles
+
+  int ps=vars->particles.size();
 	for(auto &a:vars->particles){
 		int icell=a.cell;
 		double Kn=vars->lamda[icell]/a.dp;
@@ -55,10 +59,10 @@ trajectory::initialParticle(void){
 		a.Zp=1.6e-19/threePiMuDp_Cc;
 		a.beta=threePiMuDp_Cc/a.m;
 		a.dt=1/(40*a.beta);
-		for(int i=0; i<3; i++) {
-			a.v.x[i]=vars->U[icell].x[i]*0.99;
-		}
-		for(auto &force : forces) force->computeFD(vars,flags,a);
+		for(int i=0; i<3; i++) a.v.x[i]=vars->U[icell].x[i]*0.99;   // initial velocity is 99% of fluid velocity
+		for(auto &force : forces) force->computeFD(vars,flags,a);   // force calculation
+
+  // initialize outParticles array (ending information of particles)
     outParticle op;
     op.pid=a.id;
     outParticles.push_back(op);

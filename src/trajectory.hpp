@@ -5,54 +5,59 @@
 
 class trajectory{
 	public:
-		Variables *vars;
-		Flags *flags;
-		std::vector<dragForceSM*> forces;
+		Variables *vars;	// pointer for variables
+		Flags *flags;			// pointer for flags
+		std::vector<dragForceSM*> forces;	// pointer array for force functions working on the particle
 
-		int Nth;
-
-		// Calculation conditions (flag, file path, etc...)
-		double rho_p;
-		double observeTime;
-		double totalTime;
-		int Observe;
-		double delta_r2_trajectory;
-		int plane2D;
-		string startDir;
-		double Axis;
-		double flag;
-		char filepath[100];
-		char filepathMP[100][20];
-		int boundaryStartID;
-		double constTemp;
-		double constRho;
+		int Nth;	// Number of parallel (OpenMP)
+		double rho_p;									// particle density
+		double observeTime;						// output interval in time scale
+		double totalTime;							// total calculation time
+		int Observe;									// output interval in time step
+		double delta_r2_trajectory;		// squre of migration distance for trajectory output
+		int plane2D;									// face of 2D simulation (0:y-z, 1:x-z, 2:x-y)
+		string startDir;							// start directory name (20000 is default)
+		double Axis;									// axis of 2D axi-symmetric simulation
+		double flag;									// NOT USED?
+		char filepath[100];						// file path
+		char filepathMP[100][20];			// file path for parallel (OpenMP)
+		int boundaryStartID;					// boundary start face id
+		double constTemp;							// constant temperature for incompressible flow
+		double constRho;							// constant density for incompressible flow
 		double timer;
 		FILE*f;
 		FILE*file;
+		std::vector<outParticle> outParticles; // position & velocity of the particles at the end of the simulation
+		std::vector<int> trapParticle;				 // number of particles trapped in the curculation
 
+		// The functions for turbulent dispersion (see turbulentDispersion.cpp)
 		double get_tini(particle &par);
 		void updateDisp(particle &par);
 
+		// Main simulation functions
 		void run(void);
 		double timeEvolution(particle &a);
 		double euler(particle &a);
 		double analytical(particle &a);
-
 		int checkCell(int pid);
 		int boundAction(int faceID, int pid, point norm);
+
+		// Physical properties calculation functions (see calcProperties.cpp)
 		void calculateMyu(void);
 		void calculatelamda(void);
 		void computeReMach(particle &par);
 
+		// Simualtion geometrical information
 		std::vector<face> faces;
 		std::vector<point> points;
 		std::vector<boundary> boundaries;
 		std::vector<cell> cells;
 		std::vector<int> neighbors;
 		std::vector<int> owners;
-		std::vector<outParticle> outParticles;
-		std::vector<int> erasePID;
-		void makeCells(void);
+		void makeCells(void); // make cells from abouve geometrical arrays
+
+		// Reading functions
+		void readGeometry(void);
 		void readFaces(void);
 		void readBoundaries(void);
 		void readPoints(void);
@@ -64,12 +69,14 @@ class trajectory{
 		void readVectorDum(char *readFile, std::vector<point> &variable, double value);
 		void readParticles(void);
 		void readCondition(void);
-		void readGeometry(void);
 		void readCFDresults(void);
+
+		// Initialization
 		void initialParticle(void);
 		void findParticle(void);
 		void findParticleFace(std::vector<cell> cells);
 
+		// Export functions
 		void output(particle a, double time, int nth);
 		void outputTrajectory(particle a);
 		void outputInitial(void);
@@ -83,5 +90,6 @@ class trajectory{
 
 		trajectory(void);
 		~trajectory(void);
+		
 	private:
 };
