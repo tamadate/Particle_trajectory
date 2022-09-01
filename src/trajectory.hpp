@@ -9,8 +9,9 @@ class trajectory{
 		Flags *flags;
 		std::vector<dragForceSM*> forces;
 
+		int Nth;
+
 		// Calculation conditions (flag, file path, etc...)
-		double dt;
 		double rho_p;
 		double observeTime;
 		double totalTime;
@@ -21,6 +22,7 @@ class trajectory{
 		double Axis;
 		double flag;
 		char filepath[100];
+		char filepathMP[100][20];
 		int boundaryStartID;
 		double constTemp;
 		double constRho;
@@ -68,17 +70,15 @@ class trajectory{
 		void findParticle(void);
 		void findParticleFace(std::vector<cell> cells);
 
-		void output(particle a, double time);
+		void output(particle a, double time, int nth);
 		void outputTrajectory(particle a);
 		void outputInitial(void);
-		void outputFinalPosition(outParticle a);
-		void outputInitialPosition(particle p);
+		void outputFinalPosition(void);
 		void outputPenetration(particle p);
 
 		void initialize(particle &par, int nth){
 			if(flags->dispersionFlag) par.update=1;
 			else par.tini=1e10;
-			outputInitialPosition(par);
 		}
 
 		trajectory(void);

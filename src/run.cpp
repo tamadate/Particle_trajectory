@@ -19,7 +19,7 @@ trajectory::run(void){
 			double time=0;
 			while(time<totalTime){
 				if(time - preOutTime > observeTime) {
-					output(a, time);
+					output(a, time, nth);
 					preOutTime=time;
 				}
 
@@ -42,7 +42,7 @@ trajectory::run(void){
 		}
 	}
 
-	for (int pid=0; pid<particleSize; pid++) outputFinalPosition(outParticles[pid]);
+	outputFinalPosition();
   cout<<trapParticle<<" might be trapped circulation"<<endl;
 	cout<<"Trajectory calculation time: "<<omp_get_wtime()-timer<<" sec"<<endl;
 }
