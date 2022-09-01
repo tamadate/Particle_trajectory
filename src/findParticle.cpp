@@ -1,9 +1,10 @@
 #include "trajectory.hpp"
 
+// Find cell id where particle is existing
 
 void
 trajectory::findParticle(void){
-	if(flags->inletFace==-1) findParticleFace(cells);
+	if(flags->inletFace==-1) findParticleFace(cells); // currently this is not working
 	else {
 		std::vector<cell> boundCells;
 		int cellSize=cells.size();
@@ -29,12 +30,18 @@ trajectory::findParticleFace(std::vector<cell> targetCells){
 	{
 		# pragma omp for
 		for(int i=0; i<ps; i++){
-			int foundCells=0;
+			int foundCells=0; // number of found cells (sometimes this code find multiple cells for a particle)
 			double x=vars->particles[i].x.x[0];
 			double y=vars->particles[i].x.x[1];
 			double z=vars->particles[i].x.x[2];
 			int cellSize=cells.size();
 	    double minDist=1e15;
+			/*
+				This loop calculate the inner product of particle position vector with norm vector of each faces
+				regarding with every cells.
+				If the every inner product is positive on a cell, it means the particle exists in that cell and
+				it becomes initial cell id.
+			*/
 			for(int j=0; j<cellSize; j++) {
 				cell a=cells[j];
 				int faceSize=a.iface.size();
@@ -72,9 +79,15 @@ trajectory::findParticleFace(std::vector<cell> targetCells){
 					}
 				}
 			}
-	//		if (foundCells>0){cout<<"I found "<<foundCells<<" initial cell(s) for pid "<<i<<endl;}
+
+
+			/*
+				Sometimes this code can not find any cells (foundCells=1).
+				In that case, the initial cell id is determined by the distance between particle and cell.
+				(initial cell may give minimum distance with particle).
+			*/
 			if (foundCells==0){
-				cout<<"**Error: I could not find an initial cell for pid "<<i<<endl;
+				cout<<"**Error: I could not find an initial cell for pid "<<i<<endl; // Error message for just in case
 				for(int j=0; j<cellSize; j++) {
 					cell a=targetCells[j];
 					int faceSize=a.iface.size();
@@ -88,7 +101,6 @@ trajectory::findParticleFace(std::vector<cell> targetCells){
 						point c=a.norm[k];
 						double naiseki=c.x[0]*(x-x0)+c.x[1]*(y-y0)+c.x[2]*(z-z0);
 						if(naiseki<0) {flag=1;break;}
-
 					}
 					double Dist=0;
 					for (int k=0; k<faceSize; k++){
@@ -99,7 +111,7 @@ trajectory::findParticleFace(std::vector<cell> targetCells){
 						double z0=points[c0].x[2];
 						point c=a.norm[k];
 						double naiseki=c.x[0]*(x-x0)+c.x[1]*(y-y0)+c.x[2]*(z-z0);
-		                Dist+=naiseki;
+            Dist+=naiseki;
 					}
 					if (Dist<minDist){
 						minDist=Dist;

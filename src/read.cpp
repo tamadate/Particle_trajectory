@@ -1,101 +1,11 @@
 #include "trajectory.hpp"
 
 
-void
-trajectory::readGeometry(void){
-	timer=clock();
-	readNeighbors();
-	readFaces();
-	readPoints();
-	readOwners();
-	readBoundaries();
-	cout<<"Read geometry time: "<<(clock()-timer)*1e-6<<" sec"<<endl;
-}
+// Read OpenFOAM style simulation data via below functions
 
-void
-trajectory::readCFDresults(void){
-	timer=clock();
-	sprintf ( filepath, "%s/p", startDir.c_str());
-	readScalar(filepath,vars->p);
-	sprintf ( filepath, "%s/U", startDir.c_str());
-	readVector(filepath,vars->U);
-
-	/*  Compressible? */
-	if(flags->compressFlag==1){
-		sprintf ( filepath, "%s/T", startDir.c_str());
-		readScalar(filepath,vars->T);
-		sprintf ( filepath, "%s/rho", startDir.c_str());
-		readScalar(filepath,vars->rho);
-	}
-	if(flags->compressFlag==0){
-		sprintf (filepath, "%s/p", startDir.c_str());
-		readScalarDum(filepath,vars->T, constTemp);
-		readScalarDum(filepath,vars->rho, constRho);
-	}
-
-	/*  Dispersion? */
-	if(flags->dispersionFlag){
-		sprintf ( filepath, "%s/k", startDir.c_str());
-		readScalar(filepath,vars->k);
-		sprintf ( filepath, "%s/epsilon", startDir.c_str());
-		readScalar(filepath,vars->epsilon);
-	}
-	if(flags->KFFlag==0){
-		sprintf (filepath, "%s/p", startDir.c_str());
-		readScalarDum(filepath,vars->k, 0);
-		readScalarDum(filepath,vars->epsilon, 0);
-	}
-
-	/*  Froude Krylov force? */
-	if(flags->KFFlag==1){
-		sprintf ( filepath, "%s/dp", startDir.c_str());
-		readVector(filepath,vars->dp);
-	}
-	if(flags->KFFlag==0){
-		sprintf ( filepath, "%s/p", startDir.c_str());
-		readVectorDum(filepath,vars->dp, 0);
-	}
-	cout<<"Read CFD result time: "<<(clock()-timer)*1e-6<<" sec"<<endl;
-}
-
-void
-trajectory::readParticles(void){
-	string str;
-	string strPre;
-	int iflag=0;
-	int particleID=0;
-	ifstream stream("particle/particleSet");
-	while(getline(stream,str)) {
-		if (str=="x\ty\tz\tdp") {iflag=1; continue;}
-		if (iflag==1){
-			particle p;
-			int loop=0;
-			string tmp;
-			istringstream stream(str);
-			while(getline(stream,tmp,'\t')) {
-				p.x.x[loop]=stod(tmp);
-				p.v.x[loop]=stod(tmp);
-				p.F.x[loop]=stod(tmp);
-				if(loop==3) p.dp=stod(tmp);
-				loop++;
-			}
-			p.id=particleID;
-			p.m=rho_p*M_PI*p.dp*p.dp*p.dp/6.0;
-			p.Zp=0;
-			p.beta=0;
-			p.Cc=0;
-			p.Re=0;
-			p.Mach=0;
-			p.Kn=0;
-			p.reflect=1;
-
-			vars->particles.push_back(p);
-			particleID++;
-		}
-	}
-	stream.close();
-}
-
+/******************************************************************************/
+// conditions file reading
+// ./particle/condition file
 void
 trajectory::readCondition(void){
 	string str;
@@ -187,6 +97,120 @@ trajectory::readCondition(void){
 		}
 	}
 	stream.close();
+}
+
+/******************************************************************************/
+// CFD results reading
+// p, U, T, etc... in startDir (default 20000)
+void
+trajectory::readCFDresults(void){
+	timer=clock();
+
+// read CFD simulation results using readScalar and read readVector functions (see readingFunctions.cpp)
+
+	// read pressure and velocity field
+	sprintf ( filepath, "%s/p", startDir.c_str());
+	readScalar(filepath,vars->p);
+	sprintf ( filepath, "%s/U", startDir.c_str());
+	readVector(filepath,vars->U);
+
+	// read temperature and density field
+	// if it is incompressible, read pressure in stead
+	if(flags->compressFlag==1){
+		sprintf ( filepath, "%s/T", startDir.c_str());
+		readScalar(filepath,vars->T);
+		sprintf ( filepath, "%s/rho", startDir.c_str());
+		readScalar(filepath,vars->rho);
+	}
+	if(flags->compressFlag==0){
+		sprintf (filepath, "%s/p", startDir.c_str());
+		readScalarDum(filepath,vars->T, constTemp);
+		readScalarDum(filepath,vars->rho, constRho);
+	}
+
+	// read k and epsilon field
+	// if it is laminar, read pressure in stead
+	if(flags->dispersionFlag){
+		sprintf ( filepath, "%s/k", startDir.c_str());
+		readScalar(filepath,vars->k);
+		sprintf ( filepath, "%s/epsilon", startDir.c_str());
+		readScalar(filepath,vars->epsilon);
+	}
+	if(flags->dispersionFlag==0){
+		sprintf (filepath, "%s/p", startDir.c_str());
+		readScalarDum(filepath,vars->k, 0);
+		readScalarDum(filepath,vars->epsilon, 0);
+	}
+
+	// read delta-p for Froude Krylov force
+	if(flags->KFFlag==1){
+		sprintf ( filepath, "%s/dp", startDir.c_str());
+		readVector(filepath,vars->dp);
+	}
+	if(flags->KFFlag==0){
+		sprintf ( filepath, "%s/p", startDir.c_str());
+		readVectorDum(filepath,vars->dp, 0);
+	}
+
+	cout<<"Read CFD result time: "<<(clock()-timer)*1e-6<<" sec"<<endl;
+}
+
+
+/******************************************************************************/
+// particle initial locations and diameters reading
+// particle/particleSet file
+void
+trajectory::readParticles(void){
+	string str;
+	string strPre;
+	int iflag=0;
+	int particleID=0;
+	ifstream stream("particle/particleSet");
+	while(getline(stream,str)) {
+		if (str=="x\ty\tz\tdp") {iflag=1; continue;}
+		if (iflag==1){
+			particle p;
+			int loop=0;
+			string tmp;
+			istringstream stream(str);
+			while(getline(stream,tmp,'\t')) {
+				p.x.x[loop]=stod(tmp);
+				p.v.x[loop]=stod(tmp);
+				p.F.x[loop]=stod(tmp);
+				if(loop==3) p.dp=stod(tmp);
+				loop++;
+			}
+			p.id=particleID;
+			p.m=rho_p*M_PI*p.dp*p.dp*p.dp/6.0;
+			p.Zp=0;
+			p.beta=0;
+			p.Cc=0;
+			p.Re=0;
+			p.Mach=0;
+			p.Kn=0;
+			p.reflect=1;
+
+			vars->particles.push_back(p);
+			particleID++;
+		}
+	}
+	stream.close();
+}
+
+/******************************************************************************/
+// Geometry reading
+// ./constant/polyMesh/* files
+void
+trajectory::readGeometry(void){
+	timer=clock();
+
+	readNeighbors(); // ./constant/polyMesh/neighbor
+	readFaces();		// ./constant/polyMesh/faces
+	readPoints();		// ./constant/polyMesh/points
+	readOwners();		// ./constant/polyMesh/owner
+	readBoundaries();	// ./constant/polyMesh/boundary
+
+	cout<<"Read geometry time: "<<(clock()-timer)*1e-6<<" sec"<<endl;
 }
 
 
@@ -313,70 +337,5 @@ trajectory::readOwners(void){
 			owners.push_back(stoi(str));
 		}
 	}
-	stream.close();
-}
-
-
-void
-trajectory::readScalar(char *readFile, std::vector<double> &variable){
-	string str;
-	int iflag=0;
-
-	ifstream stream(readFile);
-	while(getline(stream,str)) {
-		if (str=="(") {iflag=1; continue;}
-		if (str==")") {iflag=0; continue;}
-		if (iflag==1){
-			variable.push_back(stod(str));
-		}
-	}
-	stream.close();
-}
-
-
-void
-trajectory::readScalarDum(char *readFile, std::vector<double> &variable, double value){
-	string str;
-	ifstream stream(readFile);
-	while(getline(stream,str)) variable.push_back(value);
-	stream.close();
-}
-
-
-void
-trajectory::readVector(char *readFile, std::vector<point> &variable){
-	string str;
-	int iflag=0;
-
-	ifstream stream(readFile);
-	while(getline(stream,str)) {
-		if (str=="(") {iflag=1; continue;}
-		if (str==")") {iflag=0; continue;}
-		if (iflag==1){
-			str=str.substr(str.find("(")+1);
-			str=str.erase(str.find(")"));
-			string tmp;
-			istringstream stream(str);
-			int loop=0;
-			point POINT;
-			while(getline(stream,tmp,' ')) {
-				POINT.x[loop]=stod(tmp);
-				loop++;
-			}
-			variable.push_back(POINT);
-		}
-	}
-	stream.close();
-}
-
-void
-trajectory::readVectorDum(char *readFile, std::vector<point> &variable, double value){
-	string str;
-	ifstream stream(readFile);
-	point POINT;
-	POINT.x[0]=value;
-	POINT.x[1]=value;
-	POINT.x[2]=value;
-	while(getline(stream,str)) variable.push_back(POINT);
 	stream.close();
 }

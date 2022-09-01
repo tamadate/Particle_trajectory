@@ -1,5 +1,7 @@
 #include "dragForce.hpp"
 
+// Functions for drag force calculation
+
 void
 dragForceSM::computeFD(Variables *vars, Flags *flags, particle &par){
 	double dUx=vars->U[par.cell].x[0]+par.Urand.x[0]-par.v.x[0];
@@ -11,7 +13,7 @@ dragForceSM::computeFD(Variables *vars, Flags *flags, particle &par){
 
 	par.Re=vars->rho[par.cell]*Umag*par.dp/vars->myu[par.cell]+1e-20;
 	par.Mach=Umag/cg;
-	double Cd=computeCd(par.Re, par.Mach, par.Cc);
+	double Cd=computeCd(par.Re, par.Mach, par.Cc);	// Here this code use another equations for each drag models
 
 	double FD=M_PI*0.125*vars->myu[par.cell]*par.dp*par.Re*Cd/par.m;
 

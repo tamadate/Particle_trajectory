@@ -3,19 +3,22 @@
 void
 trajectory::makeCells(void){
 	timer=omp_get_wtime();
+
+	// get maximum number on owners = number of cells
 	int maxOwner=0;
 	for (auto &a:owners) {if(a>maxOwner) maxOwner=a;}
+
+	// make cell array
+	// add face id (i) into a cell (cell id is owners[i])
+	// add face id (i) into a cell (cell id is neighbors[i])
 	cell c;
 	for (int i=0; i<maxOwner+1; i++) {cells.push_back(c);}
-	for (int i=0; i<owners.size(); i++) {
-		cells[owners[i]].iface.push_back(i);
-	}
-	for (int i=0; i<neighbors.size(); i++) {
-		cells[neighbors[i]].iface.push_back(i);
-	}
+	for (int i=0; i<owners.size(); i++) cells[owners[i]].iface.push_back(i);
+	for (int i=0; i<neighbors.size(); i++) cells[neighbors[i]].iface.push_back(i);
 
+	// calculate center of cells
 	for (auto &a:cells) {
-		int faceSize=a.iface.size();	// how many faces in the cell
+		int faceSize=a.iface.size();	// number of faces in this cell
 		int sumN=0;
 		double X=0;
 		double Y=0;
@@ -35,6 +38,7 @@ trajectory::makeCells(void){
 		a.r.x[1]=Y;
 		a.r.x[2]=Z;
 
+		// calculate norm vectors of each face
 		for (int i=0; i<faceSize; i++){
 			int b=a.iface[i];
 			int c0=faces[b].iface[0];
@@ -70,21 +74,21 @@ trajectory::makeCells(void){
 			double y3=Y-y0;
 			double z3=Z-z0;
 
-			double naiseki=norm.x[0]*x3+norm.x[1]*y3+norm.x[2]*z3;
-			if(naiseki<0){
+			double dot=norm.x[0]*x3+norm.x[1]*y3+norm.x[2]*z3;
+			if(dot<0){
 				norm.x[0]=By*Az-Bz*Ay;
 				norm.x[1]=Bz*Ax-Bx*Az;
 				norm.x[2]=Bx*Ay-By*Ax;
 			}
-			naiseki=norm.x[0]*x3+norm.x[1]*y3+norm.x[2]*z3;
-			if(naiseki<0){cout<<"error1011"<<endl;}
+			dot=norm.x[0]*x3+norm.x[1]*y3+norm.x[2]*z3;
+			if(dot<0){cout<<"error1011"<<endl;}
 			double r2=norm.x[0]*norm.x[0]+norm.x[1]*norm.x[1]+norm.x[2]*norm.x[2];
 			double r=sqrt(r2);
 			norm.x[0]/=r;
 			norm.x[1]/=r;
 			norm.x[2]/=r;
 
-			a.norm.push_back(norm);
+			a.norm.push_back(norm); // norm vector is stored in cell
 		}
 
 	}

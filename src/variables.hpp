@@ -19,14 +19,6 @@ class Variables {
 		std::vector<double> time;
 		double analyticalStep;
 
-		Variables(void){
-			#pragma omp parallel
-			{
-				#pragma omp single
-				{
-					Nth=omp_get_num_threads();
-				}
-			}
-		};
+		Variables(void){};
 		~Variables(void){};
 };
