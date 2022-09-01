@@ -127,7 +127,7 @@ trajectory::readCondition(void){
 			}
 			if (readFlag==1) {
 				if(tmp=="auto") flags->autoStep=1;
-				else dt=stod(tmp);
+				// /else dt=stod(tmp);
 			}
 			if (readFlag==2) totalTime=stod(tmp);
 			if (readFlag==3) {

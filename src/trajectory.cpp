@@ -2,7 +2,16 @@
 
 
 trajectory::trajectory(void){
-  dt=1e-7;
+
+  #pragma omp parallel
+  {
+    #pragma omp single
+    {
+      Nth=omp_get_num_threads();
+    }
+  }
+
+
   rho_p=1000;
   observeTime=1e-5;
   totalTime=1;

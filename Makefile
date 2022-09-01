@@ -8,7 +8,7 @@ CXXFLAGS    = -std=c++11 -fopenmp
 all: $(NAME)
 
 $(NAME): $(OBJS)
-	$(CXX) $(CXXFLAGS) -o $(NAME) $(OBJS)
+	$(CXX) -O3 $(CXXFLAGS) -o $(NAME) $(OBJS)
 
 .PHONY: clean
 clean:

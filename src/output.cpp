@@ -1,26 +1,30 @@
 #include "trajectory.hpp"
 
 void
-trajectory::output(particle a, double time){
-	sprintf(filepath, "result/position.%d", int(a.id));
-	f=fopen(filepath, "a");
-	fprintf(f,"%e\t%e\t%e\t%d\t%e\n", a.x.x[0], a.x.x[1], a.x.x[2], a.cell, time);
-	fclose(f);
+trajectory::output(particle a, double time, int nth){
+	FILE*fMP;
 
-	sprintf(filepath, "result/U.%d", int(a.id));
-	f=fopen(filepath, "a");
-	fprintf(f,"%e\t%e\t%e\t%e\n", a.v.x[0], a.v.x[1], a.v.x[2], time);
-	fclose(f);
+	sprintf(filepathMP[nth], "result/position.%d", int(a.id));
+	fMP=fopen(filepathMP[nth], "a");
+	fprintf(fMP,"%e\t%e\t%e\t%d\t%e\n", a.x.x[0], a.x.x[1], a.x.x[2], a.cell, time);
+	fclose(fMP);
+
+	sprintf(filepathMP[nth], "result/U.%d", int(a.id));
+	fMP=fopen(filepathMP[nth], "a");
+	fprintf(fMP,"%e\t%e\t%e\t%e\n", a.v.x[0], a.v.x[1], a.v.x[2], time);
+	fclose(fMP);
 
 }
 
 void
 trajectory::outputTrajectory(particle a){
-	sprintf(filepath, "result/trajectory.%d", int(a.id));
-	f=fopen(filepath, "a");
-	fprintf(f,"%e\t%e\t%e\n", a.x.x[0], a.x.x[1], a.x.x[2]);
-	fclose(f);
+
+	sprintf(filepathMP[0], "result/trajectory.%d", int(a.id));
+	FILE*fMP=fopen(filepathMP[0], "a");
+	fprintf(fMP,"%e\t%e\t%e\n", a.x.x[0], a.x.x[1], a.x.x[2]);
+	fclose(fMP);
 }
+
 
 
 void
@@ -28,12 +32,12 @@ trajectory::outputInitial(void){
 	for (auto &a:vars->particles){
 		sprintf(filepath, "result/position.%d", int(a.id));
 		f=fopen(filepath, "w");
-		fprintf(f,"%e\t%e\t%e\t%d\n", a.x.x[0], a.x.x[1], a.x.x[2], a.cell);
+		fprintf(f,"%e\t%e\t%e\t%d\t%e\n", a.x.x[0], a.x.x[1], a.x.x[2], a.cell,0.0);
 		fclose(f);
 
 		sprintf(filepath, "result/U.%d", int(a.id));
 		f=fopen(filepath, "w");
-		fprintf(f,"%e\t%e\t%e\n", a.v.x[0], a.v.x[1], a.v.x[2]);
+		fprintf(f,"%e\t%e\t%e\t%e\n", a.v.x[0], a.v.x[1], a.v.x[2],0.0);
 		fclose(f);
 
 		sprintf(filepath, "result/trajectory.%d", int(a.id));
@@ -63,33 +67,32 @@ trajectory::outputInitial(void){
 }
 
 void
-trajectory::outputFinalPosition(outParticle a){
-	sprintf(filepath, "finalPosition.dat");
-	f=fopen(filepath, "a");
-   	fprintf(f,"%e\t%e\t%e\t%d\t%d\n", a.r.x[0], a.r.x[1], a.r.x[2], a.pid, a.bid);
-	fclose(f);
-	sprintf(filepath, "finalVelocity.dat");
-	f=fopen(filepath, "a");
-   	fprintf(f,"%e\t%e\t%e\t%d\t%d\n", a.v.x[0], a.v.x[1], a.v.x[2], a.pid, a.bid);
-	fclose(f);
+trajectory::outputFinalPosition(void){
+	for (auto &a:outParticles){
+		sprintf(filepath, "finalPosition.dat");
+		f=fopen(filepath, "a");
+	 	fprintf(f,"%e\t%e\t%e\t%d\t%d\n", a.r.x[0], a.r.x[1], a.r.x[2], a.pid, a.bid);
+		fclose(f);
+		sprintf(filepath, "finalVelocity.dat");
+		f=fopen(filepath, "a");
+	 	fprintf(f,"%e\t%e\t%e\t%d\t%d\n", a.v.x[0], a.v.x[1], a.v.x[2], a.pid, a.bid);
+		fclose(f);
+	}
 }
 
-void
-trajectory::outputInitialPosition(particle p){
-	sprintf(filepath, "initialVelocity.dat");
-	f=fopen(filepath, "a");
-   	fprintf(f,"%e\t%e\t%e\t%d\n", p.v.x[0], p.v.x[1], p.v.x[2], p.id);
-	fclose(f);
-}
 
 void
 trajectory::outputPenetration(particle p){
-	sprintf(filepath, "penetratePosition.dat");
-	f=fopen(filepath, "a");
-   	fprintf(f,"%e\t%e\t%e\t%d\n", p.x.x[0], p.x.x[1], p.x.x[2], p.id);
-	fclose(f);
-	sprintf(filepath, "penetrateVelocity.dat");
-	f=fopen(filepath, "a");
-   	fprintf(f,"%e\t%e\t%e\t%d\n", p.v.x[0], p.v.x[1], p.v.x[2], p.id);
-	fclose(f);
+	char filepathMP[100];
+	FILE*fMP;
+
+	sprintf(filepathMP, "penetratePosition.dat");
+	fMP=fopen(filepathMP, "a");
+ 	fprintf(fMP,"%e\t%e\t%e\t%d\n", p.x.x[0], p.x.x[1], p.x.x[2], p.id);
+	fclose(fMP);
+
+	sprintf(filepathMP, "penetrateVelocity.dat");
+	fMP=fopen(filepathMP, "a");
+ 	fprintf(fMP,"%e\t%e\t%e\t%d\n", p.v.x[0], p.v.x[1], p.v.x[2], p.id);
+	fclose(fMP);
 }
