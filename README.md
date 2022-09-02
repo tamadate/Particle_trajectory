@@ -21,8 +21,7 @@ This code read this file to set the trajectory simulaiton.  In this file, genera
 ~~~
 dragModel	Stokes-Millikan
 ~~~
-set the drag model to Stokes-Millikan model.  All syntaxes are shown here:
-(setting parameter): value or method
+set the drag model to Stokes-Millikan model.  All syntaxes are shown below.
 1. Time step <br>
 "dt" mention the time step and following syntax is auto or value.  Default is auto.  When auto is mentioned, this code automatically determine the time step from the particle veloctiy and relaxation time (or duration of the eddy when the turbulent dispersion is ON).  When value is mentioned, the time step is fixed as that value (unit is second).  Here is one example
 ~~~
@@ -38,6 +37,8 @@ totalTime  100
 ~~~
 dragModel Singh
 ~~~
+4. Turbulent dispersion <br>
+"Dispersion" mention the turbulent dispersion and syntax is Yes or No.  On the turbulent flow, the eddy repeat the generation and dissipation which make flow random.  One of the approach to treated turbulent flow as a steady state is RANS model approach, e.g., k-$epsilon$This code can include the effect of this random eddy based on the turbulent kinetic energy (k) and the this method (https://arc.aiaa.org/doi/10.2514/3.62687). by the turbulent flow. When the turbulent exist on the flow field, it never becomes steady state flow but the RANS model 
 FroudeKrylov: Yes/No
 observeTime: $value (unit is second)
 startDir: directory name (e.g., 20000 if the ending time of CFD is 20000)
@@ -48,5 +49,6 @@ analytical Yes/No	$value
 #### 3.3 particleSet file in particle directory
 ## Author
 * Dr. Tomoya Tamadate
+* [LinkedIn](https://www.linkedin.com/in/tomoya-tamadate-953673142/)/[ResearchGate](https://www.researchgate.net/profile/Tomoya-Tamadate)/[Google Scholar](https://scholar.google.com/citations?user=XXSOgXwAAAAJ&hl=ja)
 * University of Minnesota
 * tamalab0109[at]gmail.com
