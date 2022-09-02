@@ -49,7 +49,7 @@ trajectory::findParticleFace(std::vector<cell> targetCells){
 				int btest=a.iface[0];
 				int c0test=faces[btest].iface[0];
 				double y0test=points[c0test].x[1];
-				if(y0test<0.165) continue;
+				//if(y0test<0.165) continue;
 				for (int k=0; k<faceSize; k++){
 					int b=a.iface[k];
 					int c0=faces[b].iface[0];
