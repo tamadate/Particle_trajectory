@@ -33,19 +33,31 @@ dt  auto
 totalTime  100
 ~~~
 3. Drag model <br>
-"dragModel" mention the drag model that is choosable from four drag models (Singh Stokes-Millikan, Morsi, and Loth) and the syntax is same as the model name.  One of the feature of this code is Singh's drag model (https://arc.aiaa.org/doi/10.2514/1.J060648) and this is avairable for wide range of Reynodls number and Mach number even if it is supersonic flow, hence the original paper call this model as general particle drag model. Loth model is also avairable for the wide range (https://arc.aiaa.org/doi/10.2514/1.28943).  Morsi model may be avairable for incomplessible flow (https://www.cambridge.org/core/journals/journal-of-fluid-mechanics/article/an-investigation-of-particle-trajectories-in-twophase-flow-systems/5B1FF01A248EBF4988C156246EFF844A) and Stokes-Millikan is limitted to only low Reynolds number flow. Here is one example
+"dragModel" mention the drag model that is choosable from four drag models (Singh, Stokes-Millikan, Morsi, and Loth) and the syntax is same as the model name (default is Singh).  One of the feature of this code is Singh's drag model (https://arc.aiaa.org/doi/10.2514/1.J060648) and this is avairable for wide range of Reynodls number and Mach number even if it is supersonic flow, hence the original paper call this model as general particle drag model. Loth model is also avairable for the wide range (https://arc.aiaa.org/doi/10.2514/1.28943).  Morsi model may be avairable for incomplessible flow (https://www.cambridge.org/core/journals/journal-of-fluid-mechanics/article/an-investigation-of-particle-trajectories-in-twophase-flow-systems/5B1FF01A248EBF4988C156246EFF844A) and Stokes-Millikan is limitted to only low Reynolds number flow. Here is one example when Singh drag model is applied
 ~~~
 dragModel Singh
 ~~~
 4. Turbulent dispersion <br>
-"Dispersion" mention the turbulent dispersion and syntax is Yes or No.  On the turbulent flow, the eddy repeat the generation and dissipation which make flow random.  One of the approach to treated turbulent flow as a steady state is RANS model approach, e.g., k-$epsilon$This code can include the effect of this random eddy based on the turbulent kinetic energy (k) and the this method (https://arc.aiaa.org/doi/10.2514/3.62687). by the turbulent flow. When the turbulent exist on the flow field, it never becomes steady state flow but the RANS model 
-FroudeKrylov: Yes/No
-observeTime: $value (unit is second)
+"Dispersion" mention the turbulent dispersion and syntax is Yes or No (default is No).  On the turbulent flow, the eddy repeat generation and dissipation which mean the flow becomes random.  One of the approach to treat such turbulent flow as a steady state is RANS model approach, e.g., k-$\epsilon$ model.  This code also able to treat the effect of this random eddy from the parameters used in RANS model that are turbulent kinetic energy (k) and the dissipation rate of the eddy $\epsilon$ by following this method (https://arc.aiaa.org/doi/10.2514/3.62687).  This simulaiton require k and $\epusilon$ files under CFD simulation result directory.  Here is one example when it is ON
+~~~
+Dispersion  Yes
+~~~
+5. Compressibility <br>
+"compressible" mention the compressibility of the fluid and it is Yes or No (default is No).  When it is Yes, temperature and density files (T and rho) are needed to be located in the CFD simulation result directory.  Here is one example when it is compressible flow
+~~~
+compressible  Yes
+~~~
+6. Froude Krylov force <br>
+Under prepearation
+7. Observation interval <br>
+"observeTime" mentiond the interval of the output of the particle location and the velocity.  Following syntax is the interval in the unit of second (default value is 1e-6).  When you export it every 1 ms, it is written as
+~~~
+observeTime 1e-3
+~~~
+7. Start directory
 startDir: directory name (e.g., 20000 if the ending time of CFD is 20000)
-dimension: 3D/2D/2Daxi face	axis
-analytical Yes/No	$value
-
-
+8. Dimension
+"dimension" set the dimension as 3D, 2D, and 2D axi-symetric that syntaxes are 3D, 2D, and 2Daxi, respectively.  Two more syntax is required for 2Daxi case to indicate the axis.  100, 010, and 001 respectively indicate the direction of the axis is x, y, and z cordinate.  Third syntax is position of the axis. This example is when the axis is y=0 case.
 #### 3.3 particleSet file in particle directory
 ## Author
 * Dr. Tomoya Tamadate

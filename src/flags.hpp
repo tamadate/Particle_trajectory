@@ -22,7 +22,7 @@ class Flags {
 			int autoStep=0;
 			int KFFlag=0;
 			int dispersionFlag=0;
-			int compressFlag=0;
+			int compressFlag=1;
 			int dimensionFlag=0;
 			int initialBreakFlag=0;
 			int analytical=0;
