@@ -12,7 +12,7 @@ trajectory::get_tini(particle &par){
     double dv=sqrt(dvx*dvx+dvy*dvy+dvz*dvz);
     double vrand=sqrt(par.Urand.x[0]*par.Urand.x[0]+par.Urand.x[1]*par.Urand.x[1]+par.Urand.x[2]*par.Urand.x[2]);	// scale of random velocity
     double tau=rho_p*par.dp*par.dp/(18.0*vars->myu[par.cell]);	// This equation is not exact at high Reynolds number
-    double le=0.866*pow(vars->k[par.cell],1.5)/vars->epsilon[par.cell];	// le = Cm^0.5 * k^1.5 / epsilon, where Cm = 0.75 is used
+    double le=0.3*pow(vars->k[par.cell],1.5)/vars->epsilon[par.cell];	// le = Cm^0.5 * k^1.5 / epsilon, where Cm = 0.09 is used
 		double te=le/vrand;
     double inLog=1-le/(tau*dv);
     double tini=te;
