@@ -1,5 +1,5 @@
 # Particle_trajectory
-This code calculate particle trajectory coupled with the CFD simulation result (1 way is only avairable in current version) from OpenFOAM (https://www.openfoam.com/).  Fluent results are also avairable by transforming to OpenFOAM fomat via "FluentToFoam" function in OpenFOAM.
+This code calculate particle trajectory coupled with the CFD simulation result (only 1 way coupling is avairable in current version) from OpenFOAM (https://www.openfoam.com/).  Fluent results are also avairable by transforming to OpenFOAM fomat via "FluentToFoam" function in OpenFOAM.
 ***
 ## Usage
 ### Building source code
@@ -14,7 +14,3 @@ A execute file trajectory.out is created in src
 * Dr. Tomoya Tamadate
 * University of Minnesota
 * tamalab0109[at]gmail.com
-
-
-
-  
