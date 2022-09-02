@@ -1,16 +1,12 @@
 # Particle_trajectory
 This code calculate particle trajectory coupled with the CFD simulation result (only 1 way coupling is avairable in current version) from OpenFOAM (https://www.openfoam.com/).  Fluent results are also avairable by transforming to OpenFOAM fomat via "fluentToFoam" function in OpenFOAM.
-***
 ## Usage
 ### 1. Building source code
 Download this code and prepare the environment (gcc compiler and OpenMP are required). On the turminal, move to src directory from your downloaded directory and make code by just typing
 ~~~
 make
 ~~~
-Wait for several seconds and a execute file trajectory.out is created in the src directory.  When you run the simulation, put trajectory.out file on the running directory with setting the conditions (see below section 3. Set conditions and run) and run execute file on the terminal by typing
-~~~
-./trajectory
-~~~
+Wait for several seconds and a execute file trajectory.out is created in the src directory.  
 ### 2. Prepare CFD simulation
 Run OpenFOAM or Fluent.  Fluent format need to be transformed to the OpenFOAM format via fluentToFoam command in the OpenFOAM, which mean OpenFOAM installation is required both of the ways.
 ### 3. Set conditions and run
@@ -38,7 +34,7 @@ totalTime  100
 dragModel Singh
 ~~~
 4. Turbulent dispersion <br>
-"Dispersion" mention the turbulent dispersion and syntax is Yes or No (default is No).  On the turbulent flow, the eddy repeat generation and dissipation which mean the flow becomes random.  One of the approach to treat such turbulent flow as a steady state is RANS model approach, e.g., k-$\epsilon$ model.  This code also able to treat the effect of this random eddy from the parameters used in RANS model that are turbulent kinetic energy (k) and the dissipation rate of the eddy $\epsilon$ by following this method (https://arc.aiaa.org/doi/10.2514/3.62687).  This simulaiton require k and $\epusilon$ files under CFD simulation result directory.  Here is one example when it is ON
+"Dispersion" mention the turbulent dispersion and syntax is Yes or No (default is No).  On the turbulent flow, the eddy repeat generation and dissipation which mean the flow becomes random.  One of the approach to treat such turbulent flow as a steady state is RANS model approach, e.g., k - $\epsilon$ model.  This code also able to treat the effect of this random eddy from the parameters used in RANS model that are turbulent kinetic energy, k and the dissipation rate of the eddy, $\epsilon$ by following this method (https://arc.aiaa.org/doi/10.2514/3.62687).  This simulaiton require k and $\epsilon$ files under CFD simulation result directory.  Here is one example when it is ON
 ~~~
 Dispersion  Yes
 ~~~
@@ -49,16 +45,39 @@ compressible  Yes
 ~~~
 6. Froude Krylov force <br>
 Under prepearation
+~~~
+FroudeKrylov  Yes
+~~~
 7. Observation interval <br>
 "observeTime" mentiond the interval of the output of the particle location and the velocity.  Following syntax is the interval in the unit of second (default value is 1e-6).  When you export it every 1 ms, it is written as
 ~~~
 observeTime 1e-3
 ~~~
-7. Start directory
-startDir: directory name (e.g., 20000 if the ending time of CFD is 20000)
-8. Dimension
+8. Start directory
+"startDir" mention a directory which store CFD simulation results and syntax is the name of the directory (default is 20000). When the ending time of the CFD simulation is 20000, the it is written as
+~~~
+startDir  20000
+~~~
+9. Dimension
 "dimension" set the dimension as 3D, 2D, and 2D axi-symetric that syntaxes are 3D, 2D, and 2Daxi, respectively.  Two more syntax is required for 2Daxi case to indicate the axis.  100, 010, and 001 respectively indicate the direction of the axis is x, y, and z cordinate.  Third syntax is position of the axis. This example is when the axis is y=0 case.
+~~~
+dimension 010 0
+~~~
 #### 3.3 particleSet file in particle directory
+This file stores the initial particle location and each particle size.  Initial line need to be "x y z dp" and from next lines, you can give the particle initial positions and diameters.  When the first particle is start from $(x, y, z) = (0, 0, 0)$ and second is $(x, y, z) = (1, 1, 1)$ and the particle diamters are 100 nm and 200 nm, it is expressed as
+~~~
+x y z dp
+0 0 0 1e-7
+1 1 1 2e-7
+...
+~~~
+#### 3.4 Run the simulation
+When you run the simulation, put trajectory.out file in the running directory and run execute file on the terminal by typing
+~~~
+./trajectory
+~~~
+### 4 Postprocessing
+
 ## Author
 * Dr. Tomoya Tamadate
 * [LinkedIn](https://www.linkedin.com/in/tomoya-tamadate-953673142/)/[ResearchGate](https://www.researchgate.net/profile/Tomoya-Tamadate)/[Google Scholar](https://scholar.google.com/citations?user=XXSOgXwAAAAJ&hl=ja)
