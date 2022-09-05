@@ -9,7 +9,7 @@ make
 After waiting for several seconds, a execute file trajectory.out is created in the src directory.  
 ### 2. Run (steady state) CFD simulation
 This code is able to calculate particle trajectory coupled with steady state CFD simulation results, specifically OpenFOAM.  In terms of Fluent format, the mesh geometry is needed to be transformed to the OpenFOAM mesh format via fluentToFoam command from the OpenFOAM, which mean OpenFOAM installation is required anyways. The Fluent simulation result also need to be trasformed to OpenFOAM format using python script "datToFoam.py" located under the src directory.  The Fluent result format is also limitted and this code does not insure that your format is transformable.  In case of OpenFOAM format, the format changing is not required. You can find OpenFOAM installation guide from web search and the learn how to run it from manual and abandant tutorials.  This code developper recommend to do the CFD simulation with OpenFOAM due to the prospect of understanding of simulation as well as the affinity with this simulator.
-### 3. Set conditions and run
+### 3. Set conditions
 This simulator require additional directories and files to store the simulation results and to set the calculation condition including particle initial conditions as following explanation.
 #### 3.1 Creat directories
 Under the CFD simulation directory, you must have four directories which are named 1.constant, 2.20000 (this is not needed to be 20000 but default setting is 20000 in this simulator), 3.result, and 4.particle. First directory is from early performed CFD simulation and mesh geometory information is stored in constant/polyMesh/ directory.  Second directory is also from CFD simulation and the name of directory is typically time of simulation if it is OpenFOAM, e.g., there is a directory named 20000, when the ending time of the simulation is 20000.  The CFD result directory name can be changed from the calculation condition file as written later.  A system file may be also here for setting CFD simulation condition if you run CFD with OpenFOAM but it does not matter if you leave or keep it since the trajectory simulation does not never access system directory.  On the third directory named "result" is a blank directory that is required to store the trajectory simulation results.  Please make sure to creat this directory; this has been often forgotten to creat and it dump error "segmentation fault". On the fourth directory, the name is needed to be "particle" where should have trajectory simulation conditions file (/particle/conditions) and particle information file (/particle/particleSet).  Detail of these two files are described following sections 3.2 and 3.3, respectively.
@@ -60,24 +60,24 @@ observeTime 1e-3
 startDir  100
 ~~~
 9. Dimension
-"dimension" set the dimension as 3D, 2D, and 2D axi-symetric that syntaxes are 3D, 2D, and 2Daxi, respectively.  Two more syntax is required for 2Daxi case to indicate the axis.  100, 010, and 001 respectively indicate the direction of the axis is x, y, and z cordinate.  Third syntax is position of the axis. This example is when the axis is y=0 case.
+"dimension" set the dimension as 3D, 2D, and 2D axi-symetric that syntaxes are 3D, 2D, and 2Daxi, respectively.  Two more syntax is required for 2Daxi case to indicate the axis.  100, 010, and 001 respectively indicate the direction of the axis is x, y, and z cordinate.  Third syntax is position of the axis. This example is when the axis is y=0 case:
 ~~~
 dimension 010 0
 ~~~
 #### 3.3 particleSet file in particle directory
-This file stores the initial particle location and each particle size.  Initial line need to be "x y z dp" and from next lines, you can give the particle initial positions and diameters.  When the first particle is start from $(x, y, z) = (0, 0, 0)$ and second is $(x, y, z) = (1, 1, 1)$ and the particle diamters are 100 nm and 200 nm, it is expressed as
+This file stores the initial particle location and each particle size.  Initial line need to be "x y z dp" (again, the separation is tab) and from next lines, you can give the particle initial positions and diameters.  When the first particle is start from $(x, y, z) = (0, 0, 0)$ and second is $(x, y, z) = (1, 1, 1)$ and the particle diameters are 100 nm and 200 nm, it is expressed as
 ~~~
 x y z dp
 0 0 0 1e-7
 1 1 1 2e-7
 ...
 ~~~
-#### 3.4 Run the simulation
+### 4 Run the simulation
 When you run the simulation, put trajectory.out file in the running directory and run execute file on the terminal by typing
 ~~~
 ./trajectory
 ~~~
-### 4 Postprocessing
+### 5 Postprocessing
 
 ## Author
 * Dr. Tomoya Tamadate
