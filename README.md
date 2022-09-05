@@ -35,7 +35,7 @@ totalTime  100
 dragModel Singh
 ~~~
 4. Turbulent dispersion <br>
-"Dispersion" mention the turbulent dispersion and syntax is Yes or No (default is No).  On the turbulent flow, the eddy repeat to generate and dissipate which mean the flow becomes random.  One of the approach to treat such turbulent flow as a steady state is RANS model approach in CFD, e.g., k - $\epsilon$ model.  This code also able to treat the effect of this random eddy from the parameters used in RANS model that are turbulent kinetic energy, k and the dissipation rate of the eddy, $\epsilon$ by following this method ([Gosmas and Loannides]https://arc.aiaa.org/doi/10.2514/3.62687).  This simulaiton require k and $\epsilon$ prifiles under CFD simulation result directory.  Here is one example when it is ON
+"Dispersion" mention the turbulent dispersion and syntax is Yes or No (default is No).  On the turbulent flow, the eddy repeat to generate and dissipate which mean the flow becomes random.  One of the approach to treat such turbulent flow as a steady state is RANS model approach in CFD, e.g., k - $\epsilon$ model.  This code also able to treat the effect of this random eddy from the parameters used in RANS model that are turbulent kinetic energy, k and the dissipation rate of the eddy, $\epsilon$ by following this method ([Gosmas and Loannides, 1983](https://arc.aiaa.org/doi/10.2514/3.62687)).  This simulaiton require k and $\epsilon$ prifiles under CFD simulation result directory.  Here is one example when it is ON
 ~~~
 Dispersion  Yes
 ~~~
