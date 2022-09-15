@@ -15,85 +15,64 @@ trajectory::readCondition(void){
 		int readFlag=0;
 		string tmp;
 		istringstream stream(str);
+		std::vector<string> readings;
+		string reading;
+		while(getline(stream,reading,'\t')) {
+			readings.push_back(reading);
+		}
 		while(getline(stream,tmp,'\t')) {
 			if (readFlag==0) {
-				if(tmp=="dt") {readFlag=1; continue;}
-				if(tmp=="totalStep") {cout<<"you can not use this argument"<<endl;}
-				if(tmp=="totalTime") {readFlag=2; continue;}
-				if(tmp=="dragModel") {readFlag=3; continue;}
-				if(tmp=="Dispersion") {readFlag=4; continue;}
-				if(tmp=="Observe") {cout<<"you can not use this argument"<<endl;}
-				if(tmp=="observeTime") {readFlag=5; continue;}
-				if(tmp=="FroudeKrylov") {readFlag=6; continue;}
-				if(tmp=="dimension") {readFlag=7; continue;}
-				if(tmp=="compressible") {readFlag=9; continue;}
-				if(tmp=="constTemp") {readFlag=10; continue;}
-				if(tmp=="constRho") {readFlag=11; continue;}
-				if(tmp=="startDir") {readFlag=12; continue;}
-				if(tmp=="particleDensity") {readFlag=13; continue;}
-				if(tmp=="deltaTrajectory") {readFlag=14; continue;}
-				if(tmp=="analytical") {readFlag=15; continue;}
-				if(tmp=="inletFace") {readFlag=16; continue;}
+				if(readings[0]=="dt") {
+					if(readings[1]=="auto") flags->autoStep=1;
+					else dt=stod(readings[1]);
+				}
+				else if(readings[0]=="dragModel") {
+					if(readings[1]=="Singh") forces.push_back(new dragForceSingh);
+					if(readings[1]=="Stokes") forces.push_back(new dragForceSM);
+					if(readings[1]=="Morsi") forces.push_back(new dragForceMA);
+					if(readings[1]=="Loth") forces.push_back(new dragForceLoth);
+				}
+				else if(readings[0]=="Dispersion") {
+					if(readings[1]=="Yes") flags->dispersionFlag=1;
+					if(readings[1]=="No") flags->dispersionFlag=0;
+				}
+				else if(readings[0]=="FroudeKrylov") {
+					if(readings[1]=="Yes") flags->KFFlag=1;
+					if(readings[1]=="No") flags->KFFlag=0;
+				}
+				else if(readings[0]=="dimension") {
+					if(readings[1]=="3D") flags->dimensionFlag=0;
+					if(readings[1]=="2Dplane") flags->dimensionFlag=1;
+					if(readings[1]=="2Daxi") flags->dimensionFlag=2;
+					if(flags->dimensionFlag>0){
+						if(readings[2]=="100") plane2D=0;
+						if(readings[2]=="010") plane2D=1;
+						if(readings[2]=="001") plane2D=2;
+						Axis=stod(readings[3]);
+					}
+				}
+				else if(readings[0]=="compressible") {
+					if(readings[1]=="Yes") flags->compressFlag=1;
+					if(readings[1]=="No") flags->compressFlag=0;
+				}
+				else if(readings[0]=="analytical") {
+					if(readings[1]=="Yes") {
+						flags->analytical=1;
+						vars->analyticalStep=stod(readings[2]);
+					}
+					else if(readings[1]=="No") flags->analytical=0;
+				}
+				else if(readings[0]=="totalTime") totalTime=stod(readings[1]);
+				else if(readings[0]=="observeTime") observeTime=stod(readings[1]);
+				else if(readings[0]=="constTemp") constTemp=stod(readings[1]);
+				else if(readings[0]=="constRho") constRho=stod(readings[1]);
+				else if(readings[0]=="startDir") startDir=readings[1];
+				else if(readings[0]=="particleDensity") rho_p=stod(readings[1]);
+				else if(readings[0]=="deltaTrajectory") {readFlag=14; continue;}
+				else if(readings[0]=="inletFace") flags->inletFace=stoi(readings[1]);
+				else cout<<"Could not find syntax "<<readings[0]<<endl;
 			}
-			if (readFlag==1) {
-				if(tmp=="auto") flags->autoStep=1;
-				// /else dt=stod(tmp);
-			}
-			if (readFlag==2) totalTime=stod(tmp);
-			if (readFlag==3) {
-				if(tmp=="Singh") forces.push_back(new dragForceSingh);
-				if(tmp=="Stokes") forces.push_back(new dragForceSM);
-				if(tmp=="Morsi") forces.push_back(new dragForceMA);
-				if(tmp=="Loth") forces.push_back(new dragForceLoth);
-			}
-			if (readFlag==4) {
-				if(tmp=="Yes") flags->dispersionFlag=1;
-				if(tmp=="No") flags->dispersionFlag=0;
-			}
-			if (readFlag==5) observeTime=stod(tmp);
-			if (readFlag==6) {
-				if(tmp=="Yes") flags->KFFlag=1;
-				if(tmp=="No") flags->KFFlag=0;
-			}
-			if (readFlag==7) {
-				if(tmp=="3D") flags->dimensionFlag=0;
-				if(tmp=="2Dplane") {flags->dimensionFlag=1; readFlag=72;continue;}
-				if(tmp=="2Daxi") {flags->dimensionFlag=2; readFlag=72;continue;}
-			}
-			if (readFlag==72) {
-				if(tmp=="100") {plane2D=0; readFlag=73;continue;}
-				if(tmp=="010") {plane2D=1; readFlag=73;continue;}
-				if(tmp=="001") {plane2D=2; readFlag=73;continue;}
-			}
-			if (readFlag==73) {
-				Axis=stod(tmp);
-			}
-			if (readFlag==9) {
-				if(tmp=="Yes") flags->compressFlag=1;
-				if(tmp=="No") flags->compressFlag=0;
-			}
-			if (readFlag==10) {
-				constTemp=stod(tmp);
-			}
-			if (readFlag==11) {
-				constRho=stod(tmp);
-			}
-			if (readFlag==12) {
-				startDir=tmp;
-			}
-			if (readFlag==13) {
-				rho_p=stod(tmp);
-			}
-			if (readFlag==15) {
-				if(tmp=="Yes") {flags->analytical=1;readFlag=151;continue;}
-				if(tmp=="No") {flags->analytical=0;}
-			}
-			if (readFlag==151) {
-				vars->analyticalStep=stod(tmp);
-			}
-			if (readFlag==16) {
-				flags->inletFace=stoi(tmp);
-			}
+
 		}
 	}
 	stream.close();
