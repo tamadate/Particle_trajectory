@@ -7,6 +7,7 @@ trajectory::timeEvolution(particle &a){
 	computeReMach(a);
 	double timeStep;
 	// use analytical or euler?
+
 	if(a.Re<0.01 && a.Mach<0.1 && flags->analytical==1) timeStep=analytical(a);
 	else timeStep=euler(a);
 
@@ -22,7 +23,7 @@ trajectory::euler(particle &a){
 		double vmag=sqrt(v2);
 		double v2rand=a.Urand.x[0]*a.Urand.x[0]+a.Urand.x[1]*a.Urand.x[1]+a.Urand.x[2]*a.Urand.x[2];
 		if(v2rand>v2) vmag=sqrt(v2rand);
-		timeStep=1e-6/vmag;		// 1e-6 is scale of cell
+		timeStep=meshScale/vmag;		// 1e-6 is scale of cell
 		//dt=a.dt;
 	}
 
@@ -60,7 +61,7 @@ trajectory::analytical(particle &a){
 	double v2=a.v.x[0]*a.v.x[0]+a.v.x[1]*a.v.x[1]+a.v.x[2]*a.v.x[2];
 	double vmag=sqrt(v2);
 
-	timeStep=1e-6/vmag;
+	timeStep=meshScale/vmag;
 	if(a.tini<timeStep){
 		timeStep=a.tini;
 		a.update=1;

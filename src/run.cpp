@@ -25,8 +25,9 @@ trajectory::run(void){
 				time+=timeEvolution(a);		// see timeEvolution.cpp
 
 				breakFlag=checkCell(pid);
-				if(breakFlag==-1) break;
 
+				if(breakFlag==-1) break;
+				
 				if(a.update==1) updateDisp(a);
 			}
 

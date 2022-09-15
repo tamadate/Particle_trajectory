@@ -30,6 +30,7 @@ trajectory::updateDisp(particle &par){
   random_device seed;
 	mt19937 mt(seed());
 	normal_distribution<> dist_vTD(0.0, sqrt(vars->k[par.cell]*2));	// standard diviation, sigma = (2k)^0.5
+
   par.Urand.x[0]=dist_vTD(mt);
   par.Urand.x[1]=dist_vTD(mt);
   par.Urand.x[2]=dist_vTD(mt);
