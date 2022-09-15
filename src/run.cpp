@@ -27,8 +27,8 @@ trajectory::run(void){
 				breakFlag=checkCell(pid);
 
 				if(breakFlag==-1) break;
-				
-				if(a.update==1) updateDisp(a);
+
+				if(a.update==1&&) updateDisp(a);
 			}
 
 			// if particle did not hit on any "bounday" during calculation time
