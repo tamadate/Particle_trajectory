@@ -82,14 +82,18 @@ class trajectory{
 		void outputInitial(void);
 		void outputFinalPosition(void);
 		void outputPenetration(particle p);
+		void outputInitialVelocity(void);
 
 		void initialize(particle &par, int nth){
 			if(flags->dispersionFlag) par.update=1;
-			else par.tini=1e10;
+			else {
+				par.tini=1e10;
+				par.update=0;
+			}
 		}
 
 		trajectory(void);
 		~trajectory(void);
-		
+
 	private:
 };

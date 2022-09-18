@@ -25,9 +25,10 @@ trajectory::run(void){
 				time+=timeEvolution(a);		// see timeEvolution.cpp
 
 				breakFlag=checkCell(pid);
+
 				if(breakFlag==-1) break;
 
-				if(a.update==1) updateDisp(a);
+				if(a.update==1&&flags->dispersionFlag==1) updateDisp(a);
 			}
 
 			// if particle did not hit on any "bounday" during calculation time
