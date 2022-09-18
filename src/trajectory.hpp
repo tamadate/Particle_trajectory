@@ -20,7 +20,6 @@ class trajectory{
 		double Axis;									// axis of 2D axi-symmetric simulation
 		double flag;									// NOT USED?
 		char filepath[100];						// file path
-		char filepathMP[100][20];			// file path for parallel (OpenMP)
 		int boundaryStartID;					// boundary start face id
 		double constTemp;							// constant temperature for incompressible flow
 		double constRho;							// constant density for incompressible flow
