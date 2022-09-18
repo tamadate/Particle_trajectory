@@ -70,10 +70,6 @@ trajectory::outputInitial(void){
 	sprintf(filepath, "penetrateVelocity.dat");
 	f=fopen(filepath, "w");
 	fclose(f);
-	// particle initial velocity
-	sprintf(filepath, "initialVelocity.dat");
-	f=fopen(filepath, "w");
-	fclose(f);
 }
 
 void
@@ -90,6 +86,18 @@ trajectory::outputFinalPosition(void){
 	 	fprintf(f,"%e\t%e\t%e\t%d\t%d\n", a.v.x[0], a.v.x[1], a.v.x[2], a.pid, a.bid);
 		fclose(f);
 	}
+}
+
+void
+trajectory::outputInitialVelocity(void){
+	sprintf(filepath, "initialVelocity.dat");
+	f=fopen(filepath, "w");
+	for (auto &a:vars->particles){
+		// particle final velocity
+		for(int i=0; i<3; i++) a.v.x[i]=vars->U[a.cell].x[i]*0.99;
+	 	fprintf(f,"%e\t%e\t%e\t%d\n", a.v.x[0], a.v.x[1], a.v.x[2], a.id);
+	}
+	fclose(f);
 }
 
 

@@ -20,6 +20,7 @@ trajectory::findParticle(void){
 		}
 		findParticleFace(boundCells);
 	}
+	outputInitialVelocity();
 }
 
 void
@@ -36,6 +37,7 @@ trajectory::findParticleFace(std::vector<cell> targetCells){
 			double z=vars->particles[i].x.x[2];
 			int cellSize=cells.size();
 	    double minDist=1e15;
+
 			/*
 				This loop calculate the inner product of particle position vector with norm vector of each faces
 				regarding with every cells.

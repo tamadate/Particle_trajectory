@@ -1,5 +1,5 @@
-#NAME        = ../../../testTrajectory/trajectory.out
-NAME        = ./trajectory.out
+NAME        = ../../../pipe/trajectory.out
+#NAME        = ./trajectory.out
 SRCS        = ./*cpp
 OBJS        = $(SRCS:.cpp=.o)
 CXX         = g++
