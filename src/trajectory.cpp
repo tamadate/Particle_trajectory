@@ -65,6 +65,12 @@ trajectory::initialParticle(void){
   // initialize outParticles array (ending information of particles)
     outParticle op;
     op.pid=a.id;
+    op.bid=0;
+    point dum;
+    dum.x[0]=dum.x[1]=dum.x[2]=0;
+    op.r=dum;
+    op.v=dum;
     outParticles.push_back(op);
+    penetrateParticles.push_back(op);
 	}
 }

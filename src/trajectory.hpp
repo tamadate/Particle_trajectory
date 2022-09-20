@@ -27,6 +27,7 @@ class trajectory{
 		FILE*f;
 		FILE*file;
 		std::vector<outParticle> outParticles; // position & velocity of the particles at the end of the simulation
+		std::vector<outParticle> penetrateParticles; // position & velocity of the particles at the end of the simulation
 		std::vector<int> trapParticle;				 // number of particles trapped in the curculation
 
 		// The functions for turbulent dispersion (see turbulentDispersion.cpp)
@@ -80,7 +81,7 @@ class trajectory{
 		void outputTrajectory(particle a);
 		void outputInitial(void);
 		void outputFinalPosition(void);
-		void outputPenetration(particle p);
+		void outputPenetrate(void);
 		void outputInitialVelocity(void);
 
 		void initialize(particle &par, int nth){

@@ -106,17 +106,18 @@ trajectory::outputInitialVelocity(void){
 
 
 void
-trajectory::outputPenetration(particle p){
+trajectory::outputPenetrate(void){
 	char filePathMP[100];
 	FILE*fMP;
+	for (auto &p:penetrateParticles){
+		sprintf(filePathMP, "penetratePosition.dat");
+		fMP=fopen(filePathMP, "a");
+	 	fprintf(fMP,"%e\t%e\t%e\t%d\n", p.r.x[0], p.r.x[1], p.r.x[2], p.pid);
+		fclose(fMP);
 
-	sprintf(filePathMP, "penetratePosition.dat");
-	fMP=fopen(filePathMP, "a");
- 	fprintf(fMP,"%e\t%e\t%e\t%d\n", p.x.x[0], p.x.x[1], p.x.x[2], p.id);
-	fclose(fMP);
-
-	sprintf(filePathMP, "penetrateVelocity.dat");
-	fMP=fopen(filePathMP, "a");
- 	fprintf(fMP,"%e\t%e\t%e\t%d\n", p.v.x[0], p.v.x[1], p.v.x[2], p.id);
-	fclose(fMP);
+		sprintf(filePathMP, "penetrateVelocity.dat");
+		fMP=fopen(filePathMP, "a");
+	 	fprintf(fMP,"%e\t%e\t%e\t%d\n", p.v.x[0], p.v.x[1], p.v.x[2], p.pid);
+		fclose(fMP);
+	}
 }

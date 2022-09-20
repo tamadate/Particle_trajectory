@@ -16,10 +16,17 @@ trajectory::run(void){
 			int breakFlag=0;
 			double preOutTime=0;		// previous output time
 			double time=0;					// current time
+			int pflag=0;
 			while(time<totalTime){
 				if(time - preOutTime > observeTime) {
 					output(a,time,nth);
 					preOutTime=time;
+				}
+				if(pflag==0 && a.x.x[0]>0.173){
+					pflag=1;
+					penetrateParticles[pid].pid=a.id;
+					penetrateParticles[pid].r=a.x;
+					penetrateParticles[pid].v=a.v;
 				}
 
 				time+=timeEvolution(a);		// see timeEvolution.cpp
@@ -43,6 +50,7 @@ trajectory::run(void){
 	}
 
 	outputFinalPosition();
+	outputPenetrate();
 	int totalTrap=0;
 	for(int i=0;i<Nth;i++) totalTrap+=trapParticle[i];
   cout<<totalTrap<<" might be trapped circulation"<<endl;
