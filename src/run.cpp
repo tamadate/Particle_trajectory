@@ -16,17 +16,25 @@ trajectory::run(void){
 			int breakFlag=0;
 			double preOutTime=0;		// previous output time
 			double time=0;					// current time
-			int pflag=0;
+
+
 			while(time<totalTime){
 				if(time - preOutTime > observeTime) {
 					output(a,time,nth);
 					preOutTime=time;
 				}
-				if(pflag==0 && a.x.x[0]>0.173){
-					pflag=1;
-					penetrateParticles[pid].pid=a.id;
-					penetrateParticles[pid].r=a.x;
-					penetrateParticles[pid].v=a.v;
+
+				for(auto &pen:penetrates){
+					if(pen.dx0[pid]!=0){
+						double dx=pen.loc-a.x.x[pen.face];
+						if(pen.dx0[pid]*dx<0){
+							pen.outPositions[pid].pid=a.id;
+							pen.outPositions[pid].r=a.x;
+							pen.outPositions[pid].v=a.v;
+							pen.outPositions[pid].bid=1;
+							pen.dx0[pid]=0;
+						}
+					}
 				}
 
 				time+=timeEvolution(a);		// see timeEvolution.cpp

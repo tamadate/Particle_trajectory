@@ -66,14 +66,17 @@ trajectory::outputInitial(void){
 	sprintf(filepath, "finalVelocity.dat");
 	f=fopen(filepath, "w");
 	fclose(f);
-	// particle position at arbitral point
-	/*sprintf(filepath, "penetratePosition.dat");
-	f=fopen(filepath, "w");
-	fclose(f);*/
-	// particle velocity at arbitral point
-	/*sprintf(filepath, "penetrateVelocity.dat");
-	f=fopen(filepath, "w");
-	fclose(f);*/
+
+	for(int i=0;i<penetrates.size();i++){
+		// particle position at arbitral point
+		sprintf(filepath, "penetratePosition_%d.dat",i);
+		f=fopen(filepath, "w");
+		fclose(f);
+		// particle velocity at arbitral point
+		sprintf(filepath, "penetrateVelocity_%d.dat",i);
+		f=fopen(filepath, "w");
+		fclose(f);
+	}
 }
 
 void
@@ -109,15 +112,19 @@ void
 trajectory::outputPenetrate(void){
 	char filePathMP[100];
 	FILE*fMP;
-	for (auto &p:penetrateParticles){
-		sprintf(filePathMP, "penetratePosition.dat");
-		fMP=fopen(filePathMP, "a");
-	 	fprintf(fMP,"%e\t%e\t%e\t%d\n", p.r.x[0], p.r.x[1], p.r.x[2], p.pid);
-		fclose(fMP);
+	int i=0;
+	for (auto &pen:penetrates){
+		for (auto &p:pen.outPositions){
+			sprintf(filePathMP, "penetratePosition_%d.dat",i);
+			fMP=fopen(filePathMP, "a");
+		 	fprintf(fMP,"%e\t%e\t%e\t%d\n", p.r.x[0], p.r.x[1], p.r.x[2], p.pid);
+			fclose(fMP);
 
-		sprintf(filePathMP, "penetrateVelocity.dat");
-		fMP=fopen(filePathMP, "a");
-	 	fprintf(fMP,"%e\t%e\t%e\t%d\n", p.v.x[0], p.v.x[1], p.v.x[2], p.pid);
-		fclose(fMP);
+			sprintf(filePathMP, "penetrateVelocity_%d.dat",i);
+			fMP=fopen(filePathMP, "a");
+		 	fprintf(fMP,"%e\t%e\t%e\t%d\n", p.v.x[0], p.v.x[1], p.v.x[2], p.pid);
+			fclose(fMP);
+		}
+		i++;
 	}
 }

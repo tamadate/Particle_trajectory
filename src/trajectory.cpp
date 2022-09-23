@@ -71,6 +71,10 @@ trajectory::initialParticle(void){
     op.r=dum;
     op.v=dum;
     outParticles.push_back(op);
-    penetrateParticles.push_back(op);
+
+    for(auto &pen:penetrates){
+      pen.outPositions.push_back(op);
+      pen.dx0.push_back(pen.loc-a.x.x[pen.face]);
+    }
 	}
 }
