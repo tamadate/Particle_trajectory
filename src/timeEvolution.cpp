@@ -52,12 +52,6 @@ double
 trajectory::analytical(particle &a){
 	double timeStep;
 	if(flags->autoStep) {
-		double Ux=vars->U[a.cell].x[0]+a.Urand.x[0];
-		double Uy=vars->U[a.cell].x[1]+a.Urand.x[1];
-		double Uz=vars->U[a.cell].x[2]+a.Urand.x[2];
-		double dvx=a.v.x[0]-Ux;
-		double dvy=a.v.x[1]-Uy;
-		double dvz=a.v.x[2]-Uz;
 		double v2=a.v.x[0]*a.v.x[0]+a.v.x[1]*a.v.x[1]+a.v.x[2]*a.v.x[2];
 		double vmag=sqrt(v2);
 		timeStep=meshScale/vmag;
@@ -67,6 +61,13 @@ trajectory::analytical(particle &a){
 		timeStep=a.tini;
 		a.update=1;
 	}
+
+	double Ux=vars->U[a.cell].x[0]+a.Urand.x[0];
+	double Uy=vars->U[a.cell].x[1]+a.Urand.x[1];
+	double Uz=vars->U[a.cell].x[2]+a.Urand.x[2];
+	double dvx=a.v.x[0]-Ux;
+	double dvy=a.v.x[1]-Uy;
+	double dvz=a.v.x[2]-Uz;
 
 	double EXP=exp(-timeStep*a.beta);
 	double dvxEXP=dvx*EXP;

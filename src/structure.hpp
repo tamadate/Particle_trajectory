@@ -28,6 +28,13 @@ struct outParticle {
 	point v;
 };
 
+struct penetrate {
+	std::vector<outParticle> outPositions; // position & velocity of the particles at the end of the simulation
+	std::vector<double> dx0;
+	double loc;
+	int face;
+};
+
 struct particle {
 	point x;	// position
 	point v;	// velocity
