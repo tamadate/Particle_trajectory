@@ -43,7 +43,17 @@ const double Cp=Cp_Air;
 const double Cv=Cv_Air;
 const double gam=Cp/Cv;
 
+/*const double myu0=myu0_He;
+const double ST0=ST0_He;
+const double SC0=SC0_He;
+const double lamda0=lamda0_He;
+const double mgas=mgas_He;
+const double Cp=Cp_He;
+const double Cv=Cv_He;
+const double gam=Cp/Cv;*/
+
 const double lamda_coeff=sqrt(M_PI*mgas*0.5/kb);
+const double Kn_coeff=sqrt(M_PI*gam*0.5);
 const double gamkb_m=gam*kb/mgas;
 const double meshScale=1e-6;
 

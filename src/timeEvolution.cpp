@@ -4,10 +4,11 @@
 double
 trajectory::timeEvolution(particle &a){
 
-	computeReMach(a);
+	calculateNonDimension(a);
 	double timeStep;
 
 	// use analytical or euler?
+	flags->analytical=0;
 	if(a.Re<0.01 && a.Mach<0.1 && flags->analytical==1) timeStep=analytical(a);
 	else timeStep=euler(a);
 
@@ -37,11 +38,11 @@ trajectory::euler(particle &a){
 	for(int i=0; i<3; i++) a.v.x[i]+=timeStep*a.F.x[i];
 	for(int i=0; i<3; i++) a.x.x[i]+=timeStep*a.v.x[i];
 
-    if(a.x.x[plane2D]<Axis && flags->dimensionFlag>0) {
-        a.x.x[plane2D]=2*Axis-a.x.x[plane2D];
-        a.v.x[plane2D]*=-1.0;
-        a.F.x[plane2D]*=-1.0;
-        a.reflect*=-1;
+  if(a.x.x[plane2D]<Axis && flags->dimensionFlag>0) {
+	  a.x.x[plane2D]=2*Axis-a.x.x[plane2D];
+	  a.v.x[plane2D]*=-1.0;
+	  a.F.x[plane2D]*=-1.0;
+	  a.reflect*=-1;
 	}
 	a.tini-=timeStep;
 	return timeStep;

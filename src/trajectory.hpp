@@ -45,7 +45,8 @@ class trajectory{
 		// Physical properties calculation functions (see calcProperties.cpp)
 		void calculateMyu(void);
 		void calculatelamda(void);
-		void computeReMach(particle &par);
+		void calculateNonDimension(particle &par);
+
 
 		// Simualtion geometrical information
 		std::vector<face> faces;
@@ -85,12 +86,12 @@ class trajectory{
 		void outputInitialVelocity(void);
 
 		void initialize(particle &par, int nth){
-			if(flags->dispersionFlag) par.update=1;
+		if(flags->dispersionFlag) par.update=1;
 			else {
 				par.tini=1e10;
 				par.update=0;
 			}
-		}
+	}
 
 		trajectory(void);
 		~trajectory(void);

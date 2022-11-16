@@ -5,14 +5,16 @@ from os.path import exists
 import os
 
 
-N=5968672	# NUmber of cells
-E=6246987	# Number of elements
+N=234941	# NUmber of cells
+E=116800	# Number of elements
 
 param=np.zeros((E,6))	# ((rho0, vx0, vy0, vz0, T0, p0),...)
 v=np.zeros((E,3))	# ((rho0, vx0, vy0, vz0, T0, p0),...)
 
-directory="/home/tama3rdgen/jetaxis/NewMesh/100mm/"
-readFile="solution_100mm_to_substrate.dat"
+directory="/home/tama3rdgen/MURI/NewNozzle/"
+#directory="/home/tama3rdgen/MURI/newNozzle1_6mm/3Torr_Air_after/"
+directory="/home/tama3rdgen/MURI/NewNozzle_refine/working/"
+readFile="solution_refined2.dat"
 
 if(exists(directory+"20000")==0):
 	os.system("mkdir 20000")

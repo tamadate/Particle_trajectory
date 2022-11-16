@@ -20,15 +20,18 @@ def axNormal(ax):
 
 center=np.array((0,0,0))    # center of calculation domain
 directory="/home/tama3rdgen/jetaxis/NewVersion/L18/25Torr/0.1um/"
-directory="/home/tama3rdgen/jetaxis/NewMesh/100mm/5um/"
+directory="/home/tama3rdgen/jetaxis/NewMesh/100mm/0.5um/"
+directory="/home/tama3rdgen/jetaxis/NewMesh/100mm/Morsi_1/"
+#directory="/home/tama3rdgen/jetaxis/NewMesh/100mm/set1/"
 for penID in np.arange(9):
     pltNormal()
     fig, axs = plt.subplots(1,1,figsize=(7,5))
     axNormal(axs)
     data=np.loadtxt(directory+"penetratePosition_"+str(penID)+".dat")
+    datav=np.loadtxt(directory+"penetrateVelocity_"+str(penID)+".dat")
 
     mappingInt=100
-    rout=0.04
+    rout=0.03
     iX=1
     iY=2
     saveFigure=1
@@ -36,18 +39,23 @@ for penID in np.arange(9):
     delta=rout*2/float(mappingInt)
     x=np.arange(0.5*delta,mappingInt*delta,delta)-rout
     dist=np.zeros((mappingInt,mappingInt))
+    distv=np.zeros((mappingInt,mappingInt))
     Iout=0
     Itot=np.size(data.T[0])
-
+    index=0
     for i in data:
         if(i[0]==0 and i[1]==0 and i[2]==0):
             Iout+=1
         else:
-            ix=int((i[iX]-center[iX]+rout)/delta)
-            iy=int((i[iY]-center[iY]+rout)/delta)
-            dist[iy][ix]+=1
+            if (datav[index][0]>110):
+                ix=int((i[iX]-center[iX]+rout)/delta)
+                iy=int((i[iY]-center[iY]+rout)/delta)
+                dist[iy][ix]+=1
+            else:
+                Iout+=1
+        index+=1
 
-    P=Iout/float(Itot)
+    P=1-Iout/float(Itot)
     rout*=1e3
     X,Y=np.meshgrid(x,x)
     axs.set_xlabel(r'$y$ [mm]',size=12)
@@ -57,10 +65,10 @@ for penID in np.arange(9):
     DIST=np.max(dist)
     if(DIST==0):
         DIST=1
-    pl=axs.contourf(X*1e3,Y*1e3,dist/DIST,levels=np.linspace(0,1,100),cmap="gray")
+    pl=axs.contourf(X*1e3,Y*1e3,dist/float(Itot),levels=np.linspace(0,0.01,100),cmap="gray")
     axs.set_title("Penetration: {:.01f} %".format(P*100),size=15)
-    plt.colorbar(pl,ticks=np.array([0,0.2,0.4,0.6,0.8,1.0])).set_label(label="Normalized particle concentration [-]",size=12)
-    plt.text(15,35,r"$x$ = "+str(penID*10+10)+" mm",color="white",size=15)
+    #plt.colorbar(pl,ticks=np.array([0,0.2,0.4,0.6,0.8,1.0])).set_label(label="Normalized particle concentration [-]",size=12)
+    plt.text(10,20,r"$x$ = "+str(penID*10+10)+" mm",color="white",size=15)
 
     if(saveFigure):
         plt.savefig(directory+"location"+str(penID)+".png", dpi=1000)

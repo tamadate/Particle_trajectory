@@ -1,19 +1,31 @@
 # Particle_trajectory
+## 1. Introduction
 This code is particle trajectory simulator supporting the shared memorry parallel calculation with OpenMP.  The trajectory simulaiton is couploed with a steady state field profiles calculated by computational fluid dynamics (CFD) simulation, i.e., velocity, pressure, temperature, gas density, etc. Only fluid influent to particle trajectory but the opposite direction interaction (particle to fluid) is not considered as well as particle-particle interaction, which it a method called 1 way coupling trajectory calculation method.  The OpenFOAM (https://www.openfoam.com/) mesh geometory file and field profiles are avairable as the input file structures without any changing.  Fluent results are also avairable but need to transform to OpenFOAM fomat.
-## Usage
-### 1. Building source code
+## 2. Usage
+* [2.1. Building source code](#building-source-code)
+* [2.2. Run CFD simulation](#run-cfd-simulation)
+* [2.3. set-conditions](#set-conditions)
+>* [2.3.1. Creat directories](#cread-directories)
+>* [2.3.2 conditions file in particle directory](#conditions-file-in-particle-directory)
+>* [2.3.3 particleSet file in particle directory](#particleset-file-in-particle-directory)
+
+* [2.4. Run the simulation](#run-the-simulation)
+* [2.5. Post-processing](#post-processing)
+
+
+### 2.1. Building source code
 Download this code and prepare compilation environment (c++ compiler, c++11 standard library). On the turminal, move to Particle_trajectory/src directory from your download directory and make code by just typing
 ~~~
 make
 ~~~
 After waiting for several seconds, a execute file trajectory.out is created in the src directory.  You can copy this file and run on a working directory or set PATH and use from anywhere.
-### 2. Run (steady state) CFD simulation
+### 2.2. Run CFD simulation
 This code is able to be coupled with steady state CFD simulation results, specifically OpenFOAM.  In terms of Fluent format, the mesh geometry is needed to be transformed to the OpenFOAM mesh format via `fluentToFoam` command from the OpenFOAM, which mean OpenFOAM installation is required anyways. The Fluent simulation result also need to be trasformed to OpenFOAM format using python script datToFoam.py located under the src directory.  Although the transformation script is, the result format of Fluent is limitted.  In case of OpenFOAM format, the format you can use that format without any changing. You can find OpenFOAM installation guide from web search and the learn how to run it from manual and abandant tutorials.  It is good choice to learn how to run CFD simulation with OpenFOAM due to the prospect of understanding of simulation rather than the affinity with this simulator.
-### 3. Set conditions
+### 2.3. Set conditions
 This simulator require additional directories and files to store the simulation results and to set the calculation condition including particle initial conditions as following explanation.
-#### 3.1 Creat directories
+#### 2.3.1. Creat directories
 Under the CFD simulation directory, you must have four directories which are named 1.constant, 2.20000 (this is not needed to be 20000 but default setting value is 20000 in this simulator), 3.result, and 4.particle. First directory is from early performed CFD simulation and mesh geometory information is stored in constant/polyMesh/ directory.  Second directory is also from CFD simulation and the name of directory is typically time of simulation if it is OpenFOAM, e.g., in general, there is a directory named 20000, when the ending time of the simulation is 20000.  The CFD result directory name can be changed from the calculation condition file as written later.  A system file may be also here for setting CFD simulation condition if you run CFD with OpenFOAM but it does not matter if you leave or keep it since the trajectory simulation does not never access system directory.  On the third directory named "result" is a blank directory that is required to store the trajectory simulation results.  Please make sure to creat this directory; this has been often forgotten to creat and it dump error "segmentation fault". On the fourth directory, the name is needed to be "particle" where should have trajectory simulation conditions file (/particle/conditions) and particle information file (/particle/particleSet).  Detail of these two files are described following sections 3.2 and 3.3, respectively.
-#### 3.2 conditions file in particle directory
+#### 2.3.2. conditions file in particle directory
 This code read a file "conditions" to set the trajectory simulaiton conditions.  A simulation condition is set in a line, e.g.,
 ~~~
 dragModel	Stokes-Millikan
@@ -64,7 +76,7 @@ startDir  100
 ~~~
 dimension 010 0
 ~~~
-#### 3.3 particleSet file in particle directory
+#### 2.3.3. particleSet file in particle directory
 This file stores the initial particle location and each particle size.  Initial line need to be `x y z dp` (again, the separation is tab) and from next lines, you can give the particle initial positions and diameters.  When the first particle is start from $(x, y, z) = (0, 0, 0)$ and second is $(x, y, z) = (1, 1, 1)$ and the particle diameters are 100 nm and 200 nm, it is expressed as
 ~~~
 x y z dp
@@ -72,7 +84,7 @@ x y z dp
 1 1 1 2e-7
 ...
 ~~~
-### 4 Run the simulation
+### 2.4. Run the simulation
 This code support the shared memorry parallel calculation with OpenMP.  Since the particle-particle interaction is not considered, when you track N different particles and use n thread, one thread indivisually calculate N/n particles.  The scalability is checked good until at least 10. The number of parallels is set by the command `export OMP_NUM_THREADS`, for example when you disire the 4 parallel you can type this from the terminal:
 ~~~
 export OMP_NUM_THREADS=4
@@ -81,7 +93,7 @@ After setting the threads, put trajectory.out file in the working directory and 
 ~~~
 ./trajectory
 ~~~
-### 5 Postprocessing
+### 2.5. Post-processing
 
 ## Author
 * Dr. Tomoya Tamadate

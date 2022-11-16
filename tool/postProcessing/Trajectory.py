@@ -22,7 +22,8 @@ axNormal(axs)
 
 center=np.array((0,0,0))    # center of calculation domain
 #directory="/home/tama3rdgen/jetaxis/NewMesh/100nm/"
-directory="/home/tama3rdgen/DMA/"
+#directory="/home/tama3rdgen/DMA/"
+directory="/home/tama3rdgen/MURI/OldNozzle/working/"
 Nparticle=int(np.loadtxt(directory+"result/nparticle"))
 
 skipLevel=2

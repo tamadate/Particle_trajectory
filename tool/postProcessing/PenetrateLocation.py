@@ -37,7 +37,6 @@ for penID in np.arange(9):
     dist=np.zeros((mappingInt,mappingInt))
     Iout=0
     Itot=np.size(data.T[0])
-
     for i in data:
         if(i[0]==0 and i[1]==0 and i[2]==0):
             Iout+=1
@@ -45,6 +44,7 @@ for penID in np.arange(9):
             ix=int((i[iX]-center[iX]+rout)/delta)
             iy=int((i[iY]-center[iY]+rout)/delta)
             dist[iy][ix]+=1
+            distv[iy][ix]+=datav[index][0]
 
     P=Iout/float(Itot)
     rout*=1e3
@@ -53,12 +53,13 @@ for penID in np.arange(9):
     axs.set_ylabel(r'$z$ [mm]',size=12)
     axs.set_xlim(-rout,rout)
     axs.set_ylim(-rout,rout)
-    DIST=np.max(dist)
+    DIST=np.max(distv)
     if(DIST==0):
         DIST=1
-    pl=axs.contourf(X*1e3,Y*1e3,dist/DIST,levels=np.linspace(0,1,100),cmap="gray")
+    pl=axs.contourf(X*1e3,Y*1e3,distv/DIST,levels=np.linspace(0,500,100),cmap="gray")
     axs.set_title("Penetration: {:.01f} %".format(P*100),size=15)
-    plt.colorbar(pl,ticks=np.array([0,0.2,0.4,0.6,0.8,1.0])).set_label(label="Normalized particle concentration [-]",size=12)
+    #plt.colorbar(pl,ticks=np.array([0,0.2,0.4,0.6,0.8,1.0])).set_label(label="Normalized particle concentration [-]",size=12)
+    plt.colorbar(pl,ticks=np.array([0,100,200,300,400,500])).set_label(label="Normalized particle concentration [-]",size=12)
 
     if(saveFigure):
         plt.savefig(directory+"location"+str(penID)+".png", dpi=1000)
