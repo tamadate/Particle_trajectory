@@ -2,15 +2,15 @@
 ## 1. Introduction
 This code is particle trajectory simulator supporting the shared memorry parallel calculation with OpenMP.  The trajectory simulaiton is couploed with a steady state field profiles calculated by computational fluid dynamics (CFD) simulation, i.e., velocity, pressure, temperature, gas density, etc. Only fluid influent to particle trajectory but the opposite direction interaction (particle to fluid) is not considered as well as particle-particle interaction, which it a method called 1 way coupling trajectory calculation method.  The OpenFOAM (https://www.openfoam.com/) mesh geometory file and field profiles are avairable as the input file structures without any changing.  Fluent results are also avairable but need to transform to OpenFOAM fomat.
 ## 2. Usage
-* [2.1. Building source code](#building-source-code)
-* [2.2. Run CFD simulation](#run-cfd-simulation)
-* [2.3. set-conditions](#set-conditions)
->* [2.3.1. Creat directories](#cread-directories)
->* [2.3.2 conditions file in particle directory](#conditions-file-in-particle-directory)
->* [2.3.3 particleSet file in particle directory](#particleset-file-in-particle-directory)
+* [2.1. Building source code](#21-building-source-code)
+* [2.2. Run CFD simulation](#22-run-cfd-simulation)
+* [2.3. Set conditions](#23-set-conditions)
+>* [2.3.1. Creat directories](#231-cread-directories)
+>* [2.3.2 conditions file in particle directory](#232-conditions-file-in-particle-directory)
+>* [2.3.3 particleSet file in particle directory](#233-particleset-file-in-particle-directory)
 
-* [2.4. Run the simulation](#run-the-simulation)
-* [2.5. Post-processing](#post-processing)
+* [2.4. Run the simulation](#24-run-the-simulation)
+* [2.5. Post-processing](#25-post-processing)
 
 
 ### 2.1. Building source code
@@ -94,6 +94,10 @@ After setting the threads, put trajectory.out file in the working directory and 
 ./trajectory
 ~~~
 ### 2.5. Post-processing
+
+
+## 3. License
+This code is an open-source package, meaning you can use or modify it under the terms and conditions of the GPL-v3 licence. You should have received a copy along with this package, if not please refer to [https://www.gnu.org/licenses/](https://www.gnu.org/licenses/).
 
 ## Author
 * Dr. Tomoya Tamadate
