@@ -4,13 +4,13 @@ This code is particle trajectory simulator supporting the shared memorry paralle
 ## 2. Usage
 * [2.1. Building source code](#21-building-source-code)
 * [2.2. Run CFD simulation](#22-run-cfd-simulation)
-* [2.3. set-conditions](#set-conditions)
->* [2.3.1. Creat directories](#cread-directories)
->* [2.3.2 conditions file in particle directory](#conditions-file-in-particle-directory)
->* [2.3.3 particleSet file in particle directory](#particleset-file-in-particle-directory)
+* [2.3. set-conditions](#23-set-conditions)
+>* [2.3.1. Creat directories](#231-cread-directories)
+>* [2.3.2 conditions file in particle directory](#232-conditions-file-in-particle-directory)
+>* [2.3.3 particleSet file in particle directory](#233-particleset-file-in-particle-directory)
 
-* [2.4. Run the simulation](#run-the-simulation)
-* [2.5. Post-processing](#post-processing)
+* [2.4. Run the simulation](#24-run-the-simulation)
+* [2.5. Post-processing](#25-post-processing)
 
 
 ### 2.1. Building source code
