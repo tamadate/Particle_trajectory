@@ -3,7 +3,7 @@
 This code is particle trajectory simulator supporting the shared memorry parallel calculation with OpenMP.  The trajectory simulaiton is couploed with a steady state field profiles calculated by computational fluid dynamics (CFD) simulation, i.e., velocity, pressure, temperature, gas density, etc. Only fluid influent to particle trajectory but the opposite direction interaction (particle to fluid) is not considered as well as particle-particle interaction, which it a method called 1 way coupling trajectory calculation method.  The OpenFOAM (https://www.openfoam.com/) mesh geometory file and field profiles are avairable as the input file structures without any changing.  Fluent results are also avairable but need to transform to OpenFOAM fomat.
 ## 2. Usage
 * [2.1. Building source code](#2.1.-building-source-code)
-* [2.2. Run CFD simulation](#2.2.-run-cfd-simulation)
+* [2.2. Run CFD simulation](#run-cfd-simulation)
 * [2.3. set-conditions](#set-conditions)
 >* [2.3.1. Creat directories](#cread-directories)
 >* [2.3.2 conditions file in particle directory](#conditions-file-in-particle-directory)
@@ -19,7 +19,7 @@ Download this code and prepare compilation environment (c++ compiler, c++11 stan
 make
 ~~~
 After waiting for several seconds, a execute file trajectory.out is created in the src directory.  You can copy this file and run on a working directory or set PATH and use from anywhere.
-### 2.2. Run CFD simulation
+### Run CFD simulation
 This code is able to be coupled with steady state CFD simulation results, specifically OpenFOAM.  In terms of Fluent format, the mesh geometry is needed to be transformed to the OpenFOAM mesh format via `fluentToFoam` command from the OpenFOAM, which mean OpenFOAM installation is required anyways. The Fluent simulation result also need to be trasformed to OpenFOAM format using python script datToFoam.py located under the src directory.  Although the transformation script is, the result format of Fluent is limitted.  In case of OpenFOAM format, the format you can use that format without any changing. You can find OpenFOAM installation guide from web search and the learn how to run it from manual and abandant tutorials.  It is good choice to learn how to run CFD simulation with OpenFOAM due to the prospect of understanding of simulation rather than the affinity with this simulator.
 ### 2.3. Set conditions
 This simulator require additional directories and files to store the simulation results and to set the calculation condition including particle initial conditions as following explanation.
