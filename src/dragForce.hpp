@@ -9,21 +9,21 @@
 class dragForceSM{
 	public:
 		void computeFD(Variables *vars, Flags *flags, particle &par);
-		virtual double computeCd(double Re, double Mach, double Cc);
+		virtual double computeCd(particle &par);
 	private:
 };
 
 // Morsi & Alexander (1972)
 class dragForceMA : public dragForceSM{
 	public:
-		double computeCd(double Re, double Mach, double Cc);
+		double computeCd(particle &par);
 	private:
 };
 
 // Singh et al. (2021)
 class dragForceSingh : public dragForceSM{
 	public:
-		double computeCd(double Re, double Mach, double Cc);
+		double computeCd(particle &par);
 	private:
 		//	Parameters for drag force
 		const double delta0=9.4; // or 9.06?
@@ -46,6 +46,6 @@ class dragForceSingh : public dragForceSM{
 // Loth model
 class dragForceLoth : public dragForceSM{
 	public:
-		double computeCd(double Re, double Mach, double Cc);
+		double computeCd(particle &par);
 	private:
 };

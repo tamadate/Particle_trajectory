@@ -22,17 +22,25 @@ trajectory::readCondition(void){
 	  }
       if(readings[0]=="dt") {
         if(readings[1]=="auto") flags->autoStep=1;
+				cout<<"dt: "<<readings[1]<<endl;
         //else dt=stod(readings[1]);
       }
+			else if(readings[0]=="gasType") {
+				if(readings[1]=="He") forces.push_back(new dragForceSingh);
+				if(readings[1]=="Air") forces.push_back(new dragForceSM);
+				cout<<"Gas type: "<<readings[1]<<endl;
+			}
       else if(readings[0]=="dragModel") {
         if(readings[1]=="Singh") forces.push_back(new dragForceSingh);
         if(readings[1]=="Stokes") forces.push_back(new dragForceSM);
         if(readings[1]=="Morsi") forces.push_back(new dragForceMA);
         if(readings[1]=="Loth") forces.push_back(new dragForceLoth);
+				cout<<"Drag model: "<<readings[1]<<endl;
       }
       else if(readings[0]=="Dispersion") {
         if(readings[1]=="Yes") flags->dispersionFlag=1;
         if(readings[1]=="No") flags->dispersionFlag=0;
+				cout<<"Dispersion: "<<readings[1]<<endl;
       }
       else if(readings[0]=="FroudeKrylov") {
         if(readings[1]=="Yes") flags->KFFlag=1;
@@ -42,6 +50,7 @@ trajectory::readCondition(void){
         if(readings[1]=="3D") flags->dimensionFlag=0;
         if(readings[1]=="2Dplane") flags->dimensionFlag=1;
         if(readings[1]=="2Daxi") flags->dimensionFlag=2;
+				cout<<"Dimension: "<<readings[1]<<endl;
         if(flags->dimensionFlag>0){
           if(readings[2]=="100") plane2D=0;
           if(readings[2]=="010") plane2D=1;
@@ -60,6 +69,7 @@ trajectory::readCondition(void){
       else if(readings[0]=="compressible") {
         if(readings[1]=="Yes") flags->compressFlag=1;
         if(readings[1]=="No") flags->compressFlag=0;
+				cout<<"Compressible: "<<readings[1]<<endl;
       }
       else if(readings[0]=="analytical") {
         if(readings[1]=="Yes") {
@@ -104,6 +114,7 @@ trajectory::readCFDresults(void){
 		readScalar(filepath,vars->T);
 		sprintf ( filepath, "%s/rho", startDir.c_str());
 		readScalar(filepath,vars->rho);
+		//readScalarDum(filepath,vars->rho, constRho);
 	}
 	if(flags->compressFlag==0){
 		sprintf (filepath, "%s/p", startDir.c_str());

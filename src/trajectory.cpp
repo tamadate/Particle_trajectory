@@ -51,16 +51,14 @@ trajectory::initialParticle(void){
   int ps=vars->particles.size();
 	for(auto &a:vars->particles){
 		int icell=a.cell;
-		double Kn=vars->lamda[icell]/a.dp;
-		double Cc=1+Kn*(A1+A2*exp(-A3/Kn));
-		a.Kn=Kn;
-		a.Cc=Cc;
-		double threePiMuDp_Cc=3*M_PI*vars->myu[icell]*a.dp/Cc;
-		a.Zp=1.6e-19/threePiMuDp_Cc;
-		a.beta=threePiMuDp_Cc/a.m;
 		a.dt=1/(40*a.beta);
 		for(int i=0; i<3; i++) a.v.x[i]=vars->U[icell].x[i]*0.99;   // initial velocity is 99% of fluid velocity
+  	calculateNonDimension(a);
 		for(auto &force : forces) force->computeFD(vars,flags,a);   // force calculation
+
+    double threePiMuDp_Cc=3*M_PI*vars->myu[icell]*a.dp/a.Cc;
+    a.Zp=1.6e-19/threePiMuDp_Cc;
+		a.beta=threePiMuDp_Cc/a.m;
 
   // initialize outParticles array (ending information of particles)
     outParticle op;

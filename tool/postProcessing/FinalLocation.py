@@ -21,8 +21,7 @@ fig, axs = plt.subplots(1,1,figsize=(7,5))
 axNormal(axs)
 
 center=np.array((0,0,0))    # center of calculation domain
-directory="/home/tama3rdgen/jetaxis/NewVersion/L18/25Torr/0.1um/"
-directory="/home/tama3rdgen/jetaxis/NewMesh/100mm/10um/"
+directory="/home/tama3rdgen/MURI/NewNozzle/results/10000/"
 data=np.loadtxt(directory+"finalPosition.dat")
 
 mappingInt=100

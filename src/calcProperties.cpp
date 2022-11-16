@@ -18,15 +18,18 @@ trajectory::calculatelamda(void){
 	}
 }
 
+
 void
-trajectory::computeReMach(particle &par){
+trajectory::calculateNonDimension(particle &par){
 	double dUx=vars->U[par.cell].x[0]+par.Urand.x[0]-par.v.x[0];
 	double dUy=vars->U[par.cell].x[1]+par.Urand.x[1]-par.v.x[1];
 	double dUz=vars->U[par.cell].x[2]+par.Urand.x[2]-par.v.x[2];
 	double U2=dUx*dUx+dUy*dUy+dUz*dUz;
 	double Umag=sqrt(U2);
-	double cg=sqrt(gamkb_m*vars->T[par.cell]);	// speed of sound
+	double cg=sqrt(gamkb_m*vars->T[par.cell]);
 
-	par.Re=vars->rho[par.cell]*Umag*par.dp/vars->myu[par.cell]+1e-20;	// Reynolds number (1e-20 is for preventing 0 division)
-	par.Mach=Umag/cg;	// Mach number
+	par.Re=vars->rho[par.cell]*Umag*par.dp/vars->myu[par.cell]+1e-100;
+	par.Mach=Umag/cg;
+	par.Kn=par.Mach/par.Re*Kn_coeff;
+	par.Cc=1+par.Kn*(A1+A2*exp(-A3/par.Kn));
 }
