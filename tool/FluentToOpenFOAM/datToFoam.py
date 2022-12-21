@@ -13,11 +13,11 @@ v=np.zeros((E,3))	# ((rho0, vx0, vy0, vz0, T0, p0),...)
 
 directory="/home/tama3rdgen/MURI/NewNozzle/"
 #directory="/home/tama3rdgen/MURI/newNozzle1_6mm/3Torr_Air_after/"
-directory="/home/tama3rdgen/MURI/NewNozzle_refine/working/"
-readFile="solution_refined2.dat"
+directory="/home/tama3rdgen/MURI/NewNozzle_After_He/working/"
+readFile="solutionHe.dat"
 
 if(exists(directory+"20000")==0):
-	os.system("mkdir 20000")
+	os.system("mkdir "+directory+"20000")
 
 print ("start to get data file: " + directory + readFile)
 fr=open(directory + readFile,"r")
