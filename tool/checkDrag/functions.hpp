@@ -168,7 +168,7 @@ std::vector<cell> cells;
 std::vector<int> neighbors;
 std::vector<int> owners;
 std::vector<outParticle> outParticles;
-std::vector<int> erasePID;
+
 
 
 void calculateMyu(Variables *vars){
@@ -258,7 +258,7 @@ void makeCells(){
 			norm.x[0]=Ay*Bz-Az*By;
 			norm.x[1]=Az*Bx-Ax*Bz;
 			norm.x[2]=Ax*By-Ay*Bx;
-			
+
 			double x3=X-x0;
 			double y3=Y-y0;
 			double z3=Z-z0;
@@ -279,7 +279,7 @@ void makeCells(){
 
 			a.norm.push_back(norm);
 
-				
+
 		}
 
 	}
@@ -321,11 +321,11 @@ void findParticle(Variables *vars){
 					point c=a.norm[k];
 					double naiseki=c.x[0]*(x-x0)+c.x[1]*(y-y0)+c.x[2]*(z-z0);
                     Dist+=naiseki;
-				}			
+				}
 				foundCells++;
 				if (Dist<minDist){
 					minDist=Dist;
-					vars->particles[i].cell=j;		
+					vars->particles[i].cell=j;
 				}
 			}
 		}
@@ -355,8 +355,3 @@ void initialParticle(Variables *vars){
 	}
 
 }
-
-
-
-	
-
