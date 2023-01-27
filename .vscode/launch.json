@@ -1,0 +1,29 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "C++ debug",
+        "type": "cppdbg",
+        "request": "launch",
+        "program": "${fileDirname}/../test/a.out",
+        "args": ["${fileDirname}/../test/brad.con", "1"],
+        "stopAtEntry": false,
+        "cwd": "${fileDirname}/../test/",
+        "environment": [],
+        "externalConsole": false, //set to true to see output in cmd instead
+        "MIMode": "gdb",
+        "miDebuggerPath": "/usr/bin/gdb",
+        "setupCommands": [
+          {
+            "description": "Enable pretty-printing for gdb",
+            "text": "-enable-pretty-printing",
+            "ignoreFailures": true
+          }
+        ],
+
+        "preLaunchTask": "C++ debug"
+      },
+
+      ]
+  }
+  
