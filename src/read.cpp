@@ -106,14 +106,20 @@ trajectory::readCFDresults(void){
 	readScalar(filepath,vars->p);
 	sprintf ( filepath, "%s/U", startDir.c_str());
 	readVector(filepath,vars->U);
+	
 
 	// read temperature and density field
 	// if it is incompressible, read pressure in stead
 	if(flags->compressFlag==1){
 		sprintf ( filepath, "%s/T", startDir.c_str());
 		readScalar(filepath,vars->T);
-		sprintf ( filepath, "%s/rho", startDir.c_str());
-		readScalar(filepath,vars->rho);
+		/*sprintf ( filepath, "%s/rho", startDir.c_str());
+		readScalar(filepath,vars->rho);*/
+		int N=vars->T.size();
+		// pV=nRT n/V=p/RT*0.028 mol/m3 
+		for(int i=0;i<N;i++){
+			vars->rho.push_back(0.028/8.314/vars->T[i]*vars->p[i]);
+		}
 		//readScalarDum(filepath,vars->rho, constRho);
 	}
 	if(flags->compressFlag==0){

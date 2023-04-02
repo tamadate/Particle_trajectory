@@ -1,6 +1,7 @@
 #include "trajectory.hpp"
 
 
+
 trajectory::trajectory(void){
 // Get number of thread for OpenMP
   #pragma omp parallel
