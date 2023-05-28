@@ -12,82 +12,110 @@ trajectory::readCondition(void){
 	string strPre;
 	ifstream stream("particle/condition");
 	while(getline(stream,str)) {
-	  int readFlag=0;
-	  string tmp;
-	  istringstream stream(str);
-	  std::vector<string> readings;
-	  string reading;
-	  while(getline(stream,reading,'\t')) {
-	    readings.push_back(reading);
-	  }
-      if(readings[0]=="dt") {
-        if(readings[1]=="auto") flags->autoStep=1;
-				cout<<"dt: "<<readings[1]<<endl;
-        //else dt=stod(readings[1]);
-      }
-			else if(readings[0]=="gasType") {
-				if(readings[1]=="He") forces.push_back(new dragForceSingh);
-				if(readings[1]=="Air") forces.push_back(new dragForceSM);
-				cout<<"Gas type: "<<readings[1]<<endl;
-			}
-      else if(readings[0]=="dragModel") {
-        if(readings[1]=="Singh") forces.push_back(new dragForceSingh);
-        if(readings[1]=="Stokes") forces.push_back(new dragForceSM);
-        if(readings[1]=="Morsi") forces.push_back(new dragForceMA);
-        if(readings[1]=="Loth") forces.push_back(new dragForceLoth);
-				cout<<"Drag model: "<<readings[1]<<endl;
-      }
-      else if(readings[0]=="Dispersion") {
-        if(readings[1]=="Yes") flags->dispersionFlag=1;
-        if(readings[1]=="No") flags->dispersionFlag=0;
-				cout<<"Dispersion: "<<readings[1]<<endl;
-      }
-      else if(readings[0]=="FroudeKrylov") {
-        if(readings[1]=="Yes") flags->KFFlag=1;
-        if(readings[1]=="No") flags->KFFlag=0;
-      }
-      else if(readings[0]=="dimension") {
-        if(readings[1]=="3D") flags->dimensionFlag=0;
-        if(readings[1]=="2Dplane") flags->dimensionFlag=1;
-        if(readings[1]=="2Daxi") flags->dimensionFlag=2;
-				cout<<"Dimension: "<<readings[1]<<endl;
-        if(flags->dimensionFlag>0){
-          if(readings[2]=="100") plane2D=0;
-          if(readings[2]=="010") plane2D=1;
-          if(readings[2]=="001") plane2D=2;
-          Axis=stod(readings[3]);
-        }
-      }
-			else if(readings[0]=="penetrate") {
-				penetrate p;
-				if(readings[1]=="100") p.face=0;
-				if(readings[1]=="010") p.face=1;
-				if(readings[1]=="001") p.face=2;
-				p.loc=stod(readings[2]);
-				penetrates.push_back(p);
-			}
-      else if(readings[0]=="compressible") {
-        if(readings[1]=="Yes") flags->compressFlag=1;
-        if(readings[1]=="No") flags->compressFlag=0;
-				cout<<"Compressible: "<<readings[1]<<endl;
-      }
-      else if(readings[0]=="analytical") {
-        if(readings[1]=="Yes") {
-          flags->analytical=1;
-          vars->analyticalStep=stod(readings[2]);
-        }
-        else if(readings[1]=="No") flags->analytical=0;
-      }
-      else if(readings[0]=="totalTime") totalTime=stod(readings[1]);
-      else if(readings[0]=="observeTime") observeTime=stod(readings[1]);
-      else if(readings[0]=="constTemp") constTemp=stod(readings[1]);
-      else if(readings[0]=="constRho") constRho=stod(readings[1]);
-      else if(readings[0]=="startDir") startDir=readings[1];
-      else if(readings[0]=="particleDensity") rho_p=stod(readings[1]);
-      else if(readings[0]=="deltaTrajectory") {readFlag=14; continue;}
-      else if(readings[0]=="inletFace") flags->inletFace=stoi(readings[1]);
+		int readFlag=0;
+		string tmp;
+		istringstream stream(str);
+		std::vector<string> readings;
+		string reading;
+		while(getline(stream,reading,'\t')) {
+			readings.push_back(reading);
+		}
 
-      else cout<<"Could not find syntax "<<readings[0]<<endl;
+		// time step
+		if(readings[0]=="dt") {
+			if(readings[1]=="auto") flags->autoStep=1;
+			cout<<"dt: "<<readings[1]<<endl;
+			//else dt=stod(readings[1]);
+		}
+		// gas type (currently you can select He or Air)
+		else if(readings[0]=="gasType") {
+			if(readings[1]=="He") forces.push_back(new dragForceSingh);
+			if(readings[1]=="Air") forces.push_back(new dragForceSM);
+			cout<<"Gas type: "<<readings[1]<<endl;
+		}
+		// model for the drag coefficient model
+		else if(readings[0]=="dragModel") {
+			if(readings[1]=="Singh") forces.push_back(new dragForceSingh);
+			if(readings[1]=="Stokes") forces.push_back(new dragForceSM);
+			if(readings[1]=="Morsi") forces.push_back(new dragForceMA);
+			if(readings[1]=="Loth") forces.push_back(new dragForceLoth);
+			cout<<"Drag model: "<<readings[1]<<endl;
+		}
+		// turbulent dispersion on or off
+		// you can select k-e or k-w as a RANS model
+		else if(readings[0]=="Dispersion") {
+			if(readings[1]=="k-e") flags->dispersionFlag=1;
+			if(readings[1]=="k-w") flags->dispersionFlag=2;
+			if(readings[1]=="No") flags->dispersionFlag=0;
+			cout<<"Dispersion: "<<readings[1]<<endl;
+		}
+		// Froude-Krylov force (force caused by the pressure difference)
+      	else if(readings[0]=="FroudeKrylov") {
+        	if(readings[1]=="Yes") flags->KFFlag=1;
+	        if(readings[1]=="No") flags->KFFlag=0;
+		}
+		// dimension of the CFD simulation
+      	else if(readings[0]=="dimension") {
+        	if(readings[1]=="3D") flags->dimensionFlag=0;
+			if(readings[1]=="2Dplane") flags->dimensionFlag=1;
+			if(readings[1]=="2Daxi") flags->dimensionFlag=2;
+			cout<<"Dimension: "<<readings[1]<<endl;
+			if(flags->dimensionFlag>0){
+				if(readings[2]=="100") plane2D=0;
+				if(readings[2]=="010") plane2D=1;
+				if(readings[2]=="001") plane2D=2;
+				Axis=stod(readings[3]);
+        	}
+		}
+		// tracking intermediate properties
+		else if(readings[0]=="penetrate") {
+			penetrate p;
+			if(readings[1]=="100") p.face=0;
+			if(readings[1]=="010") p.face=1;
+			if(readings[1]=="001") p.face=2;
+			p.loc=stod(readings[2]);
+			penetrates.push_back(p);
+		}
+		// fluid compressibility yes or no
+      	else if(readings[0]=="compressible") {
+			if(readings[1]=="Yes") flags->compressFlag=1;
+			if(readings[1]=="No") flags->compressFlag=0;
+			cout<<"Compressible: "<<readings[1]<<endl;
+		}
+		// set particle initial velocities (default is fluid)
+		// fluid: 99% of the fluid velocity
+		// file: velocities are given in the file
+		else if(readings[0]=="initialVelocity") {
+			flags->v0=1;
+			cout<<"Reading initial velocity file"<<endl;
+		}
+		// not using now
+      	else if(readings[0]=="analytical") {
+			if(readings[1]=="Yes") {
+				flags->analytical=1;
+				vars->analyticalStep=stod(readings[2]);
+			}
+			else if(readings[1]=="No") flags->analytical=0;
+		}
+		// total simulation time step
+		else if(readings[0]=="totalTime") totalTime=stod(readings[1]);
+		// not using now
+		else if(readings[0]=="observeTime") observeTime=stod(readings[1]);
+		// set constant temperature in case of the incompressibel flow (T=300 K is default)
+		else if(readings[0]=="constTemp") constTemp=stod(readings[1]);
+		// set constant fluid density in case of the incompressibel flow (rho=1.2 kg/m3 is default)
+		else if(readings[0]=="constRho") constRho=stod(readings[1]);
+		// set name of CFD simulation result (20000 is the default)
+		else if(readings[0]=="startDir") startDir=readings[1];
+		// particle density (default is 1000 kg/m3)
+		else if(readings[0]=="particleDensity") rho_p=stod(readings[1]);
+		// not using now
+		else if(readings[0]=="deltaTrajectory") {readFlag=14; continue;}
+		// not using now
+		else if(readings[0]=="inletFace") flags->inletFace=stoi(readings[1]);
+		
+		// error check
+		else cout<<"Could not find syntax "<<readings[0]<<endl;
 	}
 	stream.close();
 }
@@ -106,6 +134,7 @@ trajectory::readCFDresults(void){
 	readScalar(filepath,vars->p);
 	sprintf ( filepath, "%s/U", startDir.c_str());
 	readVector(filepath,vars->U);
+	
 
 	// read temperature and density field
 	// if it is incompressible, read pressure in stead
@@ -114,7 +143,6 @@ trajectory::readCFDresults(void){
 		readScalar(filepath,vars->T);
 		sprintf ( filepath, "%s/rho", startDir.c_str());
 		readScalar(filepath,vars->rho);
-		//readScalarDum(filepath,vars->rho, constRho);
 	}
 	if(flags->compressFlag==0){
 		sprintf (filepath, "%s/p", startDir.c_str());
@@ -124,11 +152,21 @@ trajectory::readCFDresults(void){
 
 	// read k and epsilon field
 	// if it is laminar, read pressure in stead
-	if(flags->dispersionFlag){
+	if(flags->dispersionFlag==1){
 		sprintf ( filepath, "%s/k", startDir.c_str());
 		readScalar(filepath,vars->k);
 		sprintf ( filepath, "%s/epsilon", startDir.c_str());
 		readScalar(filepath,vars->epsilon);
+	}
+	if(flags->dispersionFlag==2){
+		sprintf ( filepath, "%s/k", startDir.c_str());
+		readScalar(filepath,vars->k);
+		sprintf ( filepath, "%s/omega", startDir.c_str());
+		readScalar(filepath,vars->epsilon);
+		int Ncell=vars->epsilon.size();
+		for(int i=0; i<Ncell; i++){
+			vars->epsilon[i]*=vars->k[i];
+		}
 	}
 	if(flags->dispersionFlag==0){
 		sprintf (filepath, "%s/p", startDir.c_str());

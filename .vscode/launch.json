@@ -5,10 +5,10 @@
         "name": "C++ debug",
         "type": "cppdbg",
         "request": "launch",
-        "program": "${fileDirname}/trajectory.out",
-        "args": ["${fileDirname}"],
+        "program": "/home/tama3rdgen/HVVI/small_fine/case1_disp/CFD/trajectory.out",
+        "args": ["/home/tama3rdgen/HVVI/small_fine/case1_disp/CFD"],
         "stopAtEntry": false,
-        "cwd": "${fileDirname}",
+        "cwd": "/home/tama3rdgen/HVVI/small_fine/case1_disp/CFD",
         "environment": [],
         "externalConsole": false, //set to true to see output in cmd instead
         "MIMode": "gdb",

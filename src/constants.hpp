@@ -55,9 +55,12 @@ const double gam=Cp/Cv;*/
 const double lamda_coeff=sqrt(M_PI*mgas*0.5/kb);
 const double Kn_coeff=sqrt(M_PI*gam*0.5);
 const double gamkb_m=gam*kb/mgas;
-const double meshScale=1e-7;
+const double meshScale=1e-8;
 
 // Parameters for slip correction
 const double A1=2.514;
 const double A2=0.8;
 const double A3=0.55;
+
+
+

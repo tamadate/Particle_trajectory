@@ -10,7 +10,7 @@ trajectory::readScalar(char *readFile, std::vector<double> &variable){
 	ifstream stream(readFile);
 	while(getline(stream,str)) {
 		if (str=="(") {iflag=1; continue;}
-		if (str==")") {iflag=0; continue;}
+		if (str==")" || str==");") {iflag=0; continue;}
 		if (iflag==1){
 			variable.push_back(stod(str));
 		}
@@ -34,7 +34,7 @@ trajectory::readVector(char *readFile, std::vector<point> &variable){
 	ifstream stream(readFile);
 	while(getline(stream,str)) {
 		if (str=="(") {iflag=1; continue;}
-		if (str==")") {iflag=0; continue;}
+		if (str==")" || str==");" ) {iflag=0; continue;}
 		if (iflag==1){
 			str=str.substr(str.find("(")+1);
 			str=str.erase(str.find(")"));
