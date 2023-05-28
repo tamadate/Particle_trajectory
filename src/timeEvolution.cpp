@@ -19,14 +19,17 @@ double
 trajectory::euler(particle &a){
 	double timeStep;
 	// calculate time step
-	if(flags->autoStep) {
+	//if(flags->autoStep) {
 		double v2=a.v.x[0]*a.v.x[0]+a.v.x[1]*a.v.x[1]+a.v.x[2]*a.v.x[2];
 		double vmag=sqrt(v2);
 		double v2rand=a.Urand.x[0]*a.Urand.x[0]+a.Urand.x[1]*a.Urand.x[1]+a.Urand.x[2]*a.Urand.x[2];
 		if(v2rand>v2) vmag=sqrt(v2rand);
-		timeStep=meshScale/vmag;		// 1e-6 is scale of cell
+		timeStep=meshScale/vmag;		
 		//dt=a.dt;
-	}
+	//}
+
+
+	if(a.dt<timeStep) timeStep=a.dt;
 
 	// a.tini is remained life time of dispersion
 	// if it is smaller than timeStep

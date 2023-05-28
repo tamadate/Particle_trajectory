@@ -36,7 +36,7 @@ trajectory::findParticleFace(std::vector<cell> targetCells){
 			double y=vars->particles[i].x.x[1];
 			double z=vars->particles[i].x.x[2];
 			int cellSize=cells.size();
-	    double minDist=1e15;
+	    	double minDist=1e15;
 
 			/*
 				This loop calculate the inner product of particle position vector with norm vector of each faces
@@ -113,7 +113,7 @@ trajectory::findParticleFace(std::vector<cell> targetCells){
 						double z0=points[c0].x[2];
 						point c=a.norm[k];
 						double naiseki=c.x[0]*(x-x0)+c.x[1]*(y-y0)+c.x[2]*(z-z0);
-            Dist+=naiseki;
+            			Dist+=naiseki;
 					}
 					if (Dist<minDist){
 						minDist=Dist;

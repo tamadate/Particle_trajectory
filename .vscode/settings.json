@@ -6,6 +6,8 @@
         "typeinfo": "cpp",
         "deque": "cpp",
         "vector": "cpp",
-        "iosfwd": "cpp"
+        "iosfwd": "cpp",
+        "functional": "cpp",
+        "numeric": "cpp"
     }
 }

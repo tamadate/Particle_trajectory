@@ -5,28 +5,26 @@ class Flags {
 	private:
 
   public:
-		int Nth;
-		int dragFlag;					// Type of drag force function
 		int KFFlag;						// Froude-Krylov force?
 		int compressFlag;			// Compressible flow?
 		int dispersionFlag;		// Turbulent dispersion?
 		int dimensionFlag;		// 2D or 3D?
-		int initialBreakFlag; // break flag at initial (in initial statement fault case)
 		int autoStep;					// Time step is auto? or fix?
 		int analytical;				// Use analytical solution?
 		int inletFace;				// Particle inlet face number (this is not avairable now)
+		bool v0;		// if v0=0, particle initial velocity is 99% of fluid velocity
+					// if v0=1, particle initial velocity is given in the velocity setting file
 
 
 		Flags(void){
-			int dragFlag=1;
-			int autoStep=0;
-			int KFFlag=0;
-			int dispersionFlag=0;
-			int compressFlag=0;
-			int dimensionFlag=0;
-			int initialBreakFlag=0;
-			int analytical=0;
-			int inletFace=-1;
+			autoStep=0;
+			KFFlag=0;
+			dispersionFlag=0;
+			compressFlag=0;
+			dimensionFlag=0;
+			analytical=0;
+			inletFace=-1;
+			v0=0;
 		};
 		~Flags(void){};
 };
