@@ -24,7 +24,7 @@ trajectory::readCondition(void){
 		// time step
 		if(readings[0]=="dt") {
 			if(readings[1]=="auto") flags->autoStep=1;
-			cout<<"dt: "<<readings[1]<<endl;
+			cout<<"Time step: "<<readings[1]<<endl;
 			//else dt=stod(readings[1]);
 		}
 		// gas type (currently you can select He or Air)

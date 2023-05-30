@@ -45,12 +45,6 @@ trajectory::outputInitial(void){
 		f=fopen(filepath, "w");
 		fprintf(f,"%e\t%e\t%e\t%e\n", a.v.x[0], a.v.x[1], a.v.x[2],0.0);
 		fclose(f);
-
-		// particle position (output interval is controled by the migration distance but not time)
-		/*sprintf(filepath, "result/trajectory.%d", int(a.id));
-		f=fopen(filepath, "w");
-		fprintf(f,"%e\t%e\t%e\n", a.x.x[0], a.x.x[1], a.x.x[2]);
-		fclose(f);*/
 	}
 
 	// number of particles
