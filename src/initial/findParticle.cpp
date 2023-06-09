@@ -1,4 +1,4 @@
-#include "trajectory.hpp"
+#include "../trajectory.hpp"
 
 // Find cell id where particle is existing
 

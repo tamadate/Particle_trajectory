@@ -24,6 +24,29 @@
         "preLaunchTask": "C++ debug"
       },
 
+      {
+        "name": "C++ debug room",
+        "type": "cppdbg",
+        "request": "launch",
+        "program": "/home/tama3rdgen/DropBox/Dropbox/A_project/room/trajectory.out",
+        "args": [],
+        "stopAtEntry": false,
+        "cwd": "/home/tama3rdgen/DropBox/Dropbox/A_project/room/",
+        "environment": [],
+        "externalConsole": false, //set to true to see output in cmd instead
+        "MIMode": "gdb",
+        "miDebuggerPath": "/usr/bin/gdb",
+        "setupCommands": [
+          {
+            "description": "Enable pretty-printing for gdb",
+            "text": "-enable-pretty-printing",
+            "ignoreFailures": true
+          }
+        ],
+
+        "preLaunchTask": "C++ debug"
+      },
+
       ]
   }
   

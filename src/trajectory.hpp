@@ -1,11 +1,13 @@
 #pragma once
-#include "forces/dragForce.hpp"
+#include "forces/force.hpp"
+#include "forces/drag/drag.hpp"
+#include "forces/gravity.hpp"
 
 class trajectory{
 	public:
 	Variables *vars;	// pointer for variables
 	Flags *flags;			// pointer for flags
-	std::vector<dragForceSM*> forces;	// pointer array for force functions working on the particle
+	std::vector<force*> forces;	// pointer array for force functions working on the particle
 
 	int Nth;	// Number of parallel (OpenMP)
 	double rho_p;									// particle density
@@ -16,11 +18,8 @@ class trajectory{
 	int plane2D;									// face of 2D simulation (0:y-z, 1:x-z, 2:x-y)
 	string startDir;							// start directory name (20000 is default)
 	double Axis;									// axis of 2D axi-symmetric simulation
-	double flag;									// NOT USED?
 	char filepath[100];						// file path
 	int boundaryStartID;					// boundary start face id
-	double constTemp;							// constant temperature for incompressible flow
-	double constRho;							// constant density for incompressible flow
 	double timer;
 	FILE*f;
 	FILE*file;
@@ -45,7 +44,6 @@ class trajectory{
 	void calculatelamda(void);
 	void calculateNonDimension(particle &par);
 
-
 	// Simualtion geometrical information
 	std::vector<face> faces;
 	std::vector<point> points;
@@ -68,13 +66,13 @@ class trajectory{
 	void readVectorDum(char *readFile, std::vector<point> &variable, double value);
 	void readParticles(void);
 	void readCondition(void);
-	void readCFDresults(void);
 
 	// Initialization
 	void initialParticle(void);
 	void findParticle(void);
 	void findParticleFace(std::vector<cell> cells);
 	void setInitialVelocity(void);
+	void setDefault(void);
 
 	// Export functions
 	void output(particle a, double time, int nth);
@@ -91,7 +89,7 @@ class trajectory{
 	}
 
 	void initialize(particle &par, int nth){
-	if(flags->dispersionFlag) par.update=1;
+		if(flags->dispersionFlag) par.update=1;
 		else {
 			par.tini=1e10;
 			par.update=0;

@@ -7,9 +7,9 @@
             "args": [
                 "-g",
                 "-o",
-                "${workspaceFolder}/testCase/CFD/trajectory.out",
+                "/home/tama3rdgen/DropBox/Dropbox/A_project/room/trajectory.out",
                 "${workspaceFolder}/src/*cpp", 
-                "${workspaceFolder}/src/*/*cpp",
+                "${workspaceFolder}/src/*/*cpp", 
                 "-std=c++11",
                 "-fopenmp"
             ],

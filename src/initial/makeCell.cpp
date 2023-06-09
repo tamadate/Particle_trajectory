@@ -1,4 +1,4 @@
-#include "trajectory.hpp"
+#include "../trajectory.hpp"
 
 void
 trajectory::makeCells(void){

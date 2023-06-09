@@ -1,4 +1,4 @@
-#include "trajectory.hpp"
+#include "../trajectory.hpp"
 
 
 double
@@ -37,8 +37,15 @@ trajectory::euler(particle &a){
 		timeStep=a.tini;
 		a.update=1;
 	}
-	for(auto &force : forces) force->computeFD(vars,flags,a);
+
+	// compute forces
+	for(int i=0; i<3; i++) a.F.x[i]=0;
+	for(auto &force : forces) force->compute(a);
+
+	// velocity update
 	for(int i=0; i<3; i++) a.v.x[i]+=timeStep*a.F.x[i];
+
+	// position update
 	for(int i=0; i<3; i++) a.x.x[i]+=timeStep*a.v.x[i];
 
   	if(a.x.x[plane2D]<Axis && flags->dimensionFlag>0) {
@@ -86,11 +93,11 @@ trajectory::analytical(particle &a){
 	a.x.x[1]+=Uy*timeStep-dvyEXP/a.beta;
 	a.x.x[2]+=Uz*timeStep-dvzEXP/a.beta;
 
-  if(a.x.x[plane2D]<Axis && flags->dimensionFlag>0) {
-    a.x.x[plane2D]=2*Axis-a.x.x[plane2D];
-    a.v.x[plane2D]*=-1.0;
-    a.F.x[plane2D]*=-1.0;
-    a.reflect*=-1;
+	if(a.x.x[plane2D]<Axis && flags->dimensionFlag>0) {
+		a.x.x[plane2D]=2*Axis-a.x.x[plane2D];
+		a.v.x[plane2D]*=-1.0;
+		a.F.x[plane2D]*=-1.0;
+		a.reflect*=-1;
 	}
 	a.tini-=timeStep;
 

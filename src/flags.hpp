@@ -5,8 +5,6 @@ class Flags {
 	private:
 
   public:
-		int KFFlag;						// Froude-Krylov force?
-		int compressFlag;			// Compressible flow?
 		int dispersionFlag;		// Turbulent dispersion?
 		int dimensionFlag;		// 2D or 3D?
 		int autoStep;					// Time step is auto? or fix?
@@ -18,9 +16,7 @@ class Flags {
 
 		Flags(void){
 			autoStep=0;
-			KFFlag=0;
 			dispersionFlag=0;
-			compressFlag=0;
 			dimensionFlag=0;
 			analytical=0;
 			inletFace=-1;
