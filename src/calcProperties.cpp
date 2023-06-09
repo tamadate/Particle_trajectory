@@ -26,7 +26,8 @@ trajectory::calculateNonDimension(particle &par){
 	double dUz=vars->U[par.cell].x[2]+par.Urand.x[2]-par.v.x[2];
 	double U2=dUx*dUx+dUy*dUy+dUz*dUz;
 	double Umag=sqrt(U2);
-	double cg=sqrt(gamkb_m*vars->T[par.cell]);
+
+	double cg=sqrt(gamkb_m*vars->T[par.cell]);	// speed of sound
 
 	par.Re=vars->rho[par.cell]*Umag*par.dp/vars->myu[par.cell]+1e-100;
 	par.Mach=Umag/cg;

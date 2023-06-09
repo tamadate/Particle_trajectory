@@ -1,4 +1,4 @@
-#include "trajectory.hpp"
+#include "../trajectory.hpp"
 
 // Reading funcitons for OpenFOAM style simulation results
 

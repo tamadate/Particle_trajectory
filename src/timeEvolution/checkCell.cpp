@@ -1,4 +1,4 @@
-#include "trajectory.hpp"
+#include "../trajectory.hpp"
 
 //  Check if particle stay current cell or move to next cell or hit to boundary
 int

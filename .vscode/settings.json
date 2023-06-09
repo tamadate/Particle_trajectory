@@ -8,6 +8,7 @@
         "vector": "cpp",
         "iosfwd": "cpp",
         "functional": "cpp",
-        "numeric": "cpp"
+        "numeric": "cpp",
+        "*.ipp": "cpp"
     }
 }

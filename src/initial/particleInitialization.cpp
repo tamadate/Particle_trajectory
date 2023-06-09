@@ -1,4 +1,4 @@
-#include "trajectory.hpp"
+#include "../trajectory.hpp"
 
 // initialization of the particle cell id and setting initial velocity
 void
@@ -13,7 +13,7 @@ trajectory::initialParticle(void){
         for(int i=0; i<3; i++) a.v.x[i]=vars->U[icell].x[i]*0.99;   // initial velocity is 99% of fluid velocity
         if(flags->v0) setInitialVelocity(); // if v0 flag is, set initial velocity through velocity file
         calculateNonDimension(a); // calculate non dimensional parameters (Re, Kn, and Mach numbers)
-        for(auto &force : forces) force->computeFD(vars,flags,a);   // force calculation
+        for(auto &force : forces) force->compute(a);   // force calculation
 
         double threePiMuDp_Cc=3*M_PI*vars->myu[icell]*a.dp/a.Cc;    // friction factor
         a.Zp=1.6e-19/threePiMuDp_Cc;    // electrical mobility
