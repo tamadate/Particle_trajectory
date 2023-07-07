@@ -19,7 +19,9 @@ class Variables {
 		std::vector<particle> particles;
 		double delta_r2;
 		std::vector<double> time;
-		double analyticalStep;
+		double meshScale;
+		double analFactor;
+		double dt;
 
 		Variables(void){};
 		~Variables(void){};

@@ -10,7 +10,7 @@ int main(int argc,char *argv[]){
 	cout<<"*** University of Minnesota        ***"<<endl;
 	cout<<"*** Kanazawa University            ***"<<endl;
 	cout<<"**************************************"<<endl;
-	
+
 	// trajectory class is initialized with constractor (see trajectory.cpp)
 	trajectory *tra = new trajectory( );
 	// This is main part of this simulaiton

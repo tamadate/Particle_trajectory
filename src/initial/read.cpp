@@ -23,9 +23,16 @@ trajectory::readCondition(void){
 
 		// time step
 		if(readings[0]=="dt") {
-			if(readings[1]=="auto") flags->autoStep=1;
-			cout<<"Time step: "<<readings[1]<<endl;
-			//else dt=stod(readings[1]);
+			if(readings[1]=="auto") {
+				flags->autoStep=true;
+				vars->meshScale=stod(readings[2]);
+				cout<<"Auto time step: "<<vars->meshScale<<endl;
+			}
+			else if(readings[1]=="fix"){
+				flags->autoStep=false;
+				vars->dt=stod(readings[2]);
+				cout<<"Fixed time step: "<<vars->dt<<endl;
+			}
 		}
 		// gas type (currently you can select He or Air)
 		else if(readings[0]=="gasType") {
@@ -62,7 +69,7 @@ trajectory::readCondition(void){
 					vars->epsilon[i]*=vars->k[i];
 				}
 			}
-			if(readings[1]=="No") {
+			if(readings[1]=="No" || readings[1]=="no") {
 				flags->dispersionFlag=0;
 				sprintf (filepath, "%s/p", startDir.c_str());
 				readScalarDum(filepath,vars->k, 0);
@@ -72,11 +79,11 @@ trajectory::readCondition(void){
 		}
 		// Froude-Krylov force (force caused by the pressure difference)
       	else if(readings[0]=="FroudeKrylov") {
-        	if(readings[1]=="Yes") {
+        	if(readings[1]=="Yes" || readings[1]=="yes") {
 				sprintf ( filepath, "%s/dp", startDir.c_str());
 				readVector(filepath,vars->dp);
 			}
-	        if(readings[1]=="No") {
+	        if(readings[1]=="No" || readings[1]=="no") {
 				sprintf ( filepath, "%s/p", startDir.c_str());
 				readVectorDum(filepath,vars->dp, 0);
 			}
@@ -105,13 +112,13 @@ trajectory::readCondition(void){
 		}
 		// fluid compressibility yes or no
       	else if(readings[0]=="compressible") {
-			if(readings[1]=="Yes") {
+			if(readings[1]=="Yes" || readings[1]=="yes") {
 				sprintf ( filepath, "%s/T", startDir.c_str());
 				readScalar(filepath,vars->T);
 				sprintf ( filepath, "%s/rho", startDir.c_str());
 				readScalar(filepath,vars->rho);
 			}
-			if(readings[1]=="No") {
+			if(readings[1]=="No" || readings[1]=="no") {
 				sprintf (filepath, "%s/p", startDir.c_str());
 				readScalarDum(filepath,vars->T, stod(readings[2]));
 				readScalarDum(filepath,vars->rho, stod(readings[3]));
@@ -127,11 +134,15 @@ trajectory::readCondition(void){
 		}
 		// not using now
       	else if(readings[0]=="analytical") {
-			if(readings[1]=="Yes") {
+			if(readings[1]=="Yes" || readings[1]=="yes") {
 				flags->analytical=1;
-				vars->analyticalStep=stod(readings[2]);
+				vars->analFactor=stod(readings[2]);
+				cout<<"Use analytical mode: "<<vars->analFactor<<endl;
 			}
-			else if(readings[1]=="No") flags->analytical=0;
+			else if(readings[1]=="No" || readings[1]=="no") {
+				flags->analytical=0;
+				cout<<"Not use analytical mode"<<endl;
+			}
 		}
 		// total simulation time step
 		else if(readings[0]=="totalTime") totalTime=stod(readings[1]);
@@ -146,10 +157,13 @@ trajectory::readCondition(void){
 			readVector(filepath,vars->U);
 			cout<<"Start directory: "<<readings[1]<<endl;
 		}
-		// not using now
+		// gravity setting
 		else if(readings[0]=="gravity") {
 			gravity *grav = new gravity(stod(readings[1]),stod(readings[2]),stod(readings[3])); // generate variables class
 			forces.push_back(grav);
+			gAnal[0] = stod(readings[1]);
+			gAnal[1] = stod(readings[2]);
+			gAnal[2] = stod(readings[3]);
 		}
 		// particle density (default is 1000 kg/m3)
 		else if(readings[0]=="particleDensity") rho_p=stod(readings[1]);
