@@ -9,6 +9,7 @@ trajectory::calculateMyu(void){
 	}
 }
 
+
 void
 trajectory::calculatelamda(void){
 	int fieldSize=vars->T.size();
@@ -33,4 +34,7 @@ trajectory::calculateNonDimension(particle &par){
 	par.Mach=Umag/cg;
 	par.Kn=par.Mach/par.Re*Kn_coeff;
 	par.Cc=1+par.Kn*(A1+A2*exp(-A3/par.Kn));
+	double threePiMuDp_Cc=3*M_PI*vars->myu[par.cell]*par.dp/par.Cc;
+	par.Zp=1.6e-19/threePiMuDp_Cc;
+	par.beta=threePiMuDp_Cc/par.m;
 }

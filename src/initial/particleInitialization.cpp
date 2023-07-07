@@ -9,7 +9,7 @@ trajectory::initialParticle(void){
     int ps=vars->particles.size(); // total number of particles
     for(auto &a:vars->particles){
         int icell=a.cell;   // cell index
-        a.dt=1/(100*a.beta);    // time step
+        a.dt=1/(2*a.beta);    // time step
         for(int i=0; i<3; i++) a.v.x[i]=vars->U[icell].x[i]*0.99;   // initial velocity is 99% of fluid velocity
         if(flags->v0) setInitialVelocity(); // if v0 flag is, set initial velocity through velocity file
         calculateNonDimension(a); // calculate non dimensional parameters (Re, Kn, and Mach numbers)

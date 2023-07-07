@@ -36,6 +36,7 @@ class trajectory{
 	double timeEvolution(particle &a);
 	double euler(particle &a);
 	double analytical(particle &a);
+	double gAnal[3];
 	int checkCell(int pid);
 	int boundAction(int faceID, int pid, point norm);
 
@@ -91,13 +92,17 @@ class trajectory{
 	void initialize(particle &par, int nth){
 		if(flags->dispersionFlag) par.update=1;
 		else {
-			par.tini=1e10;
+			par.tini=1e15;
 			par.update=0;
 		}
 	}
 
 	trajectory(void);
-	~trajectory(void){};
+	~trajectory(void){
+		gAnal[0]=0;
+		gAnal[1]=0;
+		gAnal[2]=0;
+	};
 
 	private:
 };

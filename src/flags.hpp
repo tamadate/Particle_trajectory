@@ -7,7 +7,7 @@ class Flags {
   public:
 		int dispersionFlag;		// Turbulent dispersion?
 		int dimensionFlag;		// 2D or 3D?
-		int autoStep;					// Time step is auto? or fix?
+		bool autoStep;					// Time step is auto? or fix?
 		int analytical;				// Use analytical solution?
 		int inletFace;				// Particle inlet face number (this is not avairable now)
 		bool v0;		// if v0=0, particle initial velocity is 99% of fluid velocity
@@ -15,7 +15,7 @@ class Flags {
 
 
 		Flags(void){
-			autoStep=0;
+			autoStep=true;
 			dispersionFlag=0;
 			dimensionFlag=0;
 			analytical=0;
