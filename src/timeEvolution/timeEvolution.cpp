@@ -76,9 +76,9 @@ trajectory::analytical(particle &a){
 	}
 
 	// fluid velocity including eddy velocity
-	double Ux=vars->U[a.cell].x[0]+a.Urand.x[0];
-	double Uy=vars->U[a.cell].x[1]+a.Urand.x[1];
-	double Uz=vars->U[a.cell].x[2]+a.Urand.x[2];
+	double Ux=vars->U[a.cell].x[0]+a.Urand.x[0]+gAnal[0]/a.beta;;
+	double Uy=vars->U[a.cell].x[1]+a.Urand.x[1]+gAnal[1]/a.beta;;
+	double Uz=vars->U[a.cell].x[2]+a.Urand.x[2]+gAnal[2]/a.beta;
 	// relative velocity
 	double dvx=a.v.x[0]-Ux;
 	double dvy=a.v.x[1]-Uy;
