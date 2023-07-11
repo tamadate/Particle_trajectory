@@ -38,7 +38,7 @@ class trajectory{
 	double analytical(particle &a);
 	double gAnal[3];
 	int checkCell(int pid);
-	int boundAction(int faceID, int pid, point norm);
+	int boundAction(int faceID, int pid, point norm, double dot);
 
 	// Physical properties calculation functions (see calcProperties.cpp)
 	void calculateMyu(void);

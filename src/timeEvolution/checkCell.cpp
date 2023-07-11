@@ -29,8 +29,8 @@ trajectory::checkCell(int pid){
 			// if hit face is the boundary face:
 	    	if(b>boundaryStartID-1)	{
 				if(inProduct<vars->particles[pid].dp*0.5){
-				loopFlag=boundAction(b,pid,c); // 0:continue, -1:out from bound, 1:move to next cell
-			    if(loopFlag<0) break;
+					loopFlag=boundAction(b,pid,c,inProduct); // 0:continue, -1:out from bound, 1:move to next cell
+					if(loopFlag<0) break;
 		    	}
   			}
 			// if hit face is "not" boundary face:
@@ -63,7 +63,7 @@ trajectory::checkCell(int pid){
 
 
 int
-trajectory::boundAction(int faceID, int pid, point norm){
+trajectory::boundAction(int faceID, int pid, point norm, double dot){
 	int boundSize=boundaries.size();
 	int returnInt=0;		// return value (-1: end simulation, 1: continue simulation)
 	for(int i=0; i<boundSize; i++){
@@ -85,34 +85,36 @@ trajectory::boundAction(int faceID, int pid, point norm){
 			 If the boundary is symmetryPlane, the particle is refrected.
 			 Return value is 1 (continue)
 			*/
-			/*if(boundaries[i].type=="symmetryPlane"){
-				double b0=vars->particles[pid].x.x[0]-points[faces[faceID].iface[0]].x[0];
-				double b1=vars->particles[pid].x.x[1]-points[faces[faceID].iface[0]].x[1];
-				double b2=vars->particles[pid].x.x[2]-points[faces[faceID].iface[0]].x[2];
-				double nb0=norm.x[0]*b0+norm.x[1]*b1+norm.x[2]*b2;
-				vars->particles[pid].x.x[0]-=2*nb0*norm.x[0];
-				vars->particles[pid].x.x[1]-=2*nb0*norm.x[1];
-				vars->particles[pid].x.x[2]-=2*nb0*norm.x[2];
+			if(dot<0){
+				if(boundaries[i].type=="symmetryPlane"||boundaries[i].type=="symmetry"){
+					double b0=vars->particles[pid].x.x[0]-points[faces[faceID].iface[0]].x[0];
+					double b1=vars->particles[pid].x.x[1]-points[faces[faceID].iface[0]].x[1];
+					double b2=vars->particles[pid].x.x[2]-points[faces[faceID].iface[0]].x[2];
+					double nb0=norm.x[0]*b0+norm.x[1]*b1+norm.x[2]*b2;
+					vars->particles[pid].x.x[0]-=2*nb0*norm.x[0];
+					vars->particles[pid].x.x[1]-=2*nb0*norm.x[1];
+					vars->particles[pid].x.x[2]-=2*nb0*norm.x[2];
 
-				double v0=vars->particles[pid].v.x[0];
-				double v1=vars->particles[pid].v.x[1];
-				double v2=vars->particles[pid].v.x[2];
-				double nv0=norm.x[0]*v0+norm.x[1]*v1+norm.x[2]*v2;
+					double v0=vars->particles[pid].v.x[0];
+					double v1=vars->particles[pid].v.x[1];
+					double v2=vars->particles[pid].v.x[2];
+					double nv0=norm.x[0]*v0+norm.x[1]*v1+norm.x[2]*v2;
 
-				vars->particles[pid].v.x[0]-=2*nv0*norm.x[0];
-				vars->particles[pid].v.x[1]-=2*nv0*norm.x[1];
-				vars->particles[pid].v.x[2]-=2*nv0*norm.x[2];
+					vars->particles[pid].v.x[0]-=2*nv0*norm.x[0];
+					vars->particles[pid].v.x[1]-=2*nv0*norm.x[1];
+					vars->particles[pid].v.x[2]-=2*nv0*norm.x[2];
 
-				v0=vars->particles[pid].F.x[0];
-				v1=vars->particles[pid].F.x[1];
-				v2=vars->particles[pid].F.x[2];
-				nv0=norm.x[0]*v0+norm.x[1]*v1+norm.x[2]*v2;
+					v0=vars->particles[pid].F.x[0];
+					v1=vars->particles[pid].F.x[1];
+					v2=vars->particles[pid].F.x[2];
+					nv0=norm.x[0]*v0+norm.x[1]*v1+norm.x[2]*v2;
 
-				vars->particles[pid].F.x[0]-=2*nv0*norm.x[0];
-				vars->particles[pid].F.x[1]-=2*nv0*norm.x[1];
-				vars->particles[pid].F.x[2]-=2*nv0*norm.x[2];
-				returnInt=1;
-			}*/
+					vars->particles[pid].F.x[0]-=2*nv0*norm.x[0];
+					vars->particles[pid].F.x[1]-=2*nv0*norm.x[1];
+					vars->particles[pid].F.x[2]-=2*nv0*norm.x[2];
+					returnInt=1;
+				}
+			}
 			/*
 				If the boundary is wall, the calculation is finished by return -1 (returnInt=-1).
 				Ending information is logged in outParticles array.
