@@ -125,6 +125,19 @@ trajectory::readCondition(void){
 			}
 			cout<<"Compressible: "<<readings[1]<<endl;
 		}
+		// electric motion
+		else if(readings[0]=="Efield") {
+			if(readings[1]=="Yes" || readings[1]=="yes") {
+				sprintf ( filepath, "%s/E", startDir.c_str());
+				readVector(filepath,vars->E);
+				forces.push_back(new coul(stod(readings[2])));
+			}
+			if(readings[1]=="No" || readings[1]=="no") {
+				sprintf ( filepath, "%s/p", startDir.c_str());
+				readVectorDum(filepath,vars->E, 0);
+			}
+			cout<<"Coulombic force: "<<readings[1]<<endl;
+		}
 		// set particle initial velocities (default is fluid)
 		// fluid: 99% of the fluid velocity
 		// file: velocities are given in the file

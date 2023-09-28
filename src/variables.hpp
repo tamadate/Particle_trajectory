@@ -13,6 +13,7 @@ class Variables {
 		std::vector<double> lamda;
 		std::vector<double> k;
 		std::vector<double> epsilon;
+		std::vector<point> E;
 		std::vector<point> dp;
 		std::vector<point> dT;
 		std::vector<point> dV;

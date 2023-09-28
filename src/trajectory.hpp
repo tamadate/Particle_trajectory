@@ -2,6 +2,7 @@
 #include "forces/force.hpp"
 #include "forces/drag/drag.hpp"
 #include "forces/gravity.hpp"
+#include "forces/Coulombic.hpp"
 
 class trajectory{
 	public:

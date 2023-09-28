@@ -50,6 +50,7 @@ struct particle {
 	double Zp;	// ion mobility
 	double beta;	// relaxation time (SM)
 	double dt;  // time step
+	double q;
 
 	point Urand;	// dispersion velocity
 	double tini;	// dispersion velocity life time
