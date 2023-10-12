@@ -23,6 +23,12 @@ trajectory::run(void){
 					output(a,time,nth);
 					preOutTime=time;
 				}
+				
+				if(int(time/vars->cfdUpdateTime) > vars->cfdtindex){
+					vars->cfdtindex++;
+					double cfdTime=vars->cfdtindex*vars->cfdUpdateTime+vars->cfdt0;
+					
+				}
 
 				for(auto &pen:penetrates){
 					if(pen.dx0[pid]!=0){

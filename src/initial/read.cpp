@@ -34,6 +34,15 @@ trajectory::readCondition(void){
 				cout<<"Fixed time step: "<<vars->dt<<endl;
 			}
 		}
+		// CFD
+		if(readings[0]=="CFD") {
+			if(readings[1]=="steady") {
+				vars->cfdUpdateTime=1e20;
+			}
+			else if(readings[1]=="transient"){
+				vars->cfdUpdateTime=stod(readings[2]);
+			}
+		}
 		// gas type (currently you can select He or Air)
 		else if(readings[0]=="gasType") {
 			if(readings[1]=="He") forces.push_back(new dragForceSingh);
@@ -168,6 +177,8 @@ trajectory::readCondition(void){
 			readScalar(filepath,vars->p);
 			sprintf ( filepath, "%s/U", startDir.c_str());
 			readVector(filepath,vars->U);
+			vars->cfdt0=stod(readings[1]);
+			vars->cfdtindex=0;
 			cout<<"Start directory: "<<readings[1]<<endl;
 		}
 		// gravity setting

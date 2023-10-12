@@ -22,6 +22,7 @@ class trajectory{
 	char filepath[100];						// file path
 	int boundaryStartID;					// boundary start face id
 	double timer;
+
 	FILE*f;
 	FILE*file;
 	std::vector<outParticle> outParticles; // position & velocity of the particles at the end of the simulation

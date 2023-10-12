@@ -24,6 +24,12 @@ class Variables {
 		double analFactor;
 		double dt;
 
+		double cfdUpdateTime;
+		double cfdt0;
+		double cfdtindex;
+		std::vector<std::vector<double>> updateScalerFields;
+		std::vector<std::vector<point>> updateVectorFields;
+
 		Variables(void){};
 		~Variables(void){};
 };
