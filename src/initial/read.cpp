@@ -34,12 +34,7 @@ trajectory::readCondition(void){
 				cout<<"Fixed time step: "<<vars->dt<<endl;
 			}
 		}
-		// gas type (currently you can select He or Air)
-		else if(readings[0]=="gasType") {
-			if(readings[1]=="He") forces.push_back(new dragForceSingh);
-			if(readings[1]=="Air") forces.push_back(new dragForceSM);
-			cout<<"Gas type: "<<readings[1]<<endl;
-		}
+
 		// model for the drag coefficient model
 		else if(readings[0]=="dragModel") {
 			if(readings[1]=="Singh") forces.push_back(new dragForceSingh);

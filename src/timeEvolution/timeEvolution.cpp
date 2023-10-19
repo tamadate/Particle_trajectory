@@ -1,7 +1,7 @@
 #include "../trajectory.hpp"
 
 
-double
+/*double
 trajectory::timeEvolution(particle &a){
 
 	calculateNonDimension(a); // Reynolds, Mach, and Kndsen numbers.
@@ -20,6 +20,68 @@ trajectory::timeEvolution(particle &a){
 	}
 	a.tini-=timeStep;
 
+
+	return timeStep;
+}*/
+
+double
+trajectory::timeEvolution(particle &a){
+
+	calculateNonDimension(a); // Reynolds, Mach, and Kndsen numbers.
+
+	// compute forces
+	for(int i=0; i<3; i++) a.F.x[i]=0;
+	for(auto &force : forces) force->compute(a);
+	double absF = a.F.x[0]*a.F.x[0]+a.F.x[1]*a.F.x[1]+a.F.x[2]*a.F.x[2];
+
+	// calculate time step
+	double fric=3*M_PI*vars->myu[a.cell]*a.dp/a.Cc;
+	double timeStep=a.dp*fric/absF;
+	double t0=a.dp*a.dp*fric/(6*kb*vars->T[a.cell]);
+	if(t0<timeStep) timeStep=t0;
+
+	// check time step
+	double v2=a.v.x[0]*a.v.x[0]+a.v.x[1]*a.v.x[1]+a.v.x[2]*a.v.x[2];
+	double vmag=sqrt(v2);
+	if(vars->meshScale/vmag<timeStep) cout<<"time step not correct"<<endl;
+
+	double vt[3];
+	vt[0]=a.v.x[0];
+	vt[1]=a.v.x[1];
+	vt[2]=a.v.x[2];
+
+
+    std::random_device rd;
+    std::mt19937 generator(rd());
+	double expTerm=exp(-a.beta*timeStep);
+	double kT=kb*vars->T[a.cell];
+	double RRvsq=sqrt(kT/a.m*(1-expTerm*expTerm));
+	std::normal_distribution<double> dist(0.0, 1.0);
+
+	// velocity update
+	for(int i=0; i<3; i++) {
+		a.v.x[i]+=vt[i]*expTerm;
+		a.v.x[i]+=a.F.x[i]/fric*(1-expTerm);
+		a.v.x[i]+=RRvsq*dist(generator);
+	}
+
+	double C1=(1-expTerm)/(1+expTerm);
+	double RRxsq=sqrt(2*a.m*kT/fric/fric*(fric*timeStep/a.m-2*C1));
+	// position update
+	for(int i=0; i<3; i++) {
+		a.x.x[i]+=a.m/fric*(a.v.x[i]+vt[i]-2*a.F.x[i]/fric)*C1;
+		a.x.x[i]+=a.F.x[i]/fric*timeStep;
+		a.x.x[i]+=RRxsq*dist(generator);
+	}
+
+	// if the system is symmetric
+	if(a.x.x[plane2D]<Axis && flags->dimensionFlag>0) {
+		a.x.x[plane2D]=2*Axis-a.x.x[plane2D];
+		a.v.x[plane2D]*=-1.0;
+		a.F.x[plane2D]*=-1.0;
+		a.reflect*=-1;
+	}
+	a.tini-=timeStep;
 
 	return timeStep;
 }
