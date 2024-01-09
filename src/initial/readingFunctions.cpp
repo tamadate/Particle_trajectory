@@ -16,6 +16,7 @@ trajectory::readScalar(char *readFile, std::vector<double> &variable){
 		}
 	}
 	stream.close();
+	
 }
 
 void

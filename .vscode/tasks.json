@@ -7,14 +7,14 @@
             "args": [
                 "-g",
                 "-o",
-                "/home/tama3rdgen/DropBox/Dropbox/A_project/room/trajectory.out",
+                "${workspaceFolder}/tool/BoxTest/trajectory.out",
                 "${workspaceFolder}/src/*cpp", 
                 "${workspaceFolder}/src/*/*cpp", 
                 "-std=c++11",
                 "-fopenmp"
             ],
             "options": {
-                "cwd": "${workspaceFolder}/testCase/CFD/"
+                "cwd": "${workspaceFolder}/tool/BoxTest/"
             },
             "problemMatcher": [
                 "$gcc"

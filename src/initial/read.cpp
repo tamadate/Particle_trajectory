@@ -30,7 +30,7 @@ trajectory::readCondition(void){
 			}
 			else if(readings[1]=="fix"){
 				flags->autoStep=false;
-				vars->dt=stod(readings[2]);
+				vars->fixTimeStep=stod(readings[2]);
 				cout<<"Fixed time step: "<<vars->dt<<endl;
 			}
 		}
@@ -42,11 +42,17 @@ trajectory::readCondition(void){
 		}
 		// model for the drag coefficient model
 		else if(readings[0]=="dragModel") {
-			if(readings[1]=="Singh") forces.push_back(new dragForceSingh);
-			if(readings[1]=="Stokes") forces.push_back(new dragForceSM);
-			if(readings[1]=="Morsi") forces.push_back(new dragForceMA);
-			if(readings[1]=="Loth") forces.push_back(new dragForceLoth);
+			delete drag;
+			if(readings[1]=="Singh") drag = new dragForceSingh;
+			if(readings[1]=="Stokes") drag = new dragForceSM;
+			if(readings[1]=="Morsi") drag = new dragForceMA;
+			if(readings[1]=="Loth") drag = new dragForceLoth;
 			cout<<"Drag model: "<<readings[1]<<endl;
+		}
+		// model for the drag coefficient model
+		else if(readings[0]=="diffusion") {
+			if(readings[1]=="Yes") forces.push_back(new Langevin);
+			cout<<"Diffusion: "<<readings[1]<<endl;
 		}
 		// turbulent dispersion on or off
 		// you can select k-e or k-w as a RANS model
@@ -117,13 +123,14 @@ trajectory::readCondition(void){
 				readScalar(filepath,vars->T);
 				sprintf ( filepath, "%s/rho", startDir.c_str());
 				readScalar(filepath,vars->rho);
+				cout<<"Using T and rho distribution files"<<endl;
 			}
 			if(readings[1]=="No" || readings[1]=="no") {
 				sprintf (filepath, "%s/p", startDir.c_str());
 				readScalarDum(filepath,vars->T, stod(readings[2]));
 				readScalarDum(filepath,vars->rho, stod(readings[3]));
+				cout<<"Fixed T and rho: "<<readings[2]<<" and "<<readings[3]<<endl;
 			}
-			cout<<"Compressible: "<<readings[1]<<endl;
 		}
 		// set particle initial velocities (default is fluid)
 		// fluid: 99% of the fluid velocity
@@ -161,17 +168,35 @@ trajectory::readCondition(void){
 		else if(readings[0]=="gravity") {
 			gravity *grav = new gravity(stod(readings[1]),stod(readings[2]),stod(readings[3])); // generate variables class
 			forces.push_back(grav);
-			gAnal[0] = stod(readings[1]);
-			gAnal[1] = stod(readings[2]);
-			gAnal[2] = stod(readings[3]);
+			cout<<"Gravity: "<<readings[1]<<" m2/s, "<<readings[2]<<" m2/s, "<<readings[3]<<" m2/s"<<endl;
+		}
+		// Interception
+		else if(readings[0]=="interception" || readings[0]=="Interception") {
+			if(readings[1]=="distance") {
+				deadSpaceDist dead;
+				dead.x[0]=stod(readings[2]);
+				dead.x[1]=stod(readings[3]);
+				dead.x[2]=stod(readings[4]);
+				dead.r=stod(readings[5]);
+				dead.bid=stoi(readings[6]);
+				deadDistance.push_back(dead);
+				cout<<"Set dead volume x=("<<dead.x[0]<<" "<<dead.x[1]<<" "<<dead.x[2]<<") r="<<dead.r<<endl;
+			}
+			else if(readings[1]=="box") {
+				std::vector<double> dead;
+				dead.push_back(stod(readings[1]));
+				dead.push_back(stod(readings[2]));
+				dead.push_back(stod(readings[3]));
+				dead.push_back(stod(readings[4]));
+				dead.push_back(stod(readings[5]));
+				dead.push_back(stod(readings[6]));
+				dead.push_back(stod(readings[7]));
+				deadBox.push_back(dead);
+				cout<<"set dead volume (box)"<<endl;
+			}
 		}
 		// particle density (default is 1000 kg/m3)
 		else if(readings[0]=="particleDensity") rho_p=stod(readings[1]);
-
-		// not using now
-		else if(readings[0]=="deltaTrajectory") {readFlag=14; continue;}
-		// not using now
-		else if(readings[0]=="inletFace") flags->inletFace=stoi(readings[1]);
 		
 		// error check
 		else cout<<"Could not find syntax "<<readings[0]<<endl;

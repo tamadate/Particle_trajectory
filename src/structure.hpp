@@ -15,6 +15,12 @@ struct boundary {
 	int startFace;
 };
 
+struct deadSpaceDist {
+	double x[3];
+	double r;
+	int bid;
+};
+
 struct cell {
 	std::vector<int> iface;
 	std::vector<point> norm;
@@ -49,7 +55,9 @@ struct particle {
 	double Cc;	// slip coefficient
 	double Zp;	// ion mobility
 	double beta;	// relaxation time (SM)
+	double fric;
 	double dt;  // time step
+	double tau;
 
 	point Urand;	// dispersion velocity
 	double tini;	// dispersion velocity life time

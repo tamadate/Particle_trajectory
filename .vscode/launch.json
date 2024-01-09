@@ -5,10 +5,10 @@
         "name": "C++ debug",
         "type": "cppdbg",
         "request": "launch",
-        "program": "${workspaceFolder}/testCase/CFD/trajectory.out",
+        "program": "${workspaceFolder}/tool/BoxTest/trajectory.out",
         "args": [],
         "stopAtEntry": false,
-        "cwd": "${workspaceFolder}/testCase/CFD/",
+        "cwd": "${workspaceFolder}/tool/BoxTest/",
         "environment": [],
         "externalConsole": false, //set to true to see output in cmd instead
         "MIMode": "gdb",

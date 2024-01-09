@@ -2,12 +2,14 @@
 #include "forces/force.hpp"
 #include "forces/drag/drag.hpp"
 #include "forces/gravity.hpp"
+#include "forces/Langevin.hpp"
 
 class trajectory{
 	public:
 	Variables *vars;	// pointer for variables
 	Flags *flags;			// pointer for flags
 	std::vector<force*> forces;	// pointer array for force functions working on the particle
+	force *drag;	
 
 	int Nth;	// Number of parallel (OpenMP)
 	double rho_p;									// particle density
@@ -26,6 +28,8 @@ class trajectory{
 	std::vector<outParticle> outParticles; // position & velocity of the particles at the end of the simulation
 	std::vector<penetrate> penetrates;
 	std::vector<int> trapParticle;				 // number of particles trapped in the curculation
+	std::vector<std::vector<double>> deadBox;
+	std::vector<deadSpaceDist> deadDistance;
 
 	// The functions for turbulent dispersion (see turbulentDispersion.cpp)
 	double get_tini(particle &par);
@@ -33,11 +37,11 @@ class trajectory{
 
 	// Main simulation functions
 	void run(void);
-	double timeEvolution(particle &a);
-	double euler(particle &a);
-	double analytical(particle &a);
-	double gAnal[3];
+	void timeEvolution(particle &a);
+	void euler(particle &a);
+	void analytical(particle &a);
 	int checkCell(int pid);
+	int checkBoundCell(int pid);
 	int boundAction(int faceID, int pid, point norm, double dot);
 
 	// Physical properties calculation functions (see calcProperties.cpp)
@@ -98,11 +102,7 @@ class trajectory{
 	}
 
 	trajectory(void);
-	~trajectory(void){
-		gAnal[0]=0;
-		gAnal[1]=0;
-		gAnal[2]=0;
-	};
+	~trajectory(void){};
 
 	private:
 };

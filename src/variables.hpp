@@ -22,6 +22,7 @@ class Variables {
 		double meshScale;
 		double analFactor;
 		double dt;
+		double fixTimeStep;
 
 		Variables(void){};
 		~Variables(void){};
