@@ -47,7 +47,6 @@ trajectory::checkCell(int pid){
 					vars->particles[pid].Kn=Kn;
 					vars->particles[pid].Cc=1+Kn*(A1+A2*exp(-A3/Kn));
 					double threePiMuDp_Cc=3*M_PI*vars->myu[icell]*vars->particles[pid].dp/vars->particles[pid].Cc;
-					vars->particles[pid].Zp=1.6e-19/threePiMuDp_Cc;
 					vars->particles[pid].beta=threePiMuDp_Cc/vars->particles[pid].m;
 					vars->particles[pid].dt=1/(2*vars->particles[pid].beta);
 
@@ -209,7 +208,6 @@ trajectory::checkBoundCell(int pid){
 					vars->particles[pid].Kn=Kn;
 					vars->particles[pid].Cc=1+Kn*(A1+A2*exp(-A3/Kn));
 					double threePiMuDp_Cc=3*M_PI*vars->myu[icell]*vars->particles[pid].dp/vars->particles[pid].Cc;
-					vars->particles[pid].Zp=1.6e-19/threePiMuDp_Cc;
 					vars->particles[pid].beta=threePiMuDp_Cc/vars->particles[pid].m;
 					vars->particles[pid].dt=1/(2*vars->particles[pid].beta);
 

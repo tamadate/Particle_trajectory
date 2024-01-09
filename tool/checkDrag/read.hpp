@@ -208,7 +208,6 @@ void readParticles(Variables *vars){
 			}
 			p.id=particleID;
 			p.m=rho_p*M_PI*p.dp*p.dp*p.dp/6.0;
-			p.Zp=0;
 			p.beta=0;
 			p.Cc=0;
 			p.le=0;

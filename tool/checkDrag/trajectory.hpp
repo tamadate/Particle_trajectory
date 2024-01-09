@@ -136,7 +136,6 @@ void checkCell(Variables *vars){
 						double Cc=1+Kn*(A1+A2*exp(-A3/Kn));
 						vars->particles[pid].Kn=Kn;
 						vars->particles[pid].Cc=Cc;
-						vars->particles[pid].Zp=Cc*1.6e-19/(3*M_PI*vars->myu[newID]*vars->particles[pid].dp);
 						vars->particles[pid].beta=3.0*M_PI*vars->myu[newID]*vars->particles[pid].dp/Cc/vars->particles[pid].m;
 						vars->particles[pid].le=pow(vars->k[newID],0.5)/vars->omega[newID]/pow(0.09,0.25);
 						

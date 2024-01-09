@@ -15,6 +15,7 @@ using namespace std;
 //	Constant
 const double kb=1.38e-23;
 const double e=1.6e-19;
+const double e0=8.854187e-12;
 
 //	Constant (Air)
 const double myu0_Air=1.81e-5;  // Sutherland's equation parameter

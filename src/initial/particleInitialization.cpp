@@ -15,7 +15,6 @@ trajectory::initialParticle(void){
         for(auto &force : forces) force->compute(a);   // force calculation
 
         a.fric=3*M_PI*vars->myu[icell]*a.dp/a.Cc;    // friction factor
-        a.Zp=1.6e-19/a.fric;    // electrical mobility
         a.beta=a.fric/a.m;  // beta relaxation time (Stokes)
         a.dt=1/(2*a.beta);    // time step
 

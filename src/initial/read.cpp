@@ -53,7 +53,7 @@ trajectory::readCondition(void){
 			if(readings[1]=="Loth") forces.push_back(new dragForceLoth);
 			cout<<"Drag model: "<<readings[1]<<endl;
 		}
-		// model for the drag coefficient model
+		// select diffusion on/off
 		else if(readings[0]=="diffusion") {
 			if(readings[1]=="Yes") forces.push_back(new Langevin);
 			cout<<"Diffusion: "<<readings[1]<<endl;
@@ -86,6 +86,13 @@ trajectory::readCondition(void){
 				readScalarDum(filepath,vars->epsilon, 0);
 			}
 			cout<<"Dispersion: "<<readings[1]<<endl;
+		}
+		else if(readings[0]=="CoulombForce") {
+			flags->dispersionFlag=1;
+			sprintf ( filepath, "%s/E", startDir.c_str());
+			readVector(filepath,vars->dV);
+			forces.push_back(new Coulomb);
+			cout<<"Coulomb force ON"<<endl;
 		}
 		// Froude-Krylov force (force caused by the pressure difference)
       	else if(readings[0]=="FroudeKrylov") {
@@ -236,7 +243,6 @@ trajectory::readParticles(void){
 			}
 			p.id=particleID;
 			p.m=rho_p*M_PI*p.dp*p.dp*p.dp/6.0;
-			p.Zp=0;
 			p.beta=0;
 			p.Cc=0;
 			p.Re=0;

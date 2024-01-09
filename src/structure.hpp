@@ -53,11 +53,11 @@ struct particle {
 	double dp;	// diameter
 	double m;		// mass
 	double Cc;	// slip coefficient
-	double Zp;	// ion mobility
 	double beta;	// relaxation time (SM)
 	double fric;
 	double dt;  // time step
 	double tau;
+	double q;
 
 	point Urand;	// dispersion velocity
 	double tini;	// dispersion velocity life time

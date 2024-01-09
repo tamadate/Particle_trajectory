@@ -345,7 +345,6 @@ void initialParticle(Variables *vars){
 		double Cc=1+Kn*(A1+A2*exp(-A3/Kn));
 		a.Kn=Kn;
 		a.Cc=Cc;
-		a.Zp=Cc*1.6e-19/(3*M_PI*vars->myu[icell]*a.dp);
 		a.beta=3.0*M_PI*vars->myu[icell]*a.dp/Cc/a.m;
 		a.le=pow(vars->k[icell],0.5)/vars->omega[icell]/pow(0.09,0.25);
 		for(int i=0; i<3; i++) {
