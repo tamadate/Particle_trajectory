@@ -10,7 +10,7 @@ class trajectory{
 	Variables *vars;	// pointer for variables
 	Flags *flags;			// pointer for flags
 	std::vector<force*> forces;	// pointer array for force functions working on the particle
-	//force *drag;	
+	force *drag;	
 
 	int Nth;	// Number of parallel (OpenMP)
 	double rho_p;									// particle density

@@ -42,15 +42,11 @@ trajectory::readCondition(void){
 		}*/
 		// model for the drag coefficient model
 		else if(readings[0]=="dragModel") {
-			/*delete drag;
+			delete drag;
 			if(readings[1]=="Singh") drag = new dragForceSingh;
 			if(readings[1]=="Stokes") drag = new dragForceSM;
 			if(readings[1]=="Morsi") drag = new dragForceMA;
-			if(readings[1]=="Loth") drag = new dragForceLoth;*/
-			if(readings[1]=="Singh") forces.push_back(new dragForceSingh);
-			if(readings[1]=="Stokes") forces.push_back(new dragForceSM);
-			if(readings[1]=="Morsi") forces.push_back(new dragForceMA);
-			if(readings[1]=="Loth") forces.push_back(new dragForceLoth);
+			if(readings[1]=="Loth") drag = new dragForceLoth;
 			cout<<"Drag model: "<<readings[1]<<endl;
 		}
 		// select diffusion on/off
