@@ -46,7 +46,7 @@ trajectory::euler(particle &a){
 	
 	// compute forces
 	for(int i=0; i<3; i++) a.F.x[i]=0;
-	drag->compute(a);
+	//drag->compute(a);
 	for(auto &force : forces) force->compute(a);
 	
 	// velocity update

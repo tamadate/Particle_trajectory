@@ -30,7 +30,7 @@ trajectory::trajectory(void){
 
     readParticles();  // read particle file ./particle/particleSet
     makeCells();      // make cells data (e.g., norm vector) from geometry file
-    drag->initial(vars,flags);
+    //drag->initial(vars,flags);
     for(auto &force : forces) force->initial(vars,flags);   
     initialParticle();// initialize particle (initial cell id, initial velocity)
     outputInitial();  // initialization of output files
