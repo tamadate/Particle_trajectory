@@ -88,7 +88,6 @@ trajectory::readCondition(void){
 			cout<<"Dispersion: "<<readings[1]<<endl;
 		}
 		else if(readings[0]=="CoulombForce") {
-			flags->dispersionFlag=1;
 			sprintf ( filepath, "%s/E", startDir.c_str());
 			readVector(filepath,vars->dV);
 			forces.push_back(new Coulomb);
