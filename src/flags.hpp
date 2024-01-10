@@ -12,10 +12,12 @@ class Flags {
 		int inletFace;				// Particle inlet face number (this is not avairable now)
 		bool v0;		// if v0=0, particle initial velocity is 99% of fluid velocity
 					// if v0=1, particle initial velocity is given in the velocity setting file
+		bool inertia;
 
 
 		Flags(void){
 			autoStep=true;
+			inertia=true;
 			dispersionFlag=0;
 			dimensionFlag=0;
 			analytical=0;

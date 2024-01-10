@@ -19,6 +19,7 @@ class trajectory{
 	int Observe;									// output interval in time step
 	double delta_r2_trajectory;		// squre of migration distance for trajectory output
 	int plane2D;									// face of 2D simulation (0:y-z, 1:x-z, 2:x-y)
+	int noUpdateAxis;
 	string startDir;							// start directory name (20000 is default)
 	double Axis;									// axis of 2D axi-symmetric simulation
 	char filepath[100];						// file path
@@ -41,6 +42,7 @@ class trajectory{
 	void timeEvolution(particle &a);
 	void euler(particle &a);
 	void analytical(particle &a);
+	void eulerInertiaLess(particle &a);
 	int checkCell(int pid);
 	int checkBoundCell(int pid);
 	int boundAction(int faceID, int pid, point norm, double dot);

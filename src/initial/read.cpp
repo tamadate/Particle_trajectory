@@ -107,10 +107,13 @@ trajectory::readCondition(void){
 			if(readings[1]=="2Daxi") flags->dimensionFlag=2;
 			cout<<"Dimension: "<<readings[1]<<endl;
 			if(flags->dimensionFlag>0){
-				if(readings[2]=="100") plane2D=0;
-				if(readings[2]=="010") plane2D=1;
-				if(readings[2]=="001") plane2D=2;
-				Axis=stod(readings[3]);
+				if(readings[2]=="y-z"||readings[2]=="z-y") noUpdateAxis=0;
+				if(readings[2]=="x-z"||readings[2]=="z-x") noUpdateAxis=1;
+				if(readings[2]=="x-y"||readings[2]=="y-x") noUpdateAxis=2;
+				if(readings[3]=="x") plane2D=0;
+				if(readings[3]=="y") plane2D=1;
+				if(readings[3]=="z") plane2D=2;
+				Axis=stod(readings[4]);
         	}
 		}
 		// tracking intermediate properties
@@ -203,6 +206,10 @@ trajectory::readCondition(void){
 		}
 		// particle density (default is 1000 kg/m3)
 		else if(readings[0]=="particleDensity") rho_p=stod(readings[1]);
+		else if(readings[0]=="InertiaLess") {
+			flags->inertia=false;
+			cout<<"Inertia less simulation"<<endl;
+		}
 		
 		// error check
 		else cout<<"Could not find syntax "<<readings[0]<<endl;

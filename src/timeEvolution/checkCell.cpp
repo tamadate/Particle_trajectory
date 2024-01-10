@@ -113,8 +113,8 @@ trajectory::boundAction(int faceID, int pid, point norm, double dot){
 			 Return value is 1 (continue)
 			*/
 			if(dot<0){
-				if(boundaries[i].type=="symmetryPlane"||boundaries[i].type=="symmetry"){
-					double b0=vars->particles[pid].x.x[0]-points[faces[faceID].iface[0]].x[0];
+				if(boundaries[i].type=="symmetryPlane"||boundaries[i].type=="symmetry"||boundaries[i].type=="wedge"){
+					/*double b0=vars->particles[pid].x.x[0]-points[faces[faceID].iface[0]].x[0];
 					double b1=vars->particles[pid].x.x[1]-points[faces[faceID].iface[0]].x[1];
 					double b2=vars->particles[pid].x.x[2]-points[faces[faceID].iface[0]].x[2];
 					double nb0=norm.x[0]*b0+norm.x[1]*b1+norm.x[2]*b2;
@@ -138,7 +138,7 @@ trajectory::boundAction(int faceID, int pid, point norm, double dot){
 
 					vars->particles[pid].F.x[0]-=2*nv0*norm.x[0];
 					vars->particles[pid].F.x[1]-=2*nv0*norm.x[1];
-					vars->particles[pid].F.x[2]-=2*nv0*norm.x[2];
+					vars->particles[pid].F.x[2]-=2*nv0*norm.x[2];*/
 					returnInt=1;
 				}
 			}

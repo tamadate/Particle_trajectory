@@ -6,17 +6,22 @@ trajectory::timeEvolution(particle &a){
 
 	calculateNonDimension(a); // Reynolds, Mach, and Kndsen numbers.
 
-	// use analytical or euler?
-	if(a.Re<0.1 && a.Mach<0.1 && flags->analytical==1) analytical(a);
-	else euler(a);
+	if(flags->inertia){
+		// use analytical or euler?
+		if(a.Re<0.1 && a.Mach<0.1 && flags->analytical==1) analytical(a);
+		else euler(a);
+	}
+	else{eulerInertiaLess(a);}
 
 	// if the system is symmetric
-	if(a.x.x[plane2D]<Axis && flags->dimensionFlag>0) {
-		a.x.x[plane2D]=2*Axis-a.x.x[plane2D];
-		a.v.x[plane2D]*=-1.0;
-		a.F.x[plane2D]*=-1.0;
-		a.reflect*=-1;
-
+	if(flags->dimensionFlag>0){
+		a.x.x[noUpdateAxis]=0;
+		if(a.x.x[plane2D]<Axis) {
+			a.x.x[plane2D]=2*Axis-a.x.x[plane2D];
+			a.v.x[plane2D]*=-1.0;
+			a.F.x[plane2D]*=-1.0;
+			a.reflect*=-1;
+		}
 	}
 	a.tini-=vars->dt;
 }
@@ -102,4 +107,42 @@ trajectory::analytical(particle &a){
 	a.x.x[2] += Uz * vars->dt + dvz * C1 + a.F.x[2] * C2;
 
 
+}
+
+
+
+void
+trajectory::eulerInertiaLess(particle &a){
+	// calculate time step
+	if(flags->autoStep) {
+		double v2=a.v.x[0]*a.v.x[0]+a.v.x[1]*a.v.x[1]+a.v.x[2]*a.v.x[2];
+		double vmag=sqrt(v2);
+		double v2rand=a.Urand.x[0]*a.Urand.x[0]+a.Urand.x[1]*a.Urand.x[1]+a.Urand.x[2]*a.Urand.x[2];
+		if(v2rand>v2) vmag=sqrt(v2rand);
+		vars->dt=vars->meshScale/vmag;		
+	}
+	else vars->dt=vars->fixTimeStep;
+
+	if(dtMax<vars->dt) vars->dt=dtMax ;
+
+	// if the eddy reached to its life time (a.tini<timeStep),
+	// the eddy is updated
+	if(a.tini<vars->dt){
+		vars->dt=a.tini;
+		a.update=1;
+	}
+	
+	// compute forces
+	for(int i=0; i<3; i++) a.F.x[i]=0;
+	for(auto &force : forces) force->compute(a);
+	
+	// velocity update
+	double U[3];
+	U[0] = vars->U[a.cell].x[0] + a.Urand.x[0];
+	U[1] = vars->U[a.cell].x[1] + a.Urand.x[1];
+	U[2] = vars->U[a.cell].x[2] + a.Urand.x[2];
+	for(int i=0; i<3; i++) a.v.x[i]=U[i]+a.F.x[i]/a.beta;	
+
+	// position update
+	for(int i=0; i<3; i++) a.x.x[i]+=vars->dt*a.v.x[i];
 }
