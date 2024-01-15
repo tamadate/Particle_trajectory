@@ -1,27 +1,16 @@
 #pragma once
-#include "functions.hpp"
+#include "variables.hpp"
 
-class Variables {
+class VariablesMP {
 	private:
 		int Nth;
   	public:
-		std::vector<double> p;
-		std::vector<point> U;
-		std::vector<double> T;
-		std::vector<double> rho;
-		std::vector<double> myu;
-		std::vector<double> lamda;
-		std::vector<double> k;
-		std::vector<double> epsilon;
-		std::vector<point> dp;
-		std::vector<point> dT;
-		std::vector<point> dV;
-		std::vector<particle> particles;
-		std::vector<double> time;
-
-		
 		double delta_r2;
+		std::vector<double> time;
+		double meshScale;
+		double analFactor;
 		double dt;
+		double fixTimeStep;
 
 		double rho_p;									// particle density
 		double observeTime;						// output interval in time scale
@@ -33,8 +22,7 @@ class Variables {
 		double Axis;									// axis of 2D axi-symmetric simulation
 		char filepath[100];						// file path
 		int boundaryStartID;					// boundary start face id
-		double timer;
 
-		Variables(void){};
-		~Variables(void){};
+		VariablesMP(void){};
+		~VariablesMP(void){};
 };

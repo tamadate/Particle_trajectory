@@ -33,7 +33,6 @@ trajectory::outputTrajectory(particle a){
 void
 trajectory::outputInitial(void){
 	for (auto &a:vars->particles){
-
 		// particle position
 		sprintf(filepath, "result/position.%d", int(a.id));
 		f=fopen(filepath, "w");

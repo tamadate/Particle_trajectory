@@ -25,13 +25,13 @@ trajectory::readCondition(void){
 		if(readings[0]=="dt") {
 			if(readings[1]=="auto") {
 				flags->autoStep=true;
-				vars->meshScale=stod(readings[2]);
-				cout<<"Auto time step: "<<vars->meshScale<<endl;
+				varsMP->meshScale=stod(readings[2]);
+				cout<<"Auto time step: "<<varsMP->meshScale<<endl;
 			}
 			else if(readings[1]=="fix"){
 				flags->autoStep=false;
-				vars->fixTimeStep=stod(readings[2]);
-				cout<<"Fixed time step: "<<vars->dt<<endl;
+				varsMP->fixTimeStep=stod(readings[2]);
+				cout<<"Fixed time step: "<<varsMP->dt<<endl;
 			}
 		}
 		// gas type (currently you can select He or Air)
@@ -152,8 +152,8 @@ trajectory::readCondition(void){
       	else if(readings[0]=="analytical") {
 			if(readings[1]=="Yes" || readings[1]=="yes") {
 				flags->analytical=1;
-				vars->analFactor=stod(readings[2]);
-				cout<<"Use analytical mode: "<<vars->analFactor<<endl;
+				varsMP->analFactor=stod(readings[2]);
+				cout<<"Use analytical mode: "<<varsMP->analFactor<<endl;
 			}
 			else if(readings[1]=="No" || readings[1]=="no") {
 				flags->analytical=0;
@@ -205,7 +205,7 @@ trajectory::readCondition(void){
 			}
 		}
 		// particle density (default is 1000 kg/m3)
-		else if(readings[0]=="particleDensity") rho_p=stod(readings[1]);
+		else if(readings[0]=="particleDensity") vars->rho_p=stod(readings[1]);
 		else if(readings[0]=="InertiaLess") {
 			flags->inertia=false;
 			cout<<"Inertia less simulation"<<endl;

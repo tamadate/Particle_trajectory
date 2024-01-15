@@ -23,7 +23,7 @@ trajectory::timeEvolution(particle &a){
 			a.reflect*=-1;
 		}
 	}
-	a.tini-=vars->dt;
+	a.tini-=varsMP->dt;
 }
 
 void
@@ -34,9 +34,9 @@ trajectory::euler(particle &a){
 		double vmag=sqrt(v2);
 		double v2rand=a.Urand.x[0]*a.Urand.x[0]+a.Urand.x[1]*a.Urand.x[1]+a.Urand.x[2]*a.Urand.x[2];
 		if(v2rand>v2) vmag=sqrt(v2rand);
-		vars->dt=vars->meshScale/vmag;		
+		varsMP->dt=varsMP->meshScale/vmag;		
 	}
-	else vars->dt=vars->fixTimeStep;
+	else vars->dt=varsMP->fixTimeStep;
 
 	if(dtMax<vars->dt) vars->dt=dtMax ;
 
@@ -68,9 +68,9 @@ trajectory::analytical(particle &a){
 	if(flags->autoStep) {
 		double v2=a.v.x[0]*a.v.x[0]+a.v.x[1]*a.v.x[1]+a.v.x[2]*a.v.x[2];
 		double vmag=sqrt(v2);
-		vars->dt=vars->meshScale*vars->analFactor/vmag;
+		vars->dt=varsMP->meshScale*varsMP->analFactor/vmag;
 	}
-	else vars->dt=vars->fixTimeStep;
+	else vars->dt=varsMP->fixTimeStep;
 
 	if(dtMax<vars->dt) vars->dt=dtMax ;
 
@@ -119,9 +119,9 @@ trajectory::eulerInertiaLess(particle &a){
 		double vmag=sqrt(v2);
 		double v2rand=a.Urand.x[0]*a.Urand.x[0]+a.Urand.x[1]*a.Urand.x[1]+a.Urand.x[2]*a.Urand.x[2];
 		if(v2rand>v2) vmag=sqrt(v2rand);
-		vars->dt=vars->meshScale/vmag;		
+		vars->dt=varsMP->meshScale/vmag;		
 	}
-	else vars->dt=vars->fixTimeStep;
+	else vars->dt=varsMP->fixTimeStep;
 
 	if(dtMax<vars->dt) vars->dt=dtMax ;
 

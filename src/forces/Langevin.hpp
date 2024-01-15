@@ -19,7 +19,7 @@ class Langevin : public force{
 			n=0;
 		}
 		void compute(particle &par){
-			double coeff = sqrt(2 * kb * vars->T[par.cell] * par.fric / vars->dt) / par.m;
+			double coeff = sqrt(2 * kb * vars->T[par.cell] * par.fric / varsMP->dt) / par.m;
 			if(n>N-1) generateRandom();
 			par.F.x[0] += randoms[3*n] * coeff;
 			par.F.x[1] += randoms[3*n+1] * coeff;

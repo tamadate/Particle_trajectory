@@ -11,6 +11,9 @@ class trajectory{
 	Flags *flags;			// pointer for flags
 	std::vector<force*> forces;	// pointer array for force functions working on the particle
 	force *drag;	
+	VariablesMP *varsMP;
+
+	string startDir;							// start directory name (20000 is default)
 
 	int Nth;	// Number of parallel (OpenMP)
 	double rho_p;									// particle density
@@ -20,13 +23,11 @@ class trajectory{
 	double delta_r2_trajectory;		// squre of migration distance for trajectory output
 	int plane2D;									// face of 2D simulation (0:y-z, 1:x-z, 2:x-y)
 	int noUpdateAxis;
-	string startDir;							// start directory name (20000 is default)
 	double Axis;									// axis of 2D axi-symmetric simulation
 	char filepath[100];						// file path
 	int boundaryStartID;					// boundary start face id
 	double timer;
 	FILE*f;
-	FILE*file;
 	std::vector<outParticle> outParticles; // position & velocity of the particles at the end of the simulation
 	std::vector<penetrate> penetrates;
 	std::vector<int> trapParticle;				 // number of particles trapped in the curculation
