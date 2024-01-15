@@ -73,10 +73,10 @@
         "name": "C++ debug esi",
         "type": "cppdbg",
         "request": "launch",
-        "program": "/home/tama3rdgen/CFD_sub_projects/shibui/needle_plate_1e-1/trajectory.out",
+        "program": "/home/tama3rdgen/CFD_sub_projects/shibui/test/trajectory.out",
         "args": [],
         "stopAtEntry": false,
-        "cwd": "/home/tama3rdgen/CFD_sub_projects/shibui/needle_plate_1e-1/",
+        "cwd": "/home/tama3rdgen/CFD_sub_projects/shibui/test/",
         "environment": [],
         "externalConsole": false, //set to true to see output in cmd instead
         "MIMode": "gdb",
