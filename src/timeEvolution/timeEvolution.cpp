@@ -131,7 +131,7 @@ trajectory::eulerInertiaLess(particle &a){
 		vars->dt=a.tini;
 		a.update=1;
 	}
-	
+
 	// compute forces
 	for(int i=0; i<3; i++) a.F.x[i]=0;
 	for(auto &force : forces) force->compute(a);
@@ -141,6 +141,8 @@ trajectory::eulerInertiaLess(particle &a){
 	U[0] = vars->U[a.cell].x[0] + a.Urand.x[0];
 	U[1] = vars->U[a.cell].x[1] + a.Urand.x[1];
 	U[2] = vars->U[a.cell].x[2] + a.Urand.x[2];
+
+
 	for(int i=0; i<3; i++) a.v.x[i]=U[i]+a.F.x[i]/a.beta;	
 
 	// position update

@@ -70,13 +70,13 @@
         "preLaunchTask": "C++ O3"
       },
       {
-        "name": "C++ debug esi",
+        "name": "C++ yama",
         "type": "cppdbg",
         "request": "launch",
-        "program": "/home/tama3rdgen/CFD_sub_projects/shibui/test/trajectory.out",
+        "program": "/home/tama3rdgen/CFD_sub_projects/yamagishiTest/turbulentDuffusion/trajectory.out",
         "args": [],
         "stopAtEntry": false,
-        "cwd": "/home/tama3rdgen/CFD_sub_projects/shibui/test/",
+        "cwd": "/home/tama3rdgen/CFD_sub_projects/yamagishiTest/turbulentDuffusion/",
         "environment": [],
         "externalConsole": false, //set to true to see output in cmd instead
         "MIMode": "gdb",
@@ -89,7 +89,7 @@
           }
         ],
 
-        "preLaunchTask": "C++ debug esi"
+        "preLaunchTask": "C++ yama"
       },
 
       ]

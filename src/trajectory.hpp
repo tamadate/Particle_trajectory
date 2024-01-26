@@ -3,6 +3,7 @@
 #include "forces/drag/drag.hpp"
 #include "forces/gravity.hpp"
 #include "forces/Langevin.hpp"
+#include "forces/Brownian.hpp"
 #include "forces/Coulomb.hpp"
 
 class trajectory{

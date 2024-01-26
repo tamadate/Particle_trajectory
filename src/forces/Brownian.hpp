@@ -4,11 +4,12 @@
 
 
 // base function of force
-class Langevin : public force{
+class Brownian : public force{
 	public:
 		std::vector<std::vector<double>> randoms;
 		const int N=10000000;
 		std::vector<int> n;
+		double Sch;
 		void generateRandom(void){
 			int nth=omp_get_thread_num();
 			randoms[nth].clear();
@@ -21,7 +22,11 @@ class Langevin : public force{
 		};
 		void compute(particle &par){
 			int nth=omp_get_thread_num();
-			double coeff = sqrt(2 * kb * vars->T[par.cell] * par.fric / vars->dt) / par.m;
+			double k=vars->k[par.cell];
+			double mut=0.09*vars->rho[par.cell]*k*k/vars->epsilon[par.cell];
+			double Dturb=mut/Sch;
+			double coeff = sqrt(2 * Dturb / vars->dt) * par.beta;
+
 			if(n[nth]>N-1) generateRandom();
 			par.F.x[0] += randoms[nth][3*n[nth]] * coeff;
 			par.F.x[1] += randoms[nth][3*n[nth]+1] * coeff;
@@ -29,7 +34,7 @@ class Langevin : public force{
 			n[nth]++;
 
 		};
-		Langevin(void){
+		Brownian(double sch){
 			int N_threads=omp_get_max_threads();
 			for (int i=0;i<N_threads;i++){
 				std::vector<double> arrays;
@@ -41,7 +46,8 @@ class Langevin : public force{
 				randoms.push_back(arrays);
 				n.push_back(1);	
 			}
+			Sch=sch;
 		}
-		~Langevin(void){}
+		~Brownian(void){}
 	private:
 };
