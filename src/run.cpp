@@ -46,7 +46,6 @@ trajectory::run(void){
 
 				if(a.update==1&&flags->dispersionFlag==true) updateDisp(a);
 			}
-
 			// if particle did not hit on any "bounday" during calculation time
 			if(breakFlag==0){
 				outParticles[pid].pid=a.id;

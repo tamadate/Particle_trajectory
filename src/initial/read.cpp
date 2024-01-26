@@ -52,6 +52,17 @@ trajectory::readCondition(void){
 		// select diffusion on/off
 		else if(readings[0]=="diffusion") {
 			if(readings[1]=="Yes") forces.push_back(new Langevin);
+			if(readings[1]=="k-e") {
+				forces.push_back(new Brownian(stod(readings[2])));
+				if(readings[1]=="k-e") {
+				vars->k.clear();
+				vars->epsilon.clear();
+				sprintf ( filepath, "%s/k", startDir.c_str());
+				readScalar(filepath,vars->k);
+				sprintf ( filepath, "%s/epsilon", startDir.c_str());
+				readScalar(filepath,vars->epsilon);
+			}
+			}
 			cout<<"Diffusion: "<<readings[1]<<endl;
 		}
 		// turbulent dispersion on or off
