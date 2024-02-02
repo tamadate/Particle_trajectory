@@ -147,33 +147,42 @@ trajectory::boundAction(int faceID, int pid, point norm, double dot){
 				Ending information is logged in outParticles array.
 			*/
 			if(boundaries[i].type=="wall"){
-				/*outParticles[pid].pid=vars->particles[pid].id;
-				outParticles[pid].r=vars->particles[pid].x;
-				outParticles[pid].v=vars->particles[pid].v;
-				outParticles[pid].bid=i;
-				returnInt=-1;*/
-				double b0=vars->particles[pid].x.x[0]-points[faces[faceID].iface[0]].x[0];
-				double b1=vars->particles[pid].x.x[1]-points[faces[faceID].iface[0]].x[1];
-				double b2=vars->particles[pid].x.x[2]-points[faces[faceID].iface[0]].x[2];
-				double nb0=norm.x[0]*b0+norm.x[1]*b1+norm.x[2]*b2;
-				vars->particles[pid].x.x[0]-=2*nb0*norm.x[0];
-				vars->particles[pid].x.x[1]-=2*nb0*norm.x[1];
-				vars->particles[pid].x.x[2]-=2*nb0*norm.x[2];
+				std::random_device rd;
+				std::mt19937 gen(rd());
+				std::uniform_int_distribution<> distrib(0, 10);
+				int randomValue = distrib(gen);
+				if(randomValue>8){
+					outParticles[pid].pid=vars->particles[pid].id;
+					outParticles[pid].r=vars->particles[pid].x;
+					outParticles[pid].v=vars->particles[pid].v;
+					outParticles[pid].bid=i;
+					returnInt=-1;
+				}
+				else{
 
-				double v0=vars->particles[pid].v.x[0];
-				double v1=vars->particles[pid].v.x[1];
-				double v2=vars->particles[pid].v.x[2];
-				double nv0=norm.x[0]*v0+norm.x[1]*v1+norm.x[2]*v2;
+					std::cout << "Random 0 or 1: " << randomValue << std::endl;
+					double b0=vars->particles[pid].x.x[0]-points[faces[faceID].iface[0]].x[0];
+					double b1=vars->particles[pid].x.x[1]-points[faces[faceID].iface[0]].x[1];
+					double b2=vars->particles[pid].x.x[2]-points[faces[faceID].iface[0]].x[2];
+					double nb0=norm.x[0]*b0+norm.x[1]*b1+norm.x[2]*b2;
+					vars->particles[pid].x.x[0]-=2*nb0*norm.x[0];
+					vars->particles[pid].x.x[1]-=2*nb0*norm.x[1];
+					vars->particles[pid].x.x[2]-=2*nb0*norm.x[2];
 
-				vars->particles[pid].v.x[0]-=2*nv0*norm.x[0];
-				vars->particles[pid].v.x[1]-=2*nv0*norm.x[1];
-				vars->particles[pid].v.x[2]-=2*nv0*norm.x[2];
+					double v0=vars->particles[pid].v.x[0];
+					double v1=vars->particles[pid].v.x[1];
+					double v2=vars->particles[pid].v.x[2];
+					double nv0=norm.x[0]*v0+norm.x[1]*v1+norm.x[2]*v2;
 
-				v0=vars->particles[pid].F.x[0];
-				v1=vars->particles[pid].F.x[1];
-				v2=vars->particles[pid].F.x[2];
-				nv0=norm.x[0]*v0+norm.x[1]*v1+norm.x[2]*v2;
+					vars->particles[pid].v.x[0]-=2*nv0*norm.x[0];
+					vars->particles[pid].v.x[1]-=2*nv0*norm.x[1];
+					vars->particles[pid].v.x[2]-=2*nv0*norm.x[2];
 
+					v0=vars->particles[pid].F.x[0];
+					v1=vars->particles[pid].F.x[1];
+					v2=vars->particles[pid].F.x[2];
+					nv0=norm.x[0]*v0+norm.x[1]*v1+norm.x[2]*v2;
+				}
 				//vars->particles[pid].F.x[0]-=2*nv0*norm.x[0];
 				//vars->particles[pid].F.x[1]-=2*nv0*norm.x[1];
 				//vars->particles[pid].F.x[2]-=2*nv0*norm.x[2];
