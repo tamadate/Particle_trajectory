@@ -149,9 +149,9 @@ trajectory::boundAction(int faceID, int pid, point norm, double dot){
 			if(boundaries[i].type=="wall"){
 				std::random_device rd;
 				std::mt19937 gen(rd());
-				std::uniform_int_distribution<> distrib(0, 10);
-				int randomValue = distrib(gen);
-				if(randomValue>8){
+				std::uniform_real_distribution<> distrib(0.0, 10.0);
+    			double randomValue = distrib(gen);
+				if(randomValue>9.0){
 					outParticles[pid].pid=vars->particles[pid].id;
 					outParticles[pid].r=vars->particles[pid].x;
 					outParticles[pid].v=vars->particles[pid].v;
@@ -159,8 +159,6 @@ trajectory::boundAction(int faceID, int pid, point norm, double dot){
 					returnInt=-1;
 				}
 				else{
-
-					std::cout << "Random 0 or 1: " << randomValue << std::endl;
 					double b0=vars->particles[pid].x.x[0]-points[faces[faceID].iface[0]].x[0];
 					double b1=vars->particles[pid].x.x[1]-points[faces[faceID].iface[0]].x[1];
 					double b2=vars->particles[pid].x.x[2]-points[faces[faceID].iface[0]].x[2];
