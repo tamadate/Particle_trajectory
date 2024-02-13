@@ -13,6 +13,11 @@ trajectory::timeEvolution(particle &a){
 	}
 	else{eulerInertiaLess(a);}
 
+	if(a.dp>1e-6){
+		double ddp=4*18e-3*0.22e-4/8.314/vars->T[a.cell]/rho_p/a.dp*(vars->pv_inf[a.cell]-vars->pvs[a.cell]);
+		a.dp+=ddp*vars->dt;
+	}
+
 	// if the system is symmetric
 	if(flags->dimensionFlag>0){
 		a.x.x[noUpdateAxis]=0;
@@ -131,7 +136,7 @@ trajectory::eulerInertiaLess(particle &a){
 		vars->dt=a.tini;
 		a.update=1;
 	}
-	
+
 	// compute forces
 	for(int i=0; i<3; i++) a.F.x[i]=0;
 	for(auto &force : forces) force->compute(a);
@@ -141,6 +146,8 @@ trajectory::eulerInertiaLess(particle &a){
 	U[0] = vars->U[a.cell].x[0] + a.Urand.x[0];
 	U[1] = vars->U[a.cell].x[1] + a.Urand.x[1];
 	U[2] = vars->U[a.cell].x[2] + a.Urand.x[2];
+
+
 	for(int i=0; i<3; i++) a.v.x[i]=U[i]+a.F.x[i]/a.beta;	
 
 	// position update

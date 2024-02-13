@@ -2,6 +2,7 @@
 
 // Find cell id where particle is existing
 
+
 void
 trajectory::findParticle(void){
 	if(flags->inletFace==-1) findParticleFace(cells); // currently this is not working

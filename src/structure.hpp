@@ -58,6 +58,7 @@ struct particle {
 	double dt;  // time step
 	double tau;
 	double q;
+	double D;
 
 	point Urand;	// dispersion velocity
 	double tini;	// dispersion velocity life time

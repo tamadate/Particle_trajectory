@@ -160,6 +160,20 @@ trajectory::readCondition(void){
 				cout<<"Not use analytical mode"<<endl;
 			}
 		}
+		// Relative humidity reading and convert it to vapor pressure
+      	else if(readings[0]=="Humidity") {
+			sprintf (filepath, "%s/p", startDir.c_str());
+			readScalarDum(filepath,vars->pvs, 1);
+			readScalarDum(filepath,vars->pv_inf, stod(readings[1]));
+			int N=vars->T.size();
+			for(int i=0; i<N; ++i){
+				double ps=pow(10.0,8.0275-1705.6/(vars->T[i]-41.74))/760.0*101300;
+				vars->pv_inf[i]*=ps;
+				vars->pvs[i]*=ps;
+			}
+			cout<<"Pvs for cell id 0 is: "<<vars->pvs[0]<<endl;
+			cout<<"Pv_inf for cell id 0 is: "<<vars->pv_inf[0]<<endl;
+		}
 		// total simulation time step
 		else if(readings[0]=="totalTime") totalTime=stod(readings[1]);
 		// not using now

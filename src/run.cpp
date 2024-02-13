@@ -38,9 +38,14 @@ trajectory::run(void){
 				}
 
 				timeEvolution(a);
+				
 				time+=vars->dt;
 
 				breakFlag=checkCell(pid);
+				if(a.dp<0) {
+					breakFlag=-1;
+					break;
+				}
 
 				if(breakFlag==-1) break;
 

@@ -17,12 +17,17 @@ class Variables {
 		std::vector<point> dT;
 		std::vector<point> dV;
 		std::vector<particle> particles;
+		std::vector<double> pvs;
+		std::vector<double> pv_inf;
+
+
 		double delta_r2;
 		std::vector<double> time;
 		double meshScale;
 		double analFactor;
 		double dt;
 		double fixTimeStep;
+
 
 		Variables(void){};
 		~Variables(void){};

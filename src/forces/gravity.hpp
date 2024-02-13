@@ -12,7 +12,7 @@ class gravity : public force{
 		virtual void compute(particle &par){
 			par.F.x[0]+=a[0];
 			par.F.x[1]+=a[1];
-			par.F.x[2]=+a[2];
+			par.F.x[2]+=a[2];
 		};
 		gravity(double x, double y, double z){
 			a[0]=x;

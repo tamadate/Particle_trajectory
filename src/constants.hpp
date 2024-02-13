@@ -63,5 +63,3 @@ const double A1=2.514;
 const double A2=0.8;
 const double A3=0.55;
 
-
-
