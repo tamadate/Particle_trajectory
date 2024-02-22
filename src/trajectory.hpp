@@ -47,6 +47,7 @@ class trajectory{
 	int checkCell(int pid);
 	int checkBoundCell(int pid);
 	int boundAction(int faceID, int pid, point norm, double dot);
+	int boundActionWall(int faceID, int pid, point norm, double dot);
 
 	// Physical properties calculation functions (see calcProperties.cpp)
 	void calculateMyu(void);

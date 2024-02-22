@@ -96,23 +96,23 @@ trajectory::boundAction(int faceID, int pid, point norm, double dot){
 	for(int i=0; i<boundSize; i++){
 		// find definition of boundary from the boundary array
 		if(faceID+1>boundaries[i].startFace&&faceID<boundaries[i].startFace+boundaries[i].nFaces) {
-			/*
-			 If the boundary is patch, the calculation is finished by return -1 (returnInt=-1).
-			 Ending information is logged in outParticles array.
-			*/
-			if(boundaries[i].type=="patch"){
-				outParticles[pid].pid=vars->particles[pid].id;
-				outParticles[pid].r=vars->particles[pid].x;
-				outParticles[pid].v=vars->particles[pid].v;
-				outParticles[pid].bid=i;
-				//cout<<"out from "<<boundaries[i].name<<" "<<faceID<<endl;
-				returnInt=-1;
-			}
-			/*
-			 If the boundary is symmetryPlane, the particle is refrected.
-			 Return value is 1 (continue)
-			*/
 			if(dot<0){
+				/*
+				If the boundary is patch, the calculation is finished by return -1 (returnInt=-1).
+				Ending information is logged in outParticles array.
+				*/
+				if(boundaries[i].type=="patch"){
+					outParticles[pid].pid=vars->particles[pid].id;
+					outParticles[pid].r=vars->particles[pid].x;
+					outParticles[pid].v=vars->particles[pid].v;
+					outParticles[pid].bid=i;
+					//cout<<"out from "<<boundaries[i].name<<" "<<faceID<<endl;
+					returnInt=-1;
+				}
+				/*
+				If the boundary is symmetryPlane, the particle is refrected.
+				Return value is 1 (continue)
+				*/
 				if(boundaries[i].type=="symmetryPlane"||boundaries[i].type=="symmetry"||boundaries[i].type=="wedge"){
 					/*double b0=vars->particles[pid].x.x[0]-points[faces[faceID].iface[0]].x[0];
 					double b1=vars->particles[pid].x.x[1]-points[faces[faceID].iface[0]].x[1];
