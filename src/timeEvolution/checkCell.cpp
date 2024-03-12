@@ -139,7 +139,7 @@ trajectory::boundAction(int faceID, int pid, point norm, double dot){
 					vars->particles[pid].F.x[0]-=2*nv0*norm.x[0];
 					vars->particles[pid].F.x[1]-=2*nv0*norm.x[1];
 					vars->particles[pid].F.x[2]-=2*nv0*norm.x[2];*/
-					returnInt=1;
+					returnInt=0;
 				}
 			}
 			/*

@@ -1,8 +1,5 @@
 #include "trajectory.hpp"
 
-
-
-
 int main(int argc,char *argv[]){
 	cout<<"**************************************"<<endl;
 	cout<<"*** Particle Trajectory Simulation ***"<<endl;

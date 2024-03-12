@@ -22,6 +22,7 @@ trajectory::calculatelamda(void){
 
 void
 trajectory::calculateNonDimension(particle &par){
+	// calculate particle relative velocity
 	double dUx=vars->U[par.cell].x[0]+par.Urand.x[0]-par.v.x[0];
 	double dUy=vars->U[par.cell].x[1]+par.Urand.x[1]-par.v.x[1];
 	double dUz=vars->U[par.cell].x[2]+par.Urand.x[2]-par.v.x[2];
@@ -30,10 +31,10 @@ trajectory::calculateNonDimension(particle &par){
 
 	double cg=sqrt(gamkb_m*vars->T[par.cell]);	// speed of sound
 
-	par.Re=vars->rho[par.cell]*Umag*par.dp/vars->myu[par.cell]+1e-20;
+	par.Re=vars->rho[par.cell]*Umag*par.dp/vars->myu[par.cell]+1e-100;
 	par.Mach=Umag/cg;
 	par.Kn=par.Mach/par.Re*Kn_coeff;
 	par.Cc=1+par.Kn*(A1+A2*exp(-A3/par.Kn));
-	double threePiMuDp_Cc=3*M_PI*vars->myu[par.cell]*par.dp/par.Cc;
-	par.beta=threePiMuDp_Cc/par.m;
+	par.fric=3*M_PI*vars->myu[par.cell]*par.dp/par.Cc;
+	par.beta=par.fric/par.m;
 }
