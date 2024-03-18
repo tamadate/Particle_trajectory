@@ -1,53 +1,37 @@
 #pragma once
-#include "forces/force.hpp"
-#include "forces/drag/drag.hpp"
-#include "forces/gravity.hpp"
-#include "forces/Langevin.hpp"
-#include "forces/Brownian.hpp"
-#include "forces/Coulomb.hpp"
+#include "solver/Hybrid.hpp"
+#include "solver/EulerIL.hpp"
 
 class trajectory{
 	public:
 	Variables *vars;	// pointer for variables
 	Flags *flags;			// pointer for flags
-	std::vector<force*> forces;	// pointer array for force functions working on the particle
-	force *drag;	
+	Solver *solver;
 
-	int Nth;	// Number of parallel (OpenMP)
 	double rho_p;									// particle density
 	double observeTime;						// output interval in time scale
 	double totalTime;							// total calculation time
 	int Observe;									// output interval in time step
 	double delta_r2_trajectory;		// squre of migration distance for trajectory output
-	int plane2D;									// face of 2D simulation (0:y-z, 1:x-z, 2:x-y)
 	int noUpdateAxis;
 	string startDir;							// start directory name (20000 is default)
-	double Axis;									// axis of 2D axi-symmetric simulation
 	char filepath[100];						// file path
 	int boundaryStartID;					// boundary start face id
 	double timer;
 	FILE*f;
 	FILE*file;
 	std::vector<outParticle> outParticles; // position & velocity of the particles at the end of the simulation
-	std::vector<penetrate> penetrates;
+	std::vector<activeFace> penetrates;
+	std::vector<activeFace> reflects;
 	std::vector<int> trapParticle;				 // number of particles trapped in the curculation
 	std::vector<std::vector<double>> deadBox;
 	std::vector<deadSpaceDist> deadDistance;
 
-	// The functions for turbulent dispersion (see turbulentDispersion.cpp)
-	double get_tini(particle &par);
-	void updateDisp(particle &par);
-
 	// Main simulation functions
 	void run(void);
-	void timeEvolution(particle &a);
-	void euler(particle &a);
-	void analytical(particle &a);
-	void eulerInertiaLess(particle &a);
 	int checkCell(int pid);
 	int checkBoundCell(int pid);
 	int boundAction(int faceID, int pid, point norm, double dot);
-	int boundActionWall(int faceID, int pid, point norm, double dot);
 
 	// Physical properties calculation functions (see calcProperties.cpp)
 	void calculateMyu(void);
@@ -85,7 +69,7 @@ class trajectory{
 	void setDefault(void);
 
 	// Export functions
-	void output(particle a, double time, int nth);
+	void output(particle a, double time);
 	void outputTrajectory(particle a);
 	void outputInitial(void);
 	void outputFinalPosition(void);
@@ -98,13 +82,7 @@ class trajectory{
 		return infile.good();
 	}
 
-	void initialize(particle &par, int nth){
-		if(flags->dispersionFlag) par.update=1;
-		else {
-			par.tini=1e15;
-			par.update=0;
-		}
-	}
+	void initialize(particle &par){}
 
 	trajectory(void);
 	~trajectory(void){};

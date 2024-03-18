@@ -69,14 +69,15 @@
 
         "preLaunchTask": "C++ O3"
       },
+
       {
-        "name": "C++ yama",
+        "name": "C++ debug test",
         "type": "cppdbg",
         "request": "launch",
-        "program": "/home/tama3rdgen/CFD_sub_projects/yamagishiTest/turbulentDuffusion/trajectory.out",
+        "program": "/media/tama3rdgen/6TB/UMN/MckennaSimulation/result_redo/case74/trajectory.out",
         "args": [],
         "stopAtEntry": false,
-        "cwd": "/home/tama3rdgen/CFD_sub_projects/yamagishiTest/turbulentDuffusion/",
+        "cwd": "/media/tama3rdgen/6TB/UMN/MckennaSimulation/result_redo/case74/",
         "environment": [],
         "externalConsole": false, //set to true to see output in cmd instead
         "MIMode": "gdb",
@@ -89,9 +90,8 @@
           }
         ],
 
-        "preLaunchTask": "C++ yama"
-      },
-
+        "preLaunchTask": "C++ test degub"
+      }
       ]
   }
   

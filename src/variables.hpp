@@ -3,8 +3,8 @@
 
 class Variables {
 	private:
-		int Nth;
   	public:
+		int Nth;
 		std::vector<double> p;
 		std::vector<point> U;
 		std::vector<double> T;
@@ -24,6 +24,15 @@ class Variables {
 		double dt;
 		double fixTimeStep;
 
-		Variables(void){};
+		Variables(void){
+			#pragma omp parallel
+			{
+				#pragma omp single
+				{
+					Nth=omp_get_num_threads();
+					cout << "OMP threads = " << Nth << endl;
+				}
+			}
+		};
 		~Variables(void){};
 };

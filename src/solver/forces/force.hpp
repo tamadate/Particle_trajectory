@@ -1,7 +1,7 @@
 #pragma once
-#include "../functions.hpp"
-#include "../variables.hpp"
-#include "../flags.hpp"
+#include "../../functions.hpp"
+#include "../../variables.hpp"
+#include "../../flags.hpp"
 
 
 
@@ -11,9 +11,8 @@ class force{
 		Variables *vars;
 		Flags *flags;
 		virtual void compute(particle &par){};
-		void initial(Variables *Vars, Flags *Flags){
+		void initial(Variables *Vars){
 			vars=Vars;
-			flags=Flags;
 		};
 		force(void){}
 		~force(void){}

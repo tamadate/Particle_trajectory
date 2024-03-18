@@ -1,7 +1,7 @@
 #include "trajectory.hpp"
 
 void
-trajectory::output(particle a, double time, int nth){
+trajectory::output(particle a, double time){
 	FILE*fMP;
 	char filePathMP[100];
 
@@ -16,7 +16,6 @@ trajectory::output(particle a, double time, int nth){
 	fMP=fopen(filePathMP, "a");
 	fprintf(fMP,"%e\t%e\t%e\t%e\n", a.v.x[0], a.v.x[1], a.v.x[2], time);
 	fclose(fMP);
-
 }
 
 void

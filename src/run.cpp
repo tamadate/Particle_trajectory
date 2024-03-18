@@ -11,17 +11,16 @@ trajectory::run(void){
 		for (int pid=0; pid<particleSize; pid++){
 			int nth=omp_get_thread_num();
 			particle &a=vars->particles[pid];
-			initialize(a,nth);
+			initialize(a);
 
 			int breakFlag=0;
-			double preOutTime=0;		// previous output time
+			int i_out=1;		// previous output time
 			double time=0;					// current time
 
-
 			while(time<totalTime){
-				if(time - preOutTime > observeTime) {
-					output(a,time,nth);
-					preOutTime=time;
+				if(time > observeTime * i_out) {
+					output(a,time);
+					i_out++;
 				}
 
 				for(auto &pen:penetrates){
@@ -37,14 +36,29 @@ trajectory::run(void){
 					}
 				}
 
-				timeEvolution(a);
+				calculateNonDimension(a); // Reynolds, Mach, and Kndsen numbers.
+
+				solver->solve(a);
+
+				// if the system is symmetric
+				for(auto &af : reflects){
+					double dx = a.x.x[af.face] - af.loc;
+					double dot = dx * af.direction;
+					if(dot < 0) {
+						a.x.x[af.face]=af.loc-dx;
+						a.v.x[af.face]*=-1.0;
+						a.F.x[af.face]*=-1.0;
+						a.Urand.x[af.face]*=-1.0;
+						a.reflect*=-1;
+					}
+				}
+				if(flags->dimensionFlag > 0) a.x.x[noUpdateAxis]=0;
+
 				time+=vars->dt;
 
 				breakFlag=checkCell(pid);
 
 				if(breakFlag==-1) break;
-
-				if(a.update==1&&flags->dispersionFlag==true) updateDisp(a);
 			}
 			// if particle did not hit on any "bounday" during calculation time
 			if(breakFlag==0){
@@ -60,7 +74,7 @@ trajectory::run(void){
 	outputFinalPosition();
 	outputPenetrate();
 	int totalTrap=0;
-	for(int i=0;i<Nth;i++) totalTrap+=trapParticle[i];
+	for(int i=0;i<vars->Nth;i++) totalTrap+=trapParticle[i];
   	cout<<totalTrap<<" might be trapped circulation"<<endl;
 	cout<<"Trajectory calculation time: "<<omp_get_wtime()-timer<<" sec"<<endl;
 }

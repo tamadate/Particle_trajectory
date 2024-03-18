@@ -12,11 +12,11 @@ trajectory::initialParticle(void){
         for(int i=0; i<3; i++) a.v.x[i]=vars->U[icell].x[i]*0.99;   // initial velocity is 99% of fluid velocity
         if(flags->v0) setInitialVelocity(); // if v0 flag is, set initial velocity through velocity file
         calculateNonDimension(a); // calculate non dimensional parameters (Re, Kn, and Mach numbers)
-        for(auto &force : forces) force->compute(a);   // force calculation
+        for(auto &force : solver->forces) force->compute(a);   // force calculation
 
         a.fric=3*M_PI*vars->myu[icell]*a.dp/a.Cc;    // friction factor
         a.beta=a.fric/a.m;  // beta relaxation time (Stokes)
-        a.dt=1/(2*a.beta);    // time step
+        a.dt=1/(10*a.beta);    // time step
 
         // initialize outParticles array (particle profiles at the end of the trajectory calculation)
         outParticle op;
