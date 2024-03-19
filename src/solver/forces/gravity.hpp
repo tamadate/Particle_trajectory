@@ -6,8 +6,6 @@
 // base function of force
 class gravity : public force{
 	public:
-		Variables *vars;
-		Flags *flags;
 		double a[3];
 		virtual void compute(particle &par){
 			par.F.x[0]+=a[0];

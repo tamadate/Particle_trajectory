@@ -21,120 +21,32 @@ trajectory::readCondition(void){
 			readings.push_back(reading);
 		}
 
-		// time step
-		if(readings[0]=="dt") {
-			if(readings[1]=="auto") {
-				flags->autoStep=true;
-				vars->meshScale=stod(readings[2]);
-				cout<<"Auto time step: "<<vars->meshScale<<endl;
-			}
-			else if(readings[1]=="fix"){
-				flags->autoStep=false;
-				vars->fixTimeStep=stod(readings[2]);
-				cout<<"Fixed time step: "<<vars->dt<<endl;
-			}
+		// set name of CFD simulation result (20000 is the default)
+		// Need to set first
+		if(readings[0]=="startDir") {
+			startDir=readings[1];
+			sprintf ( filepath, "%s/p", startDir.c_str());
+			readScalar(filepath,vars->p);
+			sprintf ( filepath, "%s/U", startDir.c_str());
+			readVector(filepath,vars->U);
+			cout<<"Start directory: "<<readings[1]<<endl;
 		}
-		// gas type (currently you can select He or Air)
-		/*else if(readings[0]=="gasType") {
-			if(readings[1]=="He") forces.push_back(new dragForceSingh);
-			if(readings[1]=="Air") forces.push_back(new dragForceSM);
-			cout<<"Gas type: "<<readings[1]<<endl;
-		}*/
-		// model for the drag coefficient model
-		else if(readings[0]=="dragModel") {
-			delete drag;
-			if(readings[1]=="Singh") drag = new dragForceSingh;
-			if(readings[1]=="Stokes") drag = new dragForceSM;
-			if(readings[1]=="Morsi") drag = new dragForceMA;
-			if(readings[1]=="Loth") drag = new dragForceLoth;
-			cout<<"Drag model: "<<readings[1]<<endl;
-		}
-		// select diffusion on/off
-		else if(readings[0]=="diffusion") {
-			if(readings[1]=="Yes") forces.push_back(new Langevin);
-			if(readings[1]=="k-e") {
-				forces.push_back(new Brownian(stod(readings[2])));
-				if(readings[1]=="k-e") {
-				vars->k.clear();
-				vars->epsilon.clear();
-				sprintf ( filepath, "%s/k", startDir.c_str());
-				readScalar(filepath,vars->k);
-				sprintf ( filepath, "%s/epsilon", startDir.c_str());
-				readScalar(filepath,vars->epsilon);
+		// setting solver
+      	else if(readings[0]=="solver") {
+			delete solver;
+			if(readings[1]=="Euler") {
+				solver = new Solver;
+				cout<<"Solver: Euler"<<endl;
 			}
+			else if(readings[1]=="Hybrid") {
+				solver = new Hybrid;
+				vars->analFactor=stod(readings[2]);
+				cout<<"Solver: Hybrid"<<endl;
 			}
-			cout<<"Diffusion: "<<readings[1]<<endl;
-		}
-		// turbulent dispersion on or off
-		// you can select k-e or k-w as a RANS model
-		else if(readings[0]=="Dispersion") {
-			if(readings[1]=="k-e") {
-				flags->dispersionFlag=1;
-				sprintf ( filepath, "%s/k", startDir.c_str());
-				readScalar(filepath,vars->k);
-				sprintf ( filepath, "%s/epsilon", startDir.c_str());
-				readScalar(filepath,vars->epsilon);
+			else if(readings[1]=="EulerIL") {
+				solver = new EulerIL;
+				cout<<"Solver: Euler (inertia less)"<<endl;
 			}
-			if(readings[1]=="k-w") {
-				flags->dispersionFlag=2;
-				sprintf ( filepath, "%s/k", startDir.c_str());
-				readScalar(filepath,vars->k);
-				sprintf ( filepath, "%s/omega", startDir.c_str());
-				readScalar(filepath,vars->epsilon);
-				int Ncell=vars->epsilon.size();
-				for(int i=0; i<Ncell; i++){
-					vars->epsilon[i]*=vars->k[i];
-				}
-			}
-			if(readings[1]=="No" || readings[1]=="no") {
-				flags->dispersionFlag=0;
-				sprintf (filepath, "%s/p", startDir.c_str());
-				readScalarDum(filepath,vars->k, 0);
-				readScalarDum(filepath,vars->epsilon, 0);
-			}
-			cout<<"Dispersion: "<<readings[1]<<endl;
-		}
-		else if(readings[0]=="CoulombForce") {
-			sprintf ( filepath, "%s/E", startDir.c_str());
-			readVector(filepath,vars->dV);
-			forces.push_back(new Coulomb);
-			cout<<"Coulomb force ON"<<endl;
-		}
-		// Froude-Krylov force (force caused by the pressure difference)
-      	else if(readings[0]=="FroudeKrylov") {
-        	if(readings[1]=="Yes" || readings[1]=="yes") {
-				sprintf ( filepath, "%s/dp", startDir.c_str());
-				readVector(filepath,vars->dp);
-			}
-	        if(readings[1]=="No" || readings[1]=="no") {
-				sprintf ( filepath, "%s/p", startDir.c_str());
-				readVectorDum(filepath,vars->dp, 0);
-			}
-		}
-		// dimension of the CFD simulation
-      	else if(readings[0]=="dimension") {
-        	if(readings[1]=="3D") flags->dimensionFlag=0;
-			if(readings[1]=="2Dplane") flags->dimensionFlag=1;
-			if(readings[1]=="2Daxi") flags->dimensionFlag=2;
-			cout<<"Dimension: "<<readings[1]<<endl;
-			if(flags->dimensionFlag>0){
-				if(readings[2]=="y-z"||readings[2]=="z-y") noUpdateAxis=0;
-				if(readings[2]=="x-z"||readings[2]=="z-x") noUpdateAxis=1;
-				if(readings[2]=="x-y"||readings[2]=="y-x") noUpdateAxis=2;
-				if(readings[3]=="x") plane2D=0;
-				if(readings[3]=="y") plane2D=1;
-				if(readings[3]=="z") plane2D=2;
-				Axis=stod(readings[4]);
-        	}
-		}
-		// tracking intermediate properties
-		else if(readings[0]=="penetrate") {
-			penetrate p;
-			if(readings[1]=="100") p.face=0;
-			if(readings[1]=="010") p.face=1;
-			if(readings[1]=="001") p.face=2;
-			p.loc=stod(readings[2]);
-			penetrates.push_back(p);
 		}
 		// fluid compressibility yes or no
       	else if(readings[0]=="compressible") {
@@ -152,6 +64,132 @@ trajectory::readCondition(void){
 				cout<<"Fixed T and rho: "<<readings[2]<<" and "<<readings[3]<<endl;
 			}
 		}
+		// model for the drag coefficient model
+		else if(readings[0]=="dragModel") {
+			delete solver->drag;
+			if(readings[1]=="Singh") solver->drag = new dragForceSingh;
+			if(readings[1]=="Stokes") solver->drag = new dragForceSM;
+			if(readings[1]=="Morsi") solver->drag = new dragForceMA;
+			if(readings[1]=="Loth") solver->drag = new dragForceLoth;
+			cout<<"Drag model: "<<readings[1]<<endl;
+		}
+		// select diffusion on/off
+		else if(readings[0]=="diffusion") {
+			if(readings[1]=="Yes") solver->forces.push_back(new Langevin);
+			if(readings[1]=="k-e") {
+				solver->forces.push_back(new Brownian(stod(readings[2])));
+				if(readings[1]=="k-e") {
+				vars->k.clear();
+				vars->epsilon.clear();
+				sprintf ( filepath, "%s/k", startDir.c_str());
+				readScalar(filepath,vars->k);
+				sprintf ( filepath, "%s/epsilon", startDir.c_str());
+				readScalar(filepath,vars->epsilon);
+			}
+			}
+			cout<<"Diffusion: "<<readings[1]<<endl;
+		}
+		// turbulent dispersion on or off
+		// you can select k-e or k-w as a RANS model
+		else if(readings[0]=="Dispersion") {
+			if(readings[1]=="k-e") {
+				sprintf ( filepath, "%s/k", startDir.c_str());
+				readScalar(filepath,vars->k);
+				sprintf ( filepath, "%s/epsilon", startDir.c_str());
+				readScalar(filepath,vars->epsilon);
+				solver->td = new TD_on;
+			}
+			if(readings[1]=="k-w") {
+				sprintf ( filepath, "%s/k", startDir.c_str());
+				readScalar(filepath,vars->k);
+				sprintf ( filepath, "%s/omega", startDir.c_str());
+				readScalar(filepath,vars->epsilon);
+				int Ncell=vars->epsilon.size();
+				for(int i=0; i<Ncell; i++){
+					vars->epsilon[i]*=vars->k[i];
+				}
+				solver->td = new TD_on;
+			}
+			if(readings[1]=="No" || readings[1]=="no") {
+				sprintf (filepath, "%s/p", startDir.c_str());
+				readScalarDum(filepath,vars->k, 0);
+				readScalarDum(filepath,vars->epsilon, 0);
+				solver->td = new TD;
+			}
+			cout<<"Dispersion: "<<readings[1]<<endl;
+		}
+		// gravity setting
+		else if(readings[0]=="gravity") {
+			gravity *grav = new gravity(stod(readings[1]),stod(readings[2]),stod(readings[3])); // generate variables class
+			solver->forces.push_back(grav);
+			cout<<"Gravity: "<<readings[1]<<" m2/s, "<<readings[2]<<" m2/s, "<<readings[3]<<" m2/s"<<endl;
+		}
+		// Coulombic force
+		else if(readings[0]=="CoulombForce") {
+			sprintf ( filepath, "%s/E", startDir.c_str());
+			readVector(filepath,vars->dV);
+			solver->forces.push_back(new Coulomb);
+			cout<<"Coulomb force ON"<<endl;
+		}
+		// Froude-Krylov force (force caused by the pressure difference)
+      	else if(readings[0]=="FroudeKrylov") {
+        	if(readings[1]=="Yes" || readings[1]=="yes") {
+				sprintf ( filepath, "%s/dp", startDir.c_str());
+				readVector(filepath,vars->dp);
+			}
+	        if(readings[1]=="No" || readings[1]=="no") {
+				sprintf ( filepath, "%s/p", startDir.c_str());
+				readVectorDum(filepath,vars->dp, 0);
+			}
+		}
+		// time step
+		else if(readings[0]=="cellSize") {
+			vars->meshScale=stod(readings[1]);
+			cout<<"Cell size for auto time step: "<<vars->meshScale*1e6<<" um"<<endl;
+		}
+		// dimension of the CFD simulation
+      	else if(readings[0]=="dimension") {
+        	if(readings[1]=="3D") flags->dimensionFlag=0;
+			if(readings[1]=="2Dplane") flags->dimensionFlag=1;
+			if(readings[1]=="2Daxi") flags->dimensionFlag=2;
+			cout<<"Dimension: "<<readings[1]<<endl;
+			if(flags->dimensionFlag>0){
+				if(readings[2]=="y-z"||readings[2]=="z-y") noUpdateAxis=0;
+				if(readings[2]=="x-z"||readings[2]=="z-x") noUpdateAxis=1;
+				if(readings[2]=="x-y"||readings[2]=="y-x") noUpdateAxis=2;
+        	}
+		}
+		// gas type (currently you can select He or Air)
+		/*else if(readings[0]=="gasType") {
+			if(readings[1]=="He") forces.push_back(new dragForceSingh);
+			if(readings[1]=="Air") forces.push_back(new dragForceSM);
+			cout<<"Gas type: "<<readings[1]<<endl;
+		}*/
+		// particle density (default is 1000 kg/m3)
+		else if(readings[0]=="particleDensity") rho_p=stod(readings[1]);
+		// tracking intermediate properties
+		else if(readings[0]=="penetrate") {
+			activeFace p;
+			if(readings[1]=="y-z" || readings[1]=="z-y") p.face=0;
+			if(readings[1]=="x-z" || readings[1]=="z-x") p.face=1;
+			if(readings[1]=="x-y" || readings[1]=="y-x") p.face=2;
+			p.loc=stod(readings[2]);
+			penetrates.push_back(p);
+			cout<<"Record particle penetrating "<<readings[1]<<" surface: location is "<<readings[2]<<endl;
+		}
+		// setting reflecting face
+		else if(readings[0]=="reflect") {
+			activeFace af;
+			if(readings[1]=="x") af.face=0;
+			if(readings[1]=="y") af.face=1;
+			if(readings[1]=="z") af.face=2;
+			af.loc=stod(readings[2]);
+			af.direction=stod(readings[3]);
+			reflects.push_back(af);
+			cout<<"Set reflect surface "<<readings[1]<<"="<<readings[2];
+			if(af.direction < 0) {cout<<" (remain "<<readings[1]<<"<"<<readings[2]<<")"<<endl;}
+			else {cout<<" (remain "<<readings[1]<<">"<<readings[2]<<")"<<endl;}
+		}
 		// set particle initial velocities (default is fluid)
 		// fluid: 99% of the fluid velocity
 		// file: velocities are given in the file
@@ -159,36 +197,15 @@ trajectory::readCondition(void){
 			flags->v0=1;
 			cout<<"Reading initial velocity file"<<endl;
 		}
-		// not using now
-      	else if(readings[0]=="analytical") {
-			if(readings[1]=="Yes" || readings[1]=="yes") {
-				flags->analytical=1;
-				vars->analFactor=stod(readings[2]);
-				cout<<"Use analytical mode: "<<vars->analFactor<<endl;
-			}
-			else if(readings[1]=="No" || readings[1]=="no") {
-				flags->analytical=0;
-				cout<<"Not use analytical mode"<<endl;
-			}
-		}
 		// total simulation time step
-		else if(readings[0]=="totalTime") totalTime=stod(readings[1]);
-		// not using now
-		else if(readings[0]=="observeTime") observeTime=stod(readings[1]);
-		// set name of CFD simulation result (20000 is the default)
-		else if(readings[0]=="startDir") {
-			startDir=readings[1];
-			sprintf ( filepath, "%s/p", startDir.c_str());
-			readScalar(filepath,vars->p);
-			sprintf ( filepath, "%s/U", startDir.c_str());
-			readVector(filepath,vars->U);
-			cout<<"Start directory: "<<readings[1]<<endl;
+		else if(readings[0]=="totalTime") {
+			totalTime=stod(readings[1]);
+			cout<<"Total calculation time: "<<readings[1]<<" s"<<endl;
 		}
-		// gravity setting
-		else if(readings[0]=="gravity") {
-			gravity *grav = new gravity(stod(readings[1]),stod(readings[2]),stod(readings[3])); // generate variables class
-			forces.push_back(grav);
-			cout<<"Gravity: "<<readings[1]<<" m2/s, "<<readings[2]<<" m2/s, "<<readings[3]<<" m2/s"<<endl;
+		// not using now
+		else if(readings[0]=="observeTime") {
+			observeTime=stod(readings[1]);
+			cout<<"Observation interval time: "<<readings[1]<<" s"<<endl;
 		}
 		// Interception
 		else if(readings[0]=="interception" || readings[0]=="Interception") {
@@ -214,12 +231,6 @@ trajectory::readCondition(void){
 				deadBox.push_back(dead);
 				cout<<"set dead volume (box)"<<endl;
 			}
-		}
-		// particle density (default is 1000 kg/m3)
-		else if(readings[0]=="particleDensity") rho_p=stod(readings[1]);
-		else if(readings[0]=="InertiaLess") {
-			flags->inertia=false;
-			cout<<"Inertia less simulation"<<endl;
 		}
 		
 		// error check

@@ -7,6 +7,7 @@ trajectory::makeCells(void){
 	// get maximum number on owners = number of cells
 	int maxOwner=0;
 	for (auto &a:owners) {if(a>maxOwner) maxOwner=a;}
+	cout<<"Number of cells: "<<maxOwner<<endl;
 
 	// make cell array
 	// add face id (i) into a cell (cell id is owners[i])

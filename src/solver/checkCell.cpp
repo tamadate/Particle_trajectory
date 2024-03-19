@@ -5,7 +5,7 @@ int
 trajectory::checkCell(int pid){
 	int escapeFlag=0;  // 0:continue, -1:out from bound, 1:move to next cell
 	int loopFlag;
-	while(escapeFlag<100){
+	while(escapeFlag<8){
 		loopFlag=0;
 		int icell=vars->particles[pid].cell;
 		int faceSize=cells[icell].iface.size();
@@ -15,17 +15,15 @@ trajectory::checkCell(int pid){
 		 The next cell id is found via neighbor list and if the face is boundary face,
 		 something operation is performed.
 		*/
+		// loop for faces
 		for (int i=0; i<faceSize; i++){
-			int b=cells[icell].iface[i];
-			int c0=faces[b].iface[0];
-			double x0=points[c0].x[0];
-			double y0=points[c0].x[1];
-			double z0=points[c0].x[2];
-			double x=vars->particles[pid].x.x[0]-x0;
-			double y=vars->particles[pid].x.x[1]-y0;
-			double z=vars->particles[pid].x.x[2]-z0;
-			point c=cells[icell].norm[i];
-			double inProduct=c.x[0]*x+c.x[1]*y+c.x[2]*z;
+			int b=cells[icell].iface[i];	// face ID
+			int c0=faces[b].iface[0];		// first point of a face		
+			double x=vars->particles[pid].x.x[0] - points[c0].x[0];	// x-distance from c0
+			double y=vars->particles[pid].x.x[1] - points[c0].x[1]; // y-distance from c0
+			double z=vars->particles[pid].x.x[2] - points[c0].x[2]; // z-distance from c0
+			point c=cells[icell].norm[i];	// norm vector of a face
+			double inProduct=c.x[0]*x+c.x[1]*y+c.x[2]*z;	// inner product
 			// if hit face is the boundary face:
 	    	if(b>boundaryStartID-1)	{
 				if(inProduct<vars->particles[pid].dp*0.5){
@@ -36,7 +34,7 @@ trajectory::checkCell(int pid){
 			// if hit face is "not" boundary face:
 			else{
 				if(inProduct<0){
-					loopFlag=1;  // 0:continue, -1:out from bound, "1:move to next cell"
+					loopFlag=1;  // 0:continue, -1:out from bound, 1:move to next cell
 					escapeFlag++;
 					if(owners[b]==vars->particles[pid].cell) vars->particles[pid].cell=neighbors[b];// if the cell is owner of the face: change cell id to neighbor cell of the face
 					else vars->particles[pid].cell=owners[b];// if the cell is neighbor of the face: change cell id to owner cell of the face
@@ -46,9 +44,11 @@ trajectory::checkCell(int pid){
 					double Kn=vars->lamda[newID]/vars->particles[pid].dp;
 					vars->particles[pid].Kn=Kn;
 					vars->particles[pid].Cc=1+Kn*(A1+A2*exp(-A3/Kn));
-					double threePiMuDp_Cc=3*M_PI*vars->myu[icell]*vars->particles[pid].dp/vars->particles[pid].Cc;
-					vars->particles[pid].beta=threePiMuDp_Cc/vars->particles[pid].m;
-					vars->particles[pid].dt=1/(2*vars->particles[pid].beta);
+					vars->particles[pid].fric=3*M_PI*vars->myu[icell]*vars->particles[pid].dp/vars->particles[pid].Cc;
+					vars->particles[pid].beta=vars->particles[pid].fric/vars->particles[pid].m;
+					vars->particles[pid].dt=1/(10*vars->particles[pid].beta);
+
+					//vars->particles[pid].tini=0;
 
 					break;
 				}
